@@ -94,7 +94,7 @@ Depending on your `$PATH`, `apkg` script may be available. If it isn't you can
 always invoke apkg module:
 
 ```
-python3 -m apkg build -i
+python3 -m apkg build -b
 ```
 
 
@@ -128,7 +128,7 @@ Depending on your `$PATH`, `apkg` script may be available. If it isn't you can
 always invoke apkg module
 
 ```
-python3 -m apkg build -i
+python3 -m apkg build -b
 ```
 
 ## install from source

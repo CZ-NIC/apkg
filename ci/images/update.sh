@@ -2,6 +2,8 @@
 # build and upload docker image(s) into apkg registry
 #
 # this is a simple wrapper around build.sh and update.sh
+#
+# to build & upload all images: ./update.sh */
 
 if [[ $# -le 0 ]]; then
     echo "usage: $0 IMAGE..."
@@ -9,8 +11,9 @@ if [[ $# -le 0 ]]; then
 fi
 set -e
 
-for IMAGE in "$@"
+for ARG in "$@"
 do
+    IMAGE=${ARG%/}
     echo "Building $IMAGE..."
     ./build.sh $IMAGE
     echo "Pushing $IMAGE..."

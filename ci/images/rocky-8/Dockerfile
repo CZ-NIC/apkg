@@ -15,7 +15,7 @@ RUN dnf config-manager --set-enabled powertools
 # enable EPEL
 RUN dnf install -y epel-release
 # update repos
-RUN dnf update
+RUN dnf update -y
 
 # packaging deps
 RUN dnf install -y \

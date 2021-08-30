@@ -161,6 +161,7 @@ debian-9-apkg:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
   <<: *apkg
   script:
+    - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
@@ -240,6 +241,7 @@ debian-9-bird:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
   <<: *bird
   script:
+    - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
@@ -309,6 +311,7 @@ debian-9-libyang:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
   <<: *libyang
   script:
+    - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
@@ -378,6 +381,7 @@ debian-9-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
   <<: *knot-dns
   script:
+    - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
@@ -455,6 +459,7 @@ debian-9-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
   <<: *knot-resolver
   script:
+    - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
 

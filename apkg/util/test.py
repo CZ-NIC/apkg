@@ -1,7 +1,6 @@
 """
 shared apkg testing functions
 """
-# pylint: disable=dangerous-default-value
 from pathlib import Path
 
 import apkg.util.shutil35 as shutil

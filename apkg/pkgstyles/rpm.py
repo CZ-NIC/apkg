@@ -59,7 +59,7 @@ def is_valid_template(path):
 def get_template_name(path):
     spec = get_spec_(path)
 
-    for line in spec.open():
+    for line in spec.open(encoding='utf-8'):
         m = re.match(RE_PKG_NAME, line)
         if m:
             return m.group(1)

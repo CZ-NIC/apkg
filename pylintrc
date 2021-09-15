@@ -1,8 +1,9 @@
 [MESSAGES CONTROL]
 disable=
     broad-except,
+    consider-using-f-string,  # NOTE(py35): f"yes!" when py3.5 is dropped
     consider-using-with,
-    duplicate-code, # unevitable with pkgstyle plugin arch
+    duplicate-code,  # unevitable with pkgstyle plugin arch
     fixme,
     global-statement,
     invalid-name,

@@ -75,7 +75,7 @@ def parse_input_files(files, file_lists):
         if fl == '-':
             f = sys.stdin
         else:
-            f = open(fl, 'r')
+            f = open(fl, 'r', encoding='utf-8')
         all_files += [Path(ln.strip()) for ln in f.readlines()]
         f.close()
 

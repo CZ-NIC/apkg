@@ -3,11 +3,11 @@ class NullCallableString(str):
     This emulates blessings class for cases when blessings aren't available
     """
     def __new__(cls):
-        return str.__new__(cls, u'')
+        return str.__new__(cls, '')
 
     def __call__(self, arg, *extra_args):
         if isinstance(arg, int):
-            return u''
+            return ''
         return arg
 
 

@@ -1,0 +1,14 @@
+[project]
+name = "templates"
+make_archive_script = "distro/scripts/make-archive.sh"
+
+[apkg]
+compat = 1
+
+[[distro.aliases]]
+name = "deb-old"
+distro = ["debian <= 9", "ubuntu < 20.04"]
+
+[[distro.aliases]]
+name = "el-8"
+distro = ["rocky == 8", "centos == 8", "rhel == 8"]

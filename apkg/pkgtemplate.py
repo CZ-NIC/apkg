@@ -40,6 +40,24 @@ class PackageTemplate:
             self.style = _pkgstyle.get_pkgstyle_for_template(self.path)
         return self.style
 
+    def template_env(self, env=None):
+        """
+        get/update template env from pkgstyle
+        """
+        # static vars
+        tenv = getattr(self.pkgstyle, 'TEMPLATE_ENV', {})
+        # dynamic vars resolved at render time
+        denv = getattr(self.pkgstyle, 'TEMPLATE_ENV_DYNAMIC', {})
+        if denv:
+            denv_vars = {}
+            for name, fun in denv.items():
+                denv_vars[name] = fun()
+            tenv.update(denv_vars)
+        # custom supplied vars
+        if env:
+            tenv.update(env)
+        return tenv
+
     def render(self, out_path, env,
                render_filter=default_render_filter,
                includes=None, excludes=None):
@@ -71,6 +89,8 @@ class PackageTemplate:
             log.verbose("template render dir exists: %s", out_path)
         else:
             out_path.mkdir(parents=True, exist_ok=True)
+
+        env = self.template_env(env=env)
 
         # recursively render all files
         for d, _, files in shutil.walk(self.path):
@@ -105,6 +125,7 @@ class PackageTemplate:
         render template file in memory and return its content
         """
         src = self.path / name
+        env = self.template_env(env=env)
         with src.open('r') as srcf:
             t = jinja2.Template(srcf.read())
         return t.render(**env) + '\n'

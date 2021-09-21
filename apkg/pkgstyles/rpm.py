@@ -12,7 +12,12 @@ such as Fedora, CentOS, SUSE, RHEL.
 
  * core: `rpm-build`
  * isolated build: `mock`
+
+**template variables:**
+
+ * `now`: current date in RPM changelog format
 """
+from datetime import datetime
 import glob
 from pathlib import Path
 import re
@@ -43,6 +48,18 @@ SUPPORTED_DISTROS = [
 DISTRO_REQUIRES = {
     'core': ['rpm-build'],
     'isolated': ['mock'],
+}
+
+
+def format_date():
+    """
+    current date and time in RPM changelog format
+    """
+    return datetime.now().strftime('%a %b %d %Y')
+
+
+TEMPLATE_ENV_DYNAMIC = {
+    'now': format_date,
 }
 
 

@@ -102,3 +102,22 @@ That way `apkg` will be able work with old and new config formats without disrup
 [apkg]
 compat = {{ compat_level }}
 ```
+
+
+## [distro]
+
+Config section related to distro configuration.
+
+### distro.aliases
+
+A list of custom [distro aliases](distro.md#distro-aliases).
+
+```toml
+[[distro.aliases]]
+name = "deb-old"
+distro = ["debian <= 9", "ubuntu < 20.04"]
+
+[[distro.aliases]]
+name = "el-8"
+distro = ["rocky == 8", "centos == 8", "rhel == 8"]
+```

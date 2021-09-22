@@ -27,7 +27,7 @@
 * **archive**: archive containing project source code (also known as tarball).
   * **upstream archive**: official upstream archive
   * **dev archive**: development archive created locally from project repo
-* **distro**: operating system distribution such as Debian, Fedora, Arch, NixOS, etc.
+* **[distro](distro.md)**: operating system distribution such as Debian, Fedora, Arch, NixOS, etc.
 * **package**: package archive accepted by a package manager of particular OS distribution
 * **source package**: files needed in order to build a package (this varies a lot between distros, for example RPMs are built from a single `.src.rpm` source package while `.deb` packages are built from several files)
 * **[packaging style](pkgstyles.md)**: processes associated with packaging for specific family of distros (for example `deb` packaging style is used on Debian, Ubuntu, and their clones)

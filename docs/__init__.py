@@ -41,6 +41,10 @@ def define_env(env):
             url=BASE_CODE_URL)
 
     @env.filter
+    def file_raw(path):
+        return Path(path).open('r').read().strip()
+
+    @env.filter
     def file_text(path):
         text = Path(path).open('r').read().strip()
         return "``` text\n%s\n```" % text

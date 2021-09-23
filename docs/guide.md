@@ -76,7 +76,7 @@ You can control `apkg` output format and verbosity using `-L`/`--log-level` opti
 Please note that the option must be specified **before apkg sub-command**, i.e.:
 
 ```
-apkg -L verbose build -i
+apkg -L verbose build -b
 ```
 
 !!! tip

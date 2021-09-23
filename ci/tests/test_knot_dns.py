@@ -59,7 +59,7 @@ def test_knot_srcpkg_dev(repo_path, capsys):
 
 def test_knot_build_dev(repo_path, capsys):
     with cd(repo_path):
-        assert apkg('build', '-i') == 0
+        assert apkg('build', '-b') == 0
         out, _ = capsys.readouterr()
         for pkg in out.split("\n"):
             assert Path(pkg).exists()

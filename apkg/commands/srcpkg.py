@@ -82,7 +82,7 @@ def srcpkg(
     proj = project or Project()
     distro = adistro.distro_arg(distro)
     log.info("target distro: %s", distro)
-    use_cache = proj.cache.enabled(cache)
+    use_cache = proj.cache.enabled(cache) and not render_template
 
     if not release:
         release = '1'
@@ -99,24 +99,27 @@ def srcpkg(
         if upstream:
             infiles = get_archive(
                 version=version,
-                cache=use_cache,
+                cache=cache,
                 project=proj)
         else:
             infiles = make_archive(
-                cache=use_cache,
+                cache=cache,
                 project=proj)
 
     common.ensure_input_files(infiles)
     ar_path = infiles[0]
     version = get_archive_version(ar_path)
 
-    use_cache = proj.cache.enabled(use_cache) and not render_template
     if use_cache:
         cache_name = 'srcpkg/%s/%s' % (srcpkg_type, distro)
         if upstream:
-            cache_key = file_checksum(ar_path)
+            cache_key = '%s:%s' % (ar_path.name, file_checksum(ar_path))
         else:
-            cache_key = proj.checksum
+            cache_key = '{v}-{r}:{pch}-{ach}'.format(
+                v=version,
+                r=release,
+                pch=proj.checksum,
+                ach=file_checksum(ar_path))
         cached = common.get_cached_paths(
             proj, cache_name, cache_key, result_dir)
         if cached:

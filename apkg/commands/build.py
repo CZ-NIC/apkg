@@ -114,22 +114,12 @@ def build(
             release=release,
             distro=distro,
             project=proj,
-            cache=use_cache)
+            cache=cache)
 
     common.ensure_input_files(infiles)
     srcpkg_path = infiles[0]
     if srcpkg:
         log.info("using existing source package: %s", srcpkg_path)
-
-    use_cache = proj.cache.enabled(use_cache)
-    if use_cache:
-        cache_name = 'pkg/%s' % distro
-        cache_key = file_checksum(srcpkg_path)
-        cached = common.get_cached_paths(
-            proj, cache_name, cache_key, result_dir)
-        if cached:
-            log.success("reuse %d cached packages", len(cached))
-            return cached
 
     # fetch pkgstyle (deb, rpm, arch, ...)
     template = proj.get_template_for_distro(distro)
@@ -142,6 +132,17 @@ def build(
         result_path = Path(result_dir)
     else:
         result_path = proj.package_out_path / distro / nvr
+
+    # check cache
+    if use_cache:
+        cache_name = 'pkg/%s' % distro
+        cache_key = '%s:%s' % (nvr, file_checksum(srcpkg_path))
+        cached = common.get_cached_paths(
+            proj, cache_name, cache_key, result_dir)
+        if cached:
+            log.success("reuse %d cached packages", len(cached))
+            return cached
+
     log.info("source package NVR: %s", nvr)
     log.info("build dir: %s", build_path)
     log.info("result dir: %s", result_path)

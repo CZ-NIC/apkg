@@ -264,10 +264,10 @@ def get_package_manager_(distro):
     default = 'dnf'
     if not distro:
         return default
-    if distro.startswith('opensuse'):
+    if distro.id == 'opensuse':
         return 'zypper'
-    m = re.match(r'(?:centos|rhel|oracle|scientific)-(\d+)', distro)
-    if m and int(m.group(1)) <= 7:
+    if (distro.id in ['centos', 'rhel', 'oracle', 'scientific']
+            and distro.version and int(distro.version) <= 7):
         # use yum on EL <= 7
         return 'yum'
     return default

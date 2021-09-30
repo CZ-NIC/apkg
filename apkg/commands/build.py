@@ -77,7 +77,7 @@ def build(
     log.bold('building packages')
 
     proj = project or Project()
-    distro = adistro.distro_arg(distro)
+    distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
     use_cache = proj.cache.enabled(cache)
 
@@ -127,11 +127,11 @@ def build(
 
     # get needed paths
     nvr = pkgstyle.get_srcpkg_nvr(srcpkg_path)
-    build_path = proj.package_build_path / distro / nvr
+    build_path = proj.package_build_path / distro.idver / nvr
     if result_dir:
         result_path = Path(result_dir)
     else:
-        result_path = proj.package_out_path / distro / nvr
+        result_path = proj.package_out_path / distro.idver / nvr
 
     # check cache
     if use_cache:

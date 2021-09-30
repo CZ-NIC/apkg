@@ -1,13 +1,18 @@
 """
 module for handling and rendering apkg package templates
 """
-from pathlib import Path
+import glob
+import os
 import re
 
+from pathlib import Path
+from packaging import version
 import jinja2
 
+from apkg import adistro
 from apkg.log import getLogger
 from apkg import pkgstyle as _pkgstyle
+from apkg.util import common
 import apkg.util.shutil35 as shutil
 
 
@@ -22,6 +27,14 @@ DUMMY_ENV = {
     'distro': 'DISTRO',
 }
 
+# package template selection types ordered by priority
+TS_ALIAS, TS_DISTRO, TS_PKGSTYLE = range(3)
+TEMPLATE_SELECTION_STR = {
+    TS_ALIAS: 'distro alias',
+    TS_DISTRO: 'distro-specific',
+    TS_PKGSTYLE: 'pkgstyle default',
+}
+
 
 def default_render_filter(path):
     if str(path).endswith('.patch'):
@@ -30,15 +43,36 @@ def default_render_filter(path):
 
 
 class PackageTemplate:
-    def __init__(self, path, style=None):
+    def __init__(self, path, style=None, selection=TS_DISTRO):
         self.path = Path(path)
         self.style = style
+        self.selection = selection
+        self.distro_rules = None
+
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, val):
+        self._path = Path(val)
+        self._name = self._path.name
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def pkgstyle(self):
         if not self.style:
             self.style = _pkgstyle.get_pkgstyle_for_template(self.path)
         return self.style
+
+    def selection_str(self):
+        return TEMPLATE_SELECTION_STR.get(self.selection, 'INVALID')
+
+    def match_distro(self, distro):
+        return self.distro_rules.match(distro)
 
     def template_env(self, env=None):
         """
@@ -129,3 +163,109 @@ class PackageTemplate:
         with src.open('r') as srcf:
             t = jinja2.Template(srcf.read())
         return t.render(**env) + '\n'
+
+    def __repr__(self):
+        return "PackageTemplate<%s,%s>" % (self.name, self.pkgstyle.name)
+
+
+def load_templates(path, distro_aliases=None):
+    """
+    load package templates sorted by evaluation priority
+
+    Params:
+        path - templates base path  (i.e.: distro/pkg)
+        distro_aliases - distro aliases disct (optional)
+
+    Returns:
+        list of PackageTemplates in order they should
+        be evaluated (by selection type):
+
+        1) distro alias templates
+        2) distro-specific templates
+        3) pkgstyle default templates
+    """
+    alias_tps = []
+    distro_tps = []
+    pkgstyle_tps = []
+
+    aliases = distro_aliases or {}
+
+    for entry_path in glob.glob('%s/*' % path):
+        if not os.path.isdir(entry_path):
+            # ignore non-dirs
+            continue
+
+        template = PackageTemplate(entry_path)
+        if not template.pkgstyle:
+            log.warning("ignoring unknown package style in %s", entry_path)
+            continue
+
+        dstyle = _pkgstyle.PKGSTYLES.get(template.name)
+        if dstyle:
+            # pkgstyle default template (name match)
+            template.selection = TS_PKGSTYLE
+            rules = adistro.distro_rules(dstyle.SUPPORTED_DISTROS)
+            template.distro_rules = rules
+            pkgstyle_tps.append(template)
+            continue
+
+        alias_rules = aliases.get(template.name)
+        if alias_rules:
+            # distro alias template (name match)
+            template.selection = TS_ALIAS
+            template.distro_rules = alias_rules
+            alias_tps.append(template)
+            continue
+
+        # distro-specific template
+        template.distro_rules = distro_template_rules(template.name)
+        distro_tps.append(template)
+
+    distro_tps = sort_distro_templates(distro_tps)
+    alias_tps.sort(key=lambda x: x.name)
+    pkgstyle_tps.sort(key=lambda x: x.name)
+    templates = alias_tps + distro_tps + pkgstyle_tps
+    return templates
+
+
+def distro_template_rules(name):
+    """
+    return distro rules based on distro-specific template name
+    """
+    rule_str, _, ver = name.partition('-')
+    if ver:
+        rule_str += ' == %s' % ver
+    return adistro.DistroRule(rule_str)
+
+
+def sort_distro_templates(dts):
+    """
+    sort distro templates by evaluation priority
+
+    Params:
+        dts: list of distro templates (PackageTemplate)
+
+    Return:
+        same list ordered by priority:
+
+        * specific templates that include release first
+        * secondary sort by release desc (for determinism)
+    """
+
+    def sort_key(t):
+        distro, _, rls = t.name.rpartition('-')
+        rlsv = version.parse(rls)
+        return distro, common.SortReversor(rlsv)
+
+    plain_dts = []
+    rls_dts = []
+    for t in dts:
+        if '-' in t.name:
+            rls_dts.append(t)
+        else:
+            plain_dts.append(t)
+
+    rls_dts.sort(key=sort_key)
+    plain_dts.sort(key=lambda x: x.name)
+
+    return rls_dts + plain_dts

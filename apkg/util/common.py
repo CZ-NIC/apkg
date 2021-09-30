@@ -125,3 +125,17 @@ def hash_file(filename, algo='sha256'):
         for n in iter(lambda: f.readinto(mv), 0):
             h.update(mv[:n])
     return h
+
+
+class SortReversor:
+    """
+    use this with multi-key sort() to reverse individual keys
+    """
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __eq__(self, other):
+        return other.obj == self.obj
+
+    def __lt__(self, other):
+        return other.obj < self.obj

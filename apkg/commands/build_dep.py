@@ -68,7 +68,7 @@ def build_dep(
     log.bold('%s build deps', action)
 
     proj = project or Project()
-    distro = adistro.distro_arg(distro)
+    distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
 
     # fetch pkgstyle (deb, rpm, arch, ...)

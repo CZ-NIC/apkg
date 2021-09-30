@@ -80,7 +80,7 @@ def srcpkg(
                 fail="--archive and --version options are mutually exclusive")
 
     proj = project or Project()
-    distro = adistro.distro_arg(distro)
+    distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
     use_cache = proj.cache.enabled(cache) and not render_template
 
@@ -150,11 +150,11 @@ def srcpkg(
     # get needed paths
     pkg_name = ps.get_template_name(template.path)
     nvr = "%s-%s-%s" % (pkg_name, version, release)
-    build_path = proj.srcpkg_build_path / distro / nvr
+    build_path = proj.srcpkg_build_path / distro.idver / nvr
     if result_dir:
         out_path = Path(result_dir)
     else:
-        out_path = proj.srcpkg_out_path / distro / nvr
+        out_path = proj.srcpkg_out_path / distro.idver / nvr
     log.info("package NVR: %s", nvr)
     log.info("build dir: %s", build_path)
     log.info("result dir: %s", out_path)

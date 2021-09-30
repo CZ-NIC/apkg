@@ -1,24 +1,227 @@
 """
-distro-specific apkg helpers related to current distro
+apkg helpers for distro parsing and matching
 
-current distro info isn't going to change during run so cache that
+standard distro module is used for getting current distro
 """
+from abc import ABC, abstractmethod
 import re
+
+try:
+    from functools import cached_property
+except ImportError:
+    from cached_property import cached_property
+from packaging.specifiers import SpecifierSet
+from packaging import version
 
 import distro
 
+from apkg.log import getLogger
 
-def distro_arg(distro_str):
+
+log = getLogger(__name__)
+
+
+RE_VERSION_RULE = r'(\w+)\s*((?:==|!=|~=|<=?|>=?)\s*\d+.*)'
+
+
+class Distro:
+    """
+    represent distro by id and (optional) version
+    """
+    def __init__(self, distro_str, aliases=None):
+        self.orig = distro_str
+        # idver format, i.e.: debian-10, ubuntu-21.04
+        self.idver = distro2idver(self.orig)
+        self.id, self.version = parse_idver(self.idver)
+        self.aliases = aliases or {}
+
+    def match(self, *rules):
+        """
+        return True if self matches supplied distro rule(s)
+        """
+        drules = distro_rules(rules, aliases=self.aliases)
+        return drules.match(self)
+
+    def print(self, sep='-', short=False):
+        s = self.id
+        if short:
+            s = s[:3]
+        if not self.version:
+            return s
+        if sep:
+            s += sep
+        s += str(self.version)
+        return s
+
+    @cached_property
+    def human(self):
+        """
+        return distro in human-friendly format, i.e.: 'fedora 10'
+        """
+        return self.print(sep=' ')
+
+    @cached_property
+    def tiny(self):
+        """
+        return distro in tiny format, i.e.: deb10, ubu21.04
+        """
+        return self.print(sep='', short=True)
+
+    @cached_property
+    def parsed_version(self):
+        return version.parse(self.version)
+
+    def __str__(self):
+        return self.human
+
+    def __repr__(self):
+        return "<Distro('%s')>" % self.idver
+
+
+class DistroRuleBase(ABC):
+    """
+    base class for distro rules
+    """
+    @abstractmethod
+    def match(self, distro_):
+        pass
+
+
+class DistroRule(DistroRuleBase):
+    """
+    rule matching specific distro id and version range
+    """
+    def __init__(self, rule_str):
+        self.rule_str = rule_str
+        m = re.match(RE_VERSION_RULE, rule_str)
+        if m:
+            self.id = m.group(1)
+            spec_str = m.group(2)
+            self.version_spec = SpecifierSet(spec_str)
+        else:
+            self.id = rule_str
+            self.version_spec = None
+
+    def match(self, distro_):
+        if distro_.id != self.id:
+            return False
+        if not self.version_spec:
+            return True
+        if not distro_.version:
+            return False
+        return distro_.parsed_version in self.version_spec
+
+    def __str__(self):
+        return self.rule_str
+
+    def __repr__(self):
+        return "<ApkgDistroRule('%s')>" % self.rule_str
+
+
+class DistroRules(DistroRuleBase):
+    """
+    list of multiple distro rules
+    """
+    def __init__(self, rules):
+        self.rules = rules
+
+    def match(self, distro_):
+        """
+        return True when any single rule matches (OR)
+        """
+        for rule in self.rules:
+            if rule.match(distro_):
+                return True
+        return False
+
+    def __str__(self):
+        return ' | '. join([r.rule_str for r in self.rules])
+
+    def __repr__(self):
+        return "<ApkgDistroRules(%s)>" % self.__str__()
+
+
+def distro_rules(rules, aliases=None):
+    """
+    parse (a list of) distro rule string(s) into ApkgDistroRule(s)
+    using distro aliases if supplied
+
+    Params:
+        rules: a distro rule string or a list of thereof
+        aliases: distro aliases dict (optional)
+
+    Return:
+        * ApkgDistroRule for a string
+        * ApkgDistroRules for a list of strings
+    """
+    if isinstance(rules, str):
+        # single rule string
+        rules = [rules]
+
+    aliases = aliases or {}
+    drules = []
+    for rule in rules:
+        if rule in aliases:
+            r = aliases[rule]
+        else:
+            r = DistroRule(rule)
+        drules.append(r)
+
+    if len(drules) == 1:
+        # single DistroRule
+        return drules[0]
+    else:
+        # multiple DistroRules
+        return DistroRules(drules)
+
+
+def parse_distro_aliases(config):
+    """
+    parse distro aliases from config fromat into a dict
+    """
+    aliases = {}
+    for alias in config:
+        name = alias.get('name')
+        if not name:
+            log.warning("Ignoring invalid distro alias:"
+                        " missing required option: name")
+            continue
+        distro_ = alias.get('distro')
+        if not name:
+            log.warning("Ignoring invalid distro alias:"
+                        " missing required option: distro")
+            continue
+        try:
+            rules = distro_rules(distro_)
+        except Exception as ex:
+            log.warning("Ignoring invalid distro alias '%s':"
+                        " invalid distro rule: %s",
+                        name, str(ex))
+            continue
+        aliases[name] = rules
+    return aliases
+
+
+def distro_arg(distro_str, proj=None):
     """
     normalize --distro argument as used by CLI
 
+    set distro aliases from project if supplied (optional)
+
     return current distro if not set
     """
-    if distro_str:
-        # convert custom distro string to idver format
-        return distro2idver(distro_str)
-    # use current distro by default
-    return idver()
+    if not distro_str:
+        # current distro by default
+        d = current_distro()
+    elif isinstance(distro_str, Distro):
+        # already correct format
+        d = distro_str
+    else:
+        # convert custom distro string to Distro
+        d = Distro(distro_str)
+    if proj:
+        d.aliases = proj.distro_aliases
+    return d
 
 
 def distro2idver(distro_name):
@@ -28,65 +231,38 @@ def distro2idver(distro_name):
     return re.sub(r'\s+', '-', distro_name.strip().lower())
 
 
-def idver():
+def parse_idver(idver_str):
+    """
+    split idver string 'distro-version' into (distro, version)
+    """
+    id_, _, ver_ = idver_str.partition('-')
+    return id_, ver_
+
+
+def current_idver(sep='-'):
     """
     return current distro in default idver format
     used by apkg to reference individual distros
 
     examples: debian-10, fedora-32, arch
     """
-    global _idver
-    if _idver is None:
-        _idver = id()
-        ver = version()
-        if ver:
-            _idver += "-%s" % (ver)
-    return _idver
+    idver = distro.id()
+    ver = distro.version()
+    if ver:
+        idver += "%s%s" % (sep, ver)
+    return idver
 
 
-def fullname():
+def current_fullname():
     """
     return human readable string describing current distro
     """
-    global _fullname
     parts = [
-        name(),
+        distro.name(),
         distro.version(pretty=True),
     ]
     return " ".join([p for p in parts if p])
 
 
-def id():  # pylint: disable=redefined-builtin
-    global _id
-    if _id is None:
-        _id = distro.id()
-    return _id
-
-
-def name():
-    global _name
-    if _name is None:
-        _name = distro.name()
-    return _name
-
-
-def codename():
-    global _codename
-    if _codename is None:
-        _codename = distro.codename()
-    return _codename
-
-
-def version():
-    global _version
-    if _version is None:
-        _version = distro.version()
-    return _version
-
-
-_id = None
-_idver = None
-_name = None
-_codename = None
-_version = None
-_fullname = None
+def current_distro():
+    return Distro(current_idver(sep=' '))

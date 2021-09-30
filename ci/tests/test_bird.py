@@ -22,7 +22,10 @@ def clone_path(tmpdir_factory):
     tmpd = tmpdir_factory.mktemp("apkg_test_bird_git")
     p = '%s/bird' % tmpd
     # XXX: using apkg-jru branch for now
-    git('clone', '--recursive', '-b', 'apkg-jru', BIRD_REPO_URL, p)
+    git('clone', '--recursive', '-b', 'apkg-jru',
+        # fix SSL cert issues on old debian systems
+        '-c', 'http.sslVerify=false',
+        BIRD_REPO_URL, p)
     return Path(p)
 
 

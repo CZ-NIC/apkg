@@ -1,0 +1,15 @@
+apkg-example-templates ({{ version }}-{{ release }}~{{ distro.tiny }}) unstable; urgency=medium
+
+  * new upstream version {{ version }}
+  * distro: {{ distro }} / {{ distro.idver }} / {{ distro.tiny }}
+{%- if distro.match('debian >= 11', 'ubuntu > 20.04') %}
+  * new Debian-based
+{%- elif distro.match('deb-old') %}
+  * old Debian-based (distro alias)
+{%- elif distro.match('linuxmint') %}
+  * only on Linux Mint
+{%- else %}
+  * other Debian-based
+{%- endif %}
+
+ -- Jakub Ružička <jakub.ruzicka@nic.cz>  {{ now }}

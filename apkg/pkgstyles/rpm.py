@@ -12,7 +12,12 @@ such as Fedora, CentOS, SUSE, RHEL.
 
  * core: `rpm-build`
  * isolated build: `mock`
+
+**template variables:**
+
+ * `now`: current date in RPM changelog format
 """
+from datetime import datetime
 import glob
 from pathlib import Path
 import re
@@ -46,6 +51,18 @@ DISTRO_REQUIRES = {
 }
 
 
+def format_date():
+    """
+    current date and time in RPM changelog format
+    """
+    return datetime.now().strftime('%a %b %d %Y')
+
+
+TEMPLATE_ENV_DYNAMIC = {
+    'now': format_date,
+}
+
+
 RE_PKG_NAME = r'Name:\s*(\S+)'
 RE_BUILD_REQUIRES = r'BuildRequires:\s*(.*)'
 RE_RPMBUILD_OUT_RPM = r'Wrote:\s+(.*\.rpm)\s*'
@@ -59,7 +76,7 @@ def is_valid_template(path):
 def get_template_name(path):
     spec = get_spec_(path)
 
-    for line in spec.open():
+    for line in spec.open(encoding='utf-8'):
         m = re.match(RE_PKG_NAME, line)
         if m:
             return m.group(1)
@@ -247,10 +264,10 @@ def get_package_manager_(distro):
     default = 'dnf'
     if not distro:
         return default
-    if distro.startswith('opensuse'):
+    if distro.id == 'opensuse':
         return 'zypper'
-    m = re.match(r'(?:centos|rhel|oracle|scientific)-(\d+)', distro)
-    if m and int(m.group(1)) <= 7:
+    if (distro.id in ['centos', 'rhel', 'oracle', 'scientific']
+            and distro.version and int(distro.version) <= 7):
         # use yum on EL <= 7
         return 'yum'
     return default

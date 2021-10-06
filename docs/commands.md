@@ -25,9 +25,10 @@ project VCS:             git
 project config:          distro/config/apkg.toml (exists)
 package templates path:  distro/pkg (exists)
 package templates:
-    arch: distro/pkg/arch
-    deb: distro/pkg/deb
-    rpm: distro/pkg/rpm
+    arch: arch pkgstyle default: arch
+    deb: deb pkgstyle default: ubuntu | debian | linuxmint | raspbian
+    nix: nix pkgstyle default: nix | nixos
+    rpm: rpm pkgstyle default: fedora | centos | rocky | rhel | opensuse | oracle | pidora | scientific
 
 current distro: arch / Arch Linux
     package style: arch

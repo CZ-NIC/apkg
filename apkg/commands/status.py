@@ -1,5 +1,3 @@
-import os
-
 import click
 
 from apkg import adistro
@@ -11,15 +9,17 @@ log = getLogger(__name__)
 
 
 @click.command(name='status')
+@click.option('-d', '--distro',
+              help="override target distro  [default: current]")
 @click.help_option('-h', '--help', help='show this help')
-def cli_status():
+def cli_status(*args, **kwargs):
     """
     show status of current project
     """
-    status()
+    status(*args, **kwargs)
 
 
-def status():
+def status(distro=None):
     """
     show status of current project
     """
@@ -51,22 +51,31 @@ def status():
     if proj.templates:
         msg_lines = []
         for template in proj.templates:
-            short_path = os.path.join(*list(template.path.parts)[-3:])
-            msg_lines.append("    {t.green}%s{t.normal}: {t.bold}%s{t.normal}"
-                             % (template.pkgstyle.name, short_path))
+            short_path = template.path.relative_to(proj.templates_path)
+            msg_lines.append(
+                "    {t.bold}%s{t.normal}: {t.green}%s{t.normal} %s: %s"
+                % (short_path, template.pkgstyle.name,
+                   template.selection_str(), template.distro_rules))
         msg = "\n".join(msg_lines)
     else:
         msg = "    {t.red}no package templates found{t.normal}"
     print(msg.format(dir=proj.templates_path, t=T))
 
     print()
-    # distro status
-    msg = "current distro: {t.cyan}{id}{t.normal} / {t.cyan}{full}{t.normal}"
-    print(msg.format(full=adistro.fullname(), id=adistro.idver(), t=T))
+    if distro:
+        # target distro status
+        distro = adistro.Distro(distro)
+        msg = "target distro: {t.cyan}{id}{t.normal}"
+        print(msg.format(id=distro, t=T))
+    else:
+        # current distro status
+        distro = adistro.current_distro()
+        fullname = adistro.current_fullname()
+        msg = ("current distro: "
+               "{t.cyan}{id}{t.normal} / {t.cyan}{full}{t.normal}")
+        print(msg.format(full=fullname, id=distro, t=T))
 
-    # we know what we're doing here
-    # pylint: disable=protected-access
-    template = proj._get_template_for_distro(adistro.idver())
+    template = proj.get_template_for_distro_(distro)
     msg = "    package style: "
     if template:
         style = template.pkgstyle.name

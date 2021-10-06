@@ -212,7 +212,7 @@ class Git(ShellCommand):
         if not out:
             return []
         else:
-            commits = list()
+            commits = []
             for c in out.split('\n'):
                 commits.append({'hash': c.split(" ")[0],
                                 'timestamp': c.split(" ")[1]})

@@ -1,5 +1,5 @@
 apkg ({{ version }}-{{ release }}) unstable; urgency=medium
 
-  * new upstream version {{ version }} 
+  * upstream version {{ version }}
 
- -- Jakub Ružička <jakub.ruzicka@nic.cz>  Tue, 27 Oct 2020 16:20:00 +0100
+ -- Jakub Ružička <jakub.ruzicka@nic.cz>  {{ now }}

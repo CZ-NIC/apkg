@@ -1,0 +1,8 @@
+Source: apkg-example-templates
+Priority: optional
+Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
+Homepage: https://gitlab.nic.cz/packaging/apkg
+
+Package: apkg-example-templates
+Architecture: all
+Description: minimal example of apkg templating system

@@ -69,5 +69,5 @@ This package contains apkg module for Python 3.
 
 
 %changelog
-* Mon Mar 01 2021 Jakub Ružička <jakub.ruzicka@nic.cz> - 0.1.0-1
-- initial release
+* {{ now }} Jakub Ružička <jakub.ruzicka@nic.cz> - {{ version }}-{{ release }}
+- upstream version {{ version }}

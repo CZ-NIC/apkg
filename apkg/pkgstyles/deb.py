@@ -12,7 +12,12 @@ and its many clones such as Ubuntu or Mint.
 
  * core: `devscripts`
  * isolated build: `pbuilder`
+
+**template variables:**
+
+ * `now`: current date in Debian changelog format (RFC 2822)
 """
+import email.utils
 import glob
 import os
 from pathlib import Path
@@ -41,6 +46,18 @@ SUPPORTED_DISTROS = [
 DISTRO_REQUIRES = {
     'core': ['devscripts'],
     'isolated': ['pbuilder'],
+}
+
+
+def format_date():
+    """
+    current date and time in Debian changelog format (RFC 2822)
+    """
+    return email.utils.formatdate(localtime=True)
+
+
+TEMPLATE_ENV_DYNAMIC = {
+    'now': format_date,
 }
 
 

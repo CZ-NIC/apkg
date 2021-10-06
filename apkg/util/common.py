@@ -75,7 +75,7 @@ def parse_input_files(files, file_lists):
         if fl == '-':
             f = sys.stdin
         else:
-            f = open(fl, 'r')
+            f = open(fl, 'r', encoding='utf-8')
         all_files += [Path(ln.strip()) for ln in f.readlines()]
         f.close()
 
@@ -125,3 +125,17 @@ def hash_file(filename, algo='sha256'):
         for n in iter(lambda: f.readinto(mv), 0):
             h.update(mv[:n])
     return h
+
+
+class SortReversor:
+    """
+    use this with multi-key sort() to reverse individual keys
+    """
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __eq__(self, other):
+        return other.obj == self.obj
+
+    def __lt__(self, other):
+        return other.obj < self.obj

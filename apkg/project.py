@@ -1,7 +1,6 @@
 import glob
 import hashlib
 from pathlib import Path
-import os
 import re
 
 import jinja2
@@ -11,6 +10,7 @@ try:
 except ImportError:
     from cached_property import cached_property
 
+from apkg import adistro
 from apkg import cache as _cache
 from apkg import ex
 from apkg.log import getLogger
@@ -35,6 +35,7 @@ class Project:
     packaging
     """
     config = {}
+    distro_aliases = {}
 
     name = None
     path = None
@@ -60,6 +61,53 @@ class Project:
         if autoload:
             self.load()
         self.cache = _cache.ProjectCache(self)
+
+    def load(self,
+             input_path=None,
+             output_path=None):
+        """
+        load project config and update attributes
+        """
+        if not input_path:
+            input_path = self.path / INPUT_BASE_DIR
+        self.input_path = input_path
+
+        if not output_path:
+            output_path = self.path / OUTPUT_BASE_DIR
+        self.output_path = output_path
+
+        self.config_base_path = self.input_path / 'config'
+        self.config_path = self.config_base_path / CONFIG_FN
+        self.load_config()
+        self.update_attrs()
+        self.update_paths()
+        self.update_distro_aliases()
+
+    def load_config(self):
+        """
+        load project config from file
+        """
+        if self.config_path.exists():
+            log.verbose("loading project config: %s", self.config_path)
+            self.config = toml.load(self.config_path.open())
+            return True
+        else:
+            log.verbose("project config not found: %s", self.config_path)
+            return False
+
+    def config_get(self, option, default=None):
+        """
+        get config option if set or default
+
+        example options: 'project.name', 'upstream.archive_url'
+        """
+        c = self.config
+        for key in option.split('.'):
+            try:
+                c = c[key]
+            except KeyError:
+                return default
+        return c
 
     def update_attrs(self):
         """
@@ -94,48 +142,12 @@ class Project:
         # cache: pkg/.cache.json
         self.cache_path = self.output_path / '.cache.json'
 
-    def load(self,
-             input_path=None,
-             output_path=None):
+    def update_distro_aliases(self):
         """
-        load project config and update its attributes
+        load distro aliases from project config
         """
-        if not input_path:
-            input_path = self.path / INPUT_BASE_DIR
-        self.input_path = input_path
-
-        if not output_path:
-            output_path = self.path / OUTPUT_BASE_DIR
-        self.output_path = output_path
-
-        self.config_base_path = self.input_path / 'config'
-        self.config_path = self.config_base_path / CONFIG_FN
-        self.load_config()
-        self.update_attrs()
-        self.update_paths()
-
-    def load_config(self):
-        if self.config_path.exists():
-            log.verbose("loading project config: %s", self.config_path)
-            self.config = toml.load(self.config_path.open())
-            return True
-        else:
-            log.verbose("project config not found: %s", self.config_path)
-            return False
-
-    def config_get(self, option):
-        """
-        get config option if set or None
-
-        example options: 'project.name', 'upstream.archive_url'
-        """
-        c = self.config
-        for key in option.split('.'):
-            try:
-                c = c[key]
-            except KeyError:
-                return None
-        return c
+        conf = self.config_get('distro.aliases', [])
+        self.distro_aliases = adistro.parse_distro_aliases(conf)
 
     @cached_property
     def vcs(self):
@@ -208,26 +220,26 @@ class Project:
     @cached_property
     def templates(self):
         if self.templates_path.exists():
-            return load_templates(self.templates_path)
+            return pkgtemplate.load_templates(
+                self.templates_path,
+                distro_aliases=self.distro_aliases)
         else:
             return []
 
-    def _get_template_for_distro(self, distro):
+    def get_template_for_distro_(self, distro):
         for t in self.templates:
-            ps = t.pkgstyle
-            for d in ps.SUPPORTED_DISTROS:
-                # NOTE: this is very simplistic
-                if d in distro:
-                    return t
+            if t.match_distro(distro):
+                return t
         return None
 
     def get_template_for_distro(self, distro):
-        ldistro = distro.lower()
-        template = self._get_template_for_distro(ldistro)
+        if not isinstance(distro, adistro.Distro):
+            distro = adistro.Distro(distro)
+        template = self.get_template_for_distro_(distro)
         if not template:
             tdir = self.templates_path
             msg = ("missing package template for distro: %s\n\n"
-                   "you can add it into: %s" % (distro, tdir))
+                   "you can add it into: %s" % (distro.idver, tdir))
             raise ex.MissingPackagingTemplate(msg=msg)
         return template
 
@@ -240,15 +252,3 @@ class Project:
         else:
             ar_path = self.dev_archive_path
         return glob.glob("%s/%s*" % (ar_path, name))
-
-
-def load_templates(path):
-    templates = []
-    for entry_path in glob.glob('%s/*' % path):
-        if os.path.isdir(entry_path):
-            template = pkgtemplate.PackageTemplate(entry_path)
-            if template.pkgstyle:
-                templates.append(template)
-            else:
-                log.warning("ignoring unknown package style in %s", entry_path)
-    return templates

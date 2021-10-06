@@ -38,10 +38,9 @@ def get_pkgstyle_for_template(path):
 
 
 def get_pkgstyle_for_distro(distro):
-    distro = distro.lower()
     for style in PKGSTYLES.values():
         for sup_distro in style.SUPPORTED_DISTROS:
-            if distro.startswith(sup_distro):
+            if distro.id.startswith(sup_distro):
                 return style
     return None
 

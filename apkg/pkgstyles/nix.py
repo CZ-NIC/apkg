@@ -24,7 +24,8 @@ log = getLogger(__name__)
 
 
 SUPPORTED_DISTROS = [
-    'nix'
+    'nix',
+    'nixos',
 ]
 
 

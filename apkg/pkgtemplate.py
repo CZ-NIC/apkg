@@ -48,6 +48,11 @@ class PackageTemplate:
         self.style = style
         self.selection = selection
         self.distro_rules = None
+        self.setup_env()
+
+    def setup_env(self):
+        self.env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader('.'))
 
     @property
     def path(self):
@@ -142,9 +147,7 @@ class PackageTemplate:
                 # TODO: filtering should be exposed through config
                 if render_filter(src):
                     log.verbose("rendering file: %s -> %s", src, dst)
-                    t = None
-                    with src.open('r') as srcf:
-                        t = jinja2.Template(srcf.read())
+                    t = self.env.get_template(str(src))
                     with dst.open('w') as dstf:
                         dstf.write(t.render(**tvars) + '\n')
                 else:
@@ -160,8 +163,7 @@ class PackageTemplate:
         """
         src = self.path / name
         tvars = self.template_vars(tvars=tvars)
-        with src.open('r') as srcf:
-            t = jinja2.Template(srcf.read())
+        t = self.env.get_template(str(src))
         return t.render(**tvars) + '\n'
 
     def __repr__(self):

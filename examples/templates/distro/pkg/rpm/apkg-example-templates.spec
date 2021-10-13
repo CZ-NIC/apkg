@@ -21,6 +21,7 @@ This is a minimal example of apkg templating features.
 * {{ now }} Jakub Ružička <jakub.ruzicka@nic.cz> - {{ version }}-{{ release }}
 - new upstream version {{ version }}
 - distro: {{ distro }} / {{ distro.idver }} / {{ distro.tiny }}
+- {% include 'distro/common/shared.txt' %}
 {%- if distro.match('fedora') %}
 - Fedora-specific block
 {%- elif distro.match('centos <= 7', 'rhel <= 7') %}

@@ -35,6 +35,9 @@ You can use all [jinja] templating features with following variables provided by
 * `now`: current date and time in changelog format (provided only by pkgstyles
   with changelog dates such as `deb` and `rpm`)
 
+[include] tag is also supported and can be used to include
+files relative to project root.
+
 Example Debian `changelog`:
 
 ```jinja
@@ -182,5 +185,6 @@ Examples:
 
 
 [jinja]: https://jinja.palletsprojects.com/en/3.0.x/templates/
+[include]: https://jinja.palletsprojects.com/en/3.0.x/templates/#include
 [distro in templates]: distro.md#distro-in-templates
 [target distro]: distro.md#target-distro

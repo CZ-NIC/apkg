@@ -47,13 +47,13 @@ def build_srcpkg(
         out_path,
         archive_paths,
         template,
-        env):
+        tvars):
     archive_path = archive_paths[0]
     in_pkgbuild = build_path / 'PKGBUILD'
     out_pkgbuild = out_path / 'PKGBUILD'
     out_archive = out_path / archive_path.name
     log.info("building arch source package: %s", in_pkgbuild)
-    template.render(build_path, env or {})
+    template.render(build_path, tvars or {})
     out_path.mkdir(parents=True)
     log.info("copying PKGBUILD and archive to: %s", out_path)
     shutil.copyfile(in_pkgbuild, out_pkgbuild)
@@ -128,10 +128,10 @@ def get_build_deps_from_template(
     # render PKGBUILD
     this_style = sys.modules[__name__]
     t = pkgtemplate.PackageTemplate(template_path, style=this_style)
-    env = pkgtemplate.DUMMY_ENV.copy()
+    tvars = pkgtemplate.DUMMY_VARS.copy()
     if distro:
-        env['distro'] = distro
-    pkgbuild_text = t.render_file_content('PKGBUILD', env=env)
+        tvars['distro'] = distro
+    pkgbuild_text = t.render_file_content('PKGBUILD', tvars=tvars)
     deps = parse_pkgbuild_content_(
         pkgbuild_text,
         'printf \'%s\n\' "${depends[@]}"')

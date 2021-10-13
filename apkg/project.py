@@ -181,16 +181,16 @@ class Project:
         url = self.config_get('upstream.archive_url')
         if not url:
             return None
-        env = {'project': self, 'version': version}
-        url = jinja2.Template(url).render(**env)
+        tvars = {'project': self, 'version': version}
+        url = jinja2.Template(url).render(**tvars)
         return url
 
     def upstream_signature_url(self, version):
         url = self.config_get('upstream.signature_url')
         if not url:
             return None
-        env = {'project': self, 'version': version}
-        url = jinja2.Template(url).render(**env)
+        tvars = {'project': self, 'version': version}
+        url = jinja2.Template(url).render(**tvars)
         return url
 
     @cached_property

@@ -58,7 +58,7 @@ def format_date():
     return datetime.now().strftime('%a %b %d %Y')
 
 
-TEMPLATE_ENV_DYNAMIC = {
+TEMPLATE_VARS_DYNAMIC = {
     'now': format_date,
 }
 
@@ -98,7 +98,7 @@ def build_srcpkg(
         out_path,
         archive_paths,
         template,
-        env):
+        tvars):
     """
     build .src.rpm source package
     """
@@ -108,7 +108,7 @@ def build_srcpkg(
 
     rpmbuild_src.mkdir(parents=True, exist_ok=True)
 
-    template.render(rpmbuild_src, env)
+    template.render(rpmbuild_src, tvars=tvars)
 
     spec_src_path = get_spec_(rpmbuild_src)
     spec_path = rpmbuild_spec / spec_src_path.name
@@ -239,10 +239,10 @@ def get_build_deps_from_template(
     # render .spec file
     this_style = sys.modules[__name__]
     t = pkgtemplate.PackageTemplate(template_path, style=this_style)
-    env = pkgtemplate.DUMMY_ENV.copy()
+    tvars = pkgtemplate.DUMMY_VARS.copy()
     if distro:
-        env['distro'] = distro
-    spec_text = t.render_file_content(spec_path, env=env)
+        tvars['distro'] = distro
+    spec_text = t.render_file_content(spec_path, tvars=tvars)
     return get_build_deps_from_spec_(spec_text)
 
 

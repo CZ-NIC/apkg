@@ -56,7 +56,7 @@ def format_date():
     return email.utils.formatdate(localtime=True)
 
 
-TEMPLATE_ENV_DYNAMIC = {
+TEMPLATE_VARS_DYNAMIC = {
     'now': format_date,
 }
 
@@ -113,7 +113,7 @@ def build_srcpkg(
         out_path,
         archive_paths,
         template,
-        env):
+        tvars):
     """
     build debian source package
     """
@@ -128,10 +128,10 @@ def build_srcpkg(
         raise ex.UnexpectedCommandOutput(msg=msg)
     # render template
     debian_path = source_path / 'debian'
-    template.render(debian_path, env)
+    template.render(debian_path, tvars=tvars)
     # copy archive with debian .orig name
     _, _, _, ext = parse.split_archive_fn(archive_path.name)
-    debian_ar = "%s_%s.orig%s" % (env['name'], env['version'], ext)
+    debian_ar = "%s_%s.orig%s" % (tvars['name'], tvars['version'], ext)
     debian_ar_path = build_path / debian_ar
     log.info("copying archive into source package: %s", debian_ar_path)
     shutil.copyfile(archive_path, debian_ar_path)
@@ -298,10 +298,10 @@ def get_build_deps_from_template(
     # render control file
     this_style = sys.modules[__name__]
     t = pkgtemplate.PackageTemplate(template_path, style=this_style)
-    env = pkgtemplate.DUMMY_ENV.copy()
+    tvars = pkgtemplate.DUMMY_VARS.copy()
     if distro:
-        env['distro'] = distro
-    control_text = t.render_file_content('control', env=env)
+        tvars['distro'] = distro
+    control_text = t.render_file_content('control', tvars=tvars)
     return get_build_deps_from_control_(control_text)
 
 

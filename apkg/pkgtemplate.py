@@ -19,7 +19,7 @@ import apkg.util.shutil35 as shutil
 log = getLogger(__name__)
 
 
-DUMMY_ENV = {
+DUMMY_VARS = {
     'name': 'PKGNAME',
     'version': '0.VERSION',
     'release': '0.RELEASE',
@@ -74,25 +74,25 @@ class PackageTemplate:
     def match_distro(self, distro):
         return self.distro_rules.match(distro)
 
-    def template_env(self, env=None):
+    def template_vars(self, tvars=None):
         """
-        get/update template env from pkgstyle
+        get/update template variables from pkgstyle
         """
-        # static vars
-        tenv = getattr(self.pkgstyle, 'TEMPLATE_ENV', {})
-        # dynamic vars resolved at render time
-        denv = getattr(self.pkgstyle, 'TEMPLATE_ENV_DYNAMIC', {})
-        if denv:
-            denv_vars = {}
-            for name, fun in denv.items():
-                denv_vars[name] = fun()
-            tenv.update(denv_vars)
+        # static pkgstyle vars
+        result = getattr(self.pkgstyle, 'TEMPLATE_VARS', {})
+        # dynamic pkgstyle vars resolved at render time
+        tvars_dyn = getattr(self.pkgstyle, 'TEMPLATE_VARS_DYNAMIC', {})
+        if tvars_dyn:
+            _vars = {}
+            for name, fun in tvars_dyn.items():
+                _vars[name] = fun()
+            result.update(_vars)
         # custom supplied vars
-        if env:
-            tenv.update(env)
-        return tenv
+        if tvars:
+            result.update(tvars)
+        return result
 
-    def render(self, out_path, env,
+    def render(self, out_path, tvars,
                render_filter=default_render_filter,
                includes=None, excludes=None):
         """
@@ -100,7 +100,7 @@ class PackageTemplate:
 
         Args:
             out_path: output base path
-            env: vars available from template
+            tvars: variables available from template
             render_filter: function to determine which files need rendering
             includes: render only files matching these regexes
             excludes: don't render any files matching these regexes
@@ -124,7 +124,7 @@ class PackageTemplate:
         else:
             out_path.mkdir(parents=True, exist_ok=True)
 
-        env = self.template_env(env=env)
+        tvars = self.template_vars(tvars=tvars)
 
         # recursively render all files
         for d, _, files in shutil.walk(self.path):
@@ -146,7 +146,7 @@ class PackageTemplate:
                     with src.open('r') as srcf:
                         t = jinja2.Template(srcf.read())
                     with dst.open('w') as dstf:
-                        dstf.write(t.render(**env) + '\n')
+                        dstf.write(t.render(**tvars) + '\n')
                 else:
                     log.verbose(
                         "copying file without render: %s -> %s", src, dst)
@@ -154,15 +154,15 @@ class PackageTemplate:
                 # preserve original permission
                 dst.chmod(src.stat().st_mode)
 
-    def render_file_content(self, name, env):
+    def render_file_content(self, name, tvars):
         """
         render template file in memory and return its content
         """
         src = self.path / name
-        env = self.template_env(env=env)
+        tvars = self.template_vars(tvars=tvars)
         with src.open('r') as srcf:
             t = jinja2.Template(srcf.read())
-        return t.render(**env) + '\n'
+        return t.render(**tvars) + '\n'
 
     def __repr__(self):
         return "PackageTemplate<%s,%s>" % (self.name, self.pkgstyle.name)

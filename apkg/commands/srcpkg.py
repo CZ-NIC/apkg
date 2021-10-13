@@ -170,7 +170,7 @@ def srcpkg(
         shutil.rmtree(out_path)
 
     # prepare vars accessible from templates
-    env = {
+    tvars = {
         'name': pkg_name,
         'version': version,
         'release': release,
@@ -182,7 +182,7 @@ def srcpkg(
         if result_dir:
             # respect --result-dir when rendering template
             build_path = out_path
-        template.render(build_path, env)
+        template.render(build_path, tvars=tvars)
         log.success("rendered source package template: %s", build_path)
         return [build_path]
 
@@ -192,7 +192,7 @@ def srcpkg(
         out_path,
         archive_paths=infiles,
         template=template,
-        env=env)
+        tvars=tvars)
 
     # check reported results exist
     for p in results:

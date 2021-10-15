@@ -53,7 +53,8 @@ def test_template_select(proj, distro, name, style):
 
 RE_RPM_CH = r"""\* \w{3} \w{3} \d{2} \d{4} [^-]+- ([^-]+)-(\w+)
 - new upstream version (\S+)
-- distro: ([^\n]+)\n?(.*)\Z"""
+- distro: ([^\n]+)
+- Included from shared.txt file. Name: apkg-example-templates\n?(.*)\Z"""
 
 
 @pytest.mark.parametrize('distro,extra', [
@@ -88,7 +89,8 @@ def test_template_render_rpm(proj, capsys, distro, extra):
 
 RE_DEB_CH = r"""apkg-example-templates \(([^-]+)-([^)]+)\) unstable; .*
   \* new upstream version (\S+)
-  \* distro: ([^\n]+)\n?(.*)
+  \* distro: ([^\n]+)
+  \* Included from shared.txt file. Name: apkg-example-templates\n?(.*)
  -- .+?  \w{3}, \d+ \w{3} \d{4} [\d:]{8} [+-]?\d{4}"""
 
 

@@ -76,13 +76,13 @@ def build_srcpkg(
         out_path,
         archive_paths,
         template,
-        env):
+        tvars):
     archive_path = archive_paths[0]
-    env = env or {}
-    env['src_hash'] = hash_file(archive_path).hexdigest()
+    tvars = tvars or {}
+    tvars['src_hash'] = hash_file(archive_path).hexdigest()
     out_archive = out_path / archive_path.name
     log.info("applying templates")
-    template.render(build_path, env or {})
+    template.render(build_path, tvars=tvars)
     log.info("copying everything to: %s", out_path)
     shutil.copytree(build_path, out_path)
     shutil.copyfile(archive_path, out_archive)

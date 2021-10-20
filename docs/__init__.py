@@ -7,6 +7,7 @@ import subprocess
 from apkg import COMPAT_LEVEL
 from apkg import ex
 from apkg import pkgstyle
+from apkg import pkgtemplate
 from pathlib import Path
 
 
@@ -23,6 +24,7 @@ def define_env(env):
     env.variables.exceptions = get_exceptions()
     env.variables.new_issue_url = APKG_NEW_ISSUE_URL
     env.variables.pkgstyles = pkgstyle.PKGSTYLES
+    env.variables.pkgtemplate = pkgtemplate
 
     @env.filter
     def relpath(path):

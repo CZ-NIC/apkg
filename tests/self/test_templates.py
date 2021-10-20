@@ -74,6 +74,9 @@ def test_template_render_rpm(proj, capsys, distro, extra):
         assert out_path.exists()
         spec_path = next(out_path.glob('*.spec'))
         spec = spec_path.open('r').read()
+        dummy_patch = (out_path / 'dummy.patch').open('r').read()
+        copy_only = (out_path / 'COPY_ONLY').open('r').read()
+        assert not (out_path / '.ignored_file').exists()
 
     chl = spec.split('%changelog\n')[-1]
     m = re.search(RE_RPM_CH, chl, flags=re.DOTALL)
@@ -85,6 +88,8 @@ def test_template_render_rpm(proj, capsys, distro, extra):
     distro_exp = '%s / %s / %s' % (d, d.idver, d.tiny)
     assert distro_ == distro_exp
     assert extra_.strip() == extra
+    assert dummy_patch.strip() == 'No templating: {{ distro }}'
+    assert copy_only.strip() == 'No templating: {{ distro }}'
 
 
 RE_DEB_CH = r"""apkg-example-templates \(([^-]+)-([^)]+)\) unstable; .*

@@ -19,7 +19,7 @@ By default, project name is guessed from project dir name but that can break
 easily when the project dir is renamed so it's better to specify it explicitly
 in using `project.name`
 
-```
+```toml
 [project]
 name = "banana"
 ```
@@ -39,7 +39,7 @@ paths on individual `stdout` lines after the main archive.
 
 Include such script in your project and then point to it using `make_archive_script`:
 
-```
+```toml
 [project]
 make_archive_script = "scripts/make-archive.sh"
 ```
@@ -48,7 +48,7 @@ script example: {{ 'scripts/make-archive.sh' | file_link  }}
 
 ## [upstream]
 
-Config section related to project upstream settings.
+Config section for project upstream settings.
 
 ### upstream.archive_url
 
@@ -57,7 +57,7 @@ To easily download upstream archives using `apkg` you can specify
 special `version` variable:
 
 {% raw %}
-```
+```toml
 [upstream]
 archive_url = "https://banana.proj/dl/{{ project.name }}/{{ project.name }}-{{ version }}.tar.xz"
 ```
@@ -75,7 +75,7 @@ control over the process, you can create a custom executable script which
 prints current upstream version to `stdout` and tell `apkg` to use it
 with `upstream.version_script` option:
 
-```
+```toml
 [upstream]
 version_script = "scripts/upstream-version.py"
 ```
@@ -87,7 +87,7 @@ script example: {{ 'scripts/upstream-version.py' | file_link  }}
 
 ## [apkg]
 
-Config section related to `apkg` configuration and settings.
+Config section for `apkg` settings.
 
 ### apkg.compat
 
@@ -98,7 +98,7 @@ That way `apkg` will be able work with old and new config formats without disrup
 
 **current apkg compat level: {{ compat_level }}**
 
-```
+```toml
 [apkg]
 compat = {{ compat_level }}
 ```
@@ -106,7 +106,7 @@ compat = {{ compat_level }}
 
 ## [distro]
 
-Config section related to distro configuration.
+Config section for [distro](distro.md) settings.
 
 ### distro.aliases
 
@@ -121,3 +121,54 @@ distro = ["debian <= 9", "ubuntu < 20.04"]
 name = "el-8"
 distro = ["rocky == 8", "centos == 8", "rhel == 8"]
 ```
+
+
+## [template]
+
+Config section for [package template](templates.md) settings.
+
+
+### template.ignore_files
+
+A list of unix-style [file name patterns] to select files which should be
+**ignored**/**skipped** during template render.
+
+When not specified, following defaults are used:
+
+```toml
+[template]
+ignore_files = {{ pkgtemplate.DEFAULT_IGNORE_FILES }}
+```
+
+To render all files instead of using defaults, simply set to an empty list:
+
+```toml
+[template]
+ignore_files = []
+```
+
+### template.plain_copy_files
+
+A list of unix-style [file name patterns] to select files which should be
+copied over without templating during template render.
+
+This option is overriden by [template.ignore_files](#templateignore_files) -
+when a file matches both `ignore_files` and `plain_copy_files`, it will be
+ignored.
+
+When not specified, following defaults are used:
+
+```toml
+[template]
+plain_copy_files = {{ pkgtemplate.DEFAULT_PLAIN_COPY_FILES }}
+```
+
+To template all files instead of using defaults, simply set to an empty list:
+
+```toml
+[template]
+plain_copy_files = []
+```
+
+
+[file name patterns]: https://docs.python.org/3/library/fnmatch.html

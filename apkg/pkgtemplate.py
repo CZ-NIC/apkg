@@ -3,7 +3,6 @@ module for handling and rendering apkg package templates
 """
 import glob
 import os
-import re
 
 from pathlib import Path
 from packaging import version
@@ -35,19 +34,32 @@ TEMPLATE_SELECTION_STR = {
     TS_PKGSTYLE: 'pkgstyle default',
 }
 
+DEFAULT_IGNORE_FILES = [
+    '.*',
+]
+DEFAULT_PLAIN_COPY_FILES = [
+    '*.patch',
+]
 
-def default_render_filter(path):
-    if str(path).endswith('.patch'):
-        return False
-    return True
 
-
+# pylint: disable=too-many-instance-attributes
 class PackageTemplate:
-    def __init__(self, path, style=None, selection=TS_DISTRO):
+    def __init__(self, path, style=None, selection=TS_DISTRO,
+                 ignore_files=None, plain_copy_files=None):
         self.path = Path(path)
         self.style = style
         self.selection = selection
         self.distro_rules = None
+
+        if ignore_files is None:
+            self.ignore_files = DEFAULT_IGNORE_FILES
+        else:
+            self.ignore_files = ignore_files
+        if plain_copy_files is None:
+            self.plain_copy_files = DEFAULT_PLAIN_COPY_FILES
+        else:
+            self.plain_copy_files = plain_copy_files
+
         self.setup_env()
 
     def setup_env(self):
@@ -97,32 +109,14 @@ class PackageTemplate:
             result.update(tvars)
         return result
 
-    def render(self, out_path, tvars,
-               render_filter=default_render_filter,
-               includes=None, excludes=None):
+    def render(self, out_path, tvars):
         """
         render package template into specified output directory
 
         Args:
             out_path: output base path
             tvars: variables available from template
-            render_filter: function to determine which files need rendering
-            includes: render only files matching these regexes
-            excludes: don't render any files matching these regexes
         """
-        def is_included(fn):
-            if includes:
-                for inc_re in includes:
-                    if re.match(inc_re, fn):
-                        break
-                else:
-                    return False
-            if excludes:
-                for exc_re in excludes:
-                    if re.match(exc_re, fn):
-                        return False
-            return True
-
         log.info("renderding package template: %s -> %s", self.path, out_path)
         if out_path.exists():
             log.verbose("template render dir exists: %s", out_path)
@@ -140,20 +134,21 @@ class PackageTemplate:
             for fn in files:
                 dst = out_path / rel_dir / fn
                 src = Path(d) / fn
-                if not is_included(fn):
-                    log.verbose("file excluded from render: %s", fn)
+                if common.fnmatch_any(fn, self.ignore_files):
+                    log.verbose("ignoring template file: %s", src)
                     continue
 
-                # TODO: filtering should be exposed through config
-                if render_filter(src):
+                if common.fnmatch_any(fn, self.plain_copy_files):
+                    log.verbose(
+                        "plain copying file without render: %s -> %s",
+                        src, dst)
+                    shutil.copyfile(src, dst)
+                else:
                     log.verbose("rendering file: %s -> %s", src, dst)
                     t = self.env.get_template(str(src))
                     with dst.open('w') as dstf:
                         dstf.write(t.render(**tvars) + '\n')
-                else:
-                    log.verbose(
-                        "copying file without render: %s -> %s", src, dst)
-                    shutil.copyfile(src, dst)
+
                 # preserve original permission
                 dst.chmod(src.stat().st_mode)
 
@@ -170,13 +165,19 @@ class PackageTemplate:
         return "PackageTemplate<%s,%s>" % (self.name, self.pkgstyle.name)
 
 
-def load_templates(path, distro_aliases=None):
+def load_templates(path,
+                   distro_aliases=None,
+                   ignore_files=None,
+                   plain_copy_files=None):
     """
     load package templates sorted by evaluation priority
 
     Params:
-        path - templates base path  (i.e.: distro/pkg)
-        distro_aliases - distro aliases disct (optional)
+        path - templates base path (i.e.: distro/pkg)
+        distro_aliases - distro aliases dict (optional)
+        ignore_files - list of file patterns to ignore (optional)
+        plain_copy_files - list of file patterns to copy
+                           without templating (optional)
 
     Returns:
         list of PackageTemplates in order they should
@@ -197,7 +198,11 @@ def load_templates(path, distro_aliases=None):
             # ignore non-dirs
             continue
 
-        template = PackageTemplate(entry_path)
+        template = PackageTemplate(
+            entry_path,
+            ignore_files=ignore_files,
+            plain_copy_files=plain_copy_files)
+
         if not template.pkgstyle:
             log.warning("ignoring unknown package style in %s", entry_path)
             continue

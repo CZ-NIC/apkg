@@ -19,14 +19,35 @@ template.
     * {{ 'distro/pkg' | file_link }}
 
 
+## template files
+
+By default, files in a package template are rendered using [jinja] into output
+directory while preserving file names, attributes and directory structure.
+
+[template.ignore_files](config.md#templateignore_files) can be used to
+ignore/skip selected files during render. Hidden files are ignored by default:
+
+```toml
+[template]
+ignore_files = {{ pkgtemplate.DEFAULT_IGNORE_FILES }}
+```
+
+[template.plain_copy_files](config.md#templateplain_copy_files) can be used to
+copy selected files without jinja templating. This is useful for files that can
+contain jinja control strings or non-unicode characters. This option defaults to:
+
+```toml
+[template]
+plain_copy_files = {{ pkgtemplate.DEFAULT_PLAIN_COPY_FILES }}
+```
+
+Use `-L verbose` or `-L debug` to log how `apkg` handles individual files during render.
+
+
 ## template syntax
 
-`apkg` uses [jinja] the great python templating engine on all files in a package template by default.
-
-There's currently a hardcoded mechanism to copy problematinc files (i.e. patches) over without
-templating which should be exposed through config or a `.gitignore`-like file in the future.
-
-You can use all [jinja] templating features with following variables provided by `apkg`:
+`apkg` uses [jinja] the great python templating engine with following variables
+available:
 
 * `name`: project name
 * `version`: package version

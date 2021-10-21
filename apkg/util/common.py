@@ -1,6 +1,7 @@
 from contextlib import contextmanager
-from pathlib import Path
+import fnmatch
 import hashlib
+from pathlib import Path
 import sys
 import tempfile
 
@@ -125,6 +126,16 @@ def hash_file(filename, algo='sha256'):
         for n in iter(lambda: f.readinto(mv), 0):
             h.update(mv[:n])
     return h
+
+
+def fnmatch_any(filename, patterns):
+    """
+    check if a filename matches any of supplied patterns
+    """
+    for p in patterns:
+        if fnmatch.fnmatch(filename, p):
+            return True
+    return False
 
 
 class SortReversor:

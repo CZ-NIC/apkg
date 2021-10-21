@@ -12,3 +12,7 @@ distro = ["debian <= 9", "ubuntu < 20.04"]
 [[distro.aliases]]
 name = "el-8"
 distro = ["rocky == 8", "centos == 8", "rhel == 8"]
+
+[template]
+ignore_files = ['.*', 'IGNORED']
+plain_copy_files = ['*.patch', 'COPY?ONLY']

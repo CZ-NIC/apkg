@@ -220,9 +220,13 @@ class Project:
     @cached_property
     def templates(self):
         if self.templates_path.exists():
+            ignore_files = self.config_get('template.ignore_files')
+            plain_copy_files = self.config_get('template.plain_copy_files')
             return pkgtemplate.load_templates(
                 self.templates_path,
-                distro_aliases=self.distro_aliases)
+                distro_aliases=self.distro_aliases,
+                ignore_files=ignore_files,
+                plain_copy_files=plain_copy_files)
         else:
             return []
 

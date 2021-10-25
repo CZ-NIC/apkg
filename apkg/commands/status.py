@@ -1,6 +1,7 @@
 import click
 
 from apkg import adistro
+from apkg import compat
 from apkg.log import getLogger, T
 from apkg.project import Project
 
@@ -39,6 +40,18 @@ def status(distro=None):
     else:
         msg += " ({t.warn}doesn't exist{t.normal})"
     print(msg.format(path=proj.config_path, t=T))
+
+    msg = "project compat level:    {t.bold}{level}{t.normal}"
+    level = proj.compat_level
+    compat_ok, compat_state = compat.level_status(level)
+    if level is None:
+        level = 'N/A'
+    if compat_ok:
+        msg += " ({t.green}{state}{t.normal})"
+    else:
+        msg += (" ({t.warn}{state}"
+                " -> run {t.command}apkg compat{t.normal})")
+    print(msg.format(level=level, state=compat_state, t=T))
 
     msg = "package templates path:  {t.bold}{path}{t.normal}"
     if proj.templates_path.exists():

@@ -4,7 +4,7 @@ generate docs from apkg code/docstrings using mkdocs-macros-plugin
 import inspect
 import subprocess
 
-from apkg import COMPAT_LEVEL
+from apkg.compat import COMPAT_LEVEL
 from apkg import ex
 from apkg import pkgstyle
 from apkg import pkgtemplate

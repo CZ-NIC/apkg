@@ -177,6 +177,13 @@ class Project:
             return checksum
         return None
 
+    @property
+    def compat_level(self):
+        """
+        current project compat level as set in config
+        """
+        return self.config_get('apkg.compat')
+
     def upstream_archive_url(self, version):
         url = self.config_get('upstream.archive_url')
         if not url:

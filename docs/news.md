@@ -1,7 +1,16 @@
 # apkg news
 
 
-## apkg 0.2.0 (2021-07-13)
+## apkg 0.3.0
+
+Released 2021-11-??
+
+## NEXT RELEASE (TBD)
+
+
+## apkg 0.2.0
+
+Released 2021-07-13
 
 ### Improvements
 
@@ -31,6 +40,8 @@
   removed in future versions.
 
 
-## apkg 0.1.1 (2021-06-09)
+## apkg 0.1.1
+
+Released 2021-06-09
 
 - first apkg beta release

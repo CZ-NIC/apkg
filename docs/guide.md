@@ -290,3 +290,6 @@ output that can be re-created by re-running apkg commands.
 
 !!! TODO
     This guide deserves more content ✍🏽
+
+!!! tip
+    See [projects using apkg](users.md) 👀

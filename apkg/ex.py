@@ -65,6 +65,16 @@ class InvalidSourcePackageFormat(InvalidFormat):
     exit_code = 18
 
 
+class InvalidCompatLevel(ApkgException):
+    msg_fmt = (
+        "Project compat level %(proj)s is newer than current"
+        " apkg compat level %(apkg)s.\n\n"
+        "Run `apkg compat` for more information.\n\n"
+        "Please upgrade apkg to work with this project."
+    )
+    exit_code = 20
+
+
 # 30-39: Missing and NotFound
 class MissingRequiredArgument(ApkgException):
     msg_fmt = "Missing required argument: %(arg)s"

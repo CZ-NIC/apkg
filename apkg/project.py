@@ -12,6 +12,7 @@ except ImportError:
 
 from apkg import adistro
 from apkg import cache as _cache
+from apkg import compat
 from apkg import ex
 from apkg.log import getLogger
 from apkg import pkgtemplate
@@ -53,13 +54,15 @@ class Project:
     package_out_path = None
     srcpkg_out_path = None
 
-    def __init__(self, path=None, autoload=True):
+    def __init__(self, path=None, auto_load=True, auto_compat=True):
         if path:
             self.path = path
         else:
             self.path = Path('.')
-        if autoload:
+        if auto_load:
             self.load()
+        if auto_compat:
+            self.ensure_compat()
         self.cache = _cache.ProjectCache(self)
 
     def load(self,
@@ -183,6 +186,9 @@ class Project:
         current project compat level as set in config
         """
         return self.config_get('apkg.compat')
+
+    def ensure_compat(self):
+        compat.ensure_compat(self.compat_level)
 
     def upstream_archive_url(self, version):
         url = self.config_get('upstream.archive_url')

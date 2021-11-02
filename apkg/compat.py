@@ -1,6 +1,7 @@
 import re
 import requests
 
+from apkg import ex
 from apkg.log import getLogger
 from apkg.util.upstreamversion import latest_apkg_version
 
@@ -22,6 +23,15 @@ of a respective pkgstyle such as deb, rpm, arch, or nix.
 
 Inspect new improved `apkg status` package templates listing.""")
 }
+
+
+def ensure_compat(compat_level):
+    if not compat_level:
+        return
+    compat_level = int(compat_level)
+    if COMPAT_LEVEL < compat_level:
+        raise ex.InvalidCompatLevel(
+            proj=compat_level, apkg=COMPAT_LEVEL)
 
 
 def level_status(compat_level):

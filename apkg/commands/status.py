@@ -24,7 +24,7 @@ def status(distro=None):
     """
     show status of current project
     """
-    proj = Project()
+    proj = Project(auto_compat=False)
 
     msg = "project name:            {t.bold}{name}{t.normal}"
     print(msg.format(name=proj.name, t=T))

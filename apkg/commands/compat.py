@@ -40,7 +40,7 @@ def compat(latest=True, notes=None):
         print_notes(notes_)
         return True
 
-    proj = Project()
+    proj = Project(auto_compat=False)
     proj_compat = proj.compat_level
     current_version = version.parse(__version__)
 

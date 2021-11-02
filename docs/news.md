@@ -3,9 +3,33 @@
 
 ## apkg 0.3.0
 
-Released 2021-11-??
+Released 2021-11-03
 
-## NEXT RELEASE (TBD)
+### Compat Level 2 News
+
+- better [distro](distro.md) handling
+    - [distro rules](distro.md#distro-rules) to specify particular distro version range
+    - [distro aliases](distro.md#distro-aliases) to conveniently refer to custom distro sets
+    - magic `distro` variable [in templates](distro.md#distro-in-templates) for dynamic templating
+- new flexible [template selection](templates.md#template-selection)
+- new config options to control special files in templates using patterns:
+    - [template.ignore_files](config.md#templateignore_files) to ignore/skip files
+    - [template.plain_copy_files](config.md#templateplain_copy_files) to copy files without templating
+- support Jinja's [include](https://jinja.palletsprojects.com/en/3.0.x/templates/#include) tag
+- new `now` template variable available in `deb` and `rpm` pkgstyles (for changelog dates)
+
+### Improvements
+
+- new `apkg compat` command and [compat docs](compat.md)
+- `apkg` will refuse to work with projects with newer compat level
+- new minimal templating example `examples/templates`
+- sort `apkg srcpkg` output for determinism
+- update and extend docs (new pages: [compat](compat.md), [distro](distro.md), [users](users.md))
+
+### Fixes
+
+- fix false positive cache hits in special cases
+- CI fixes and improvements
 
 
 ## apkg 0.2.0

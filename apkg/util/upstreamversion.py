@@ -16,6 +16,17 @@ log = getLogger(__name__)
 RE_ARCHIVE_VERSION = r'[\w-]+-(\d[^-]+)\.tar\..*'
 
 
+def version_from_script(script, script_name='script'):
+    """
+    get version from last stdout line of a script
+    """
+    log.verbose("getting upstream version from %s: %s", script_name, script)
+    out = run(script)
+    _, _, last_line = out.rpartition('\n')
+    v = version.parse(last_line.strip())
+    return v
+
+
 def version_from_listing(html_listing_url):
     """
     get latest version from HTML listing
@@ -38,12 +49,22 @@ def version_from_listing(html_listing_url):
     return None
 
 
-def version_from_script(script, script_name='script'):
+def version_from_pypi(name):
     """
-    get version from last stdout line of a script
+    get latest version from PyPI by name
     """
-    log.verbose("getting upstream version from %s: %s", script_name, script)
-    out = run(script)
-    _, _, last_line = out.rpartition('\n')
-    v = version.parse(last_line.strip())
-    return v
+    log.verbose("getting upstream version from PyPI: %s", name)
+    url = 'https://pypi.org/pypi/%s/json' % name
+    r = requests.get(url)
+    if not r.ok:
+        return None
+    data = r.json()
+
+    versions = data['releases'].keys()
+    ver = sorted(versions, key=version.parse)[-1]
+
+    return ver
+
+
+def latest_apkg_version():
+    return version_from_pypi('apkg')

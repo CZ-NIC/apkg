@@ -92,9 +92,10 @@ Config section for `apkg` settings.
 ### apkg.compat
 
 In order to allow config file format changes without breaking compatibility,
-it's **strongly recommended** to include current apkg compatibility level in the config file.
+it's **strongly recommended** to include current apkg [compat level](compat.md)
+in the config file.
 
-That way `apkg` will be able work with old and new config formats without disruption in the future.
+That way, `apkg` will be able work with old and new formats without disruption in the future.
 
 **current apkg compat level: {{ compat_level }}**
 

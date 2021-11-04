@@ -126,7 +126,7 @@ class PackageTemplate:
         tvars = self.template_vars(tvars=tvars)
 
         # recursively render all files
-        for d, _, files in shutil.walk(self.path):
+        for d, _, files in shutil.walk(self.path, followlinks=True):
             rel_dir = Path(d).relative_to(self.path)
             dst_dir = out_path / rel_dir
             dst_dir.mkdir(parents=True, exist_ok=True)

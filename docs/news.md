@@ -1,6 +1,15 @@
 # apkg news
 
 
+## apkg 0.3.1
+
+Released 2021-11-04
+
+### Fixes
+
+- follow symlinks when rendering templates
+
+
 ## apkg 0.3.0
 
 Released 2021-11-03

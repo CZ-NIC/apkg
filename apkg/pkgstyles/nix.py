@@ -97,10 +97,14 @@ def build_packages(
         srcpkg_paths,
         **_):
     log.info("building using nix (silent unless fail)")
-    # TODO: perhaps without --print-build-logs and shown? (it has color status)
-    run('nix', 'build', '--file', srcpkg_paths[0], '--out-link',
-        out_path / 'result',
-        '--print-build-logs',  # get full logs shown on failure
+    # TODO: use "nix" command CLI after versions < 2.4 get less common
+    # (because `--extra-experimental-features nix-command` support).
+    # That new CLI is officially experimental (up to change),
+    # but we'd be using it in way that seem extremely unlikely to break.
+    # The reason is that its output will be a bit more user-friendly.
+    # Perhaps use it without --print-build-logs and shown? (has color status)
+    run('nix-build', srcpkg_paths[0],
+        '--out-link', out_path / 'result',
         '--keep-failed',  # and keep the nix build dir for inspection
         )
     return list(out_path.glob('result*'))

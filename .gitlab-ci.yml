@@ -108,7 +108,7 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     # The image auto-detects as alpine distro, and tests don't allow overriding easily :-/
     - echo 'ID=nixos' > /etc/os-release
     # Some archive scripts need /bin/bash
-    - nix build nixpkgs.bash && ln -s "$(realpath ./result/bin/bash)" /bin/bash
+    - nix-build '<nixpkgs>' -QA bash && ln -s "$(realpath ./result/bin/bash)" /bin/bash
     # Use bootstrap apkg to install itself from the current commit
     - nix-shell '<nixpkgs>' -p apkg --run 'apkg install'
 

@@ -122,7 +122,7 @@ def get_build_deps_from_template(
         template_path,
         **kwargs):
     """
-    parse depends from packaging template
+    parse depends and makedepends from packaging template
     """
     distro = kwargs.get('distro')
     # render PKGBUILD
@@ -132,10 +132,15 @@ def get_build_deps_from_template(
     if distro:
         tvars['distro'] = distro
     pkgbuild_text = t.render_file_content('PKGBUILD', tvars=tvars)
-    deps = parse_pkgbuild_content_(
+    # depends: required for build and run
+    depends = parse_pkgbuild_content_(
         pkgbuild_text,
-        'printf \'%s\n\' "${depends[@]}"')
-    return deps.splitlines()
+        'printf \'%s\n\' "${depends[@]}"').splitlines()
+    # makedepends: required for build only
+    makedepends = parse_pkgbuild_content_(
+        pkgbuild_text,
+        'printf \'%s\n\' "${makedepends[@]}"').splitlines()
+    return depends + makedepends
 
 
 def get_build_deps_from_srcpkg(

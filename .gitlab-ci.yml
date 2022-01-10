@@ -98,7 +98,8 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     - docker
     - linux
     - amd64
-  image: nixos/nix
+  # TODO: untag after resolving problems around https://github.com/NixOS/nix/issues/5776
+  image: nixos/nix:2.3.12
   variables:
     #NIX_PATH: nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz
     NIX_PATH: nixpkgs=https://github.com/vcunat/nixpkgs/archive/p/apkg.tar.gz
@@ -108,7 +109,7 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     # The image auto-detects as alpine distro, and tests don't allow overriding easily :-/
     - echo 'ID=nixos' > /etc/os-release
     # Some archive scripts need /bin/bash
-    - nix build nixpkgs.bash && ln -s "$(realpath ./result/bin/bash)" /bin/bash
+    - nix-build '<nixpkgs>' -QA bash && ln -s "$(realpath ./result/bin/bash)" /bin/bash
     # Use bootstrap apkg to install itself from the current commit
     - nix-shell '<nixpkgs>' -p apkg --run 'apkg install'
 

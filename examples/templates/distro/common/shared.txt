@@ -1,1 +1,1 @@
-Included from shared.txt file. Name: {{ name }}
+from shared.txt: {{ name }}

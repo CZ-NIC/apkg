@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from packaging import version
 import jinja2
+import jinja2.ext
 
 from apkg import adistro
 from apkg.log import getLogger
@@ -42,6 +43,25 @@ DEFAULT_PLAIN_COPY_FILES = [
 ]
 
 
+class IncludeRawExtension(jinja2.ext.Extension):
+    """
+    include raw file contents without templating
+
+    Usage from template: {% include_raw distro/pkg/foo %}
+    """
+    tags = {"include_raw"}
+
+    def parse(self, parser):
+        lineno = parser.stream.expect("name:include_raw").lineno
+        fn = jinja2.nodes.Const(parser.parse_expression().value)
+        result = self.call_method("_render", [fn], lineno=lineno)
+        return jinja2.nodes.Output([result], lineno=lineno)
+
+    def _render(self, filename):
+        src = self.environment.loader.get_source(self.environment, filename)[0]
+        return jinja2.Markup(src.rstrip('\n'))
+
+
 # pylint: disable=too-many-instance-attributes
 class PackageTemplate:
     def __init__(self, path, style=None, selection=TS_DISTRO,
@@ -64,7 +84,8 @@ class PackageTemplate:
 
     def setup_env(self):
         self.env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader('.'))
+            loader=jinja2.FileSystemLoader('.'),
+            extensions=[IncludeRawExtension])
 
     @property
     def path(self):

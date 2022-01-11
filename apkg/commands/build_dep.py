@@ -125,12 +125,16 @@ def build_dep(
             template.path, distro=distro)
 
     if install:
-        log.info("installing %s build deps...", len(deps))
-        call_pkgstyle_fun(
-            pkgstyle, 'install_build_deps',
-            deps,
-            distro=distro,
-            interactive=interactive)
+        n_deps = len(deps)
+        if n_deps > 0:
+            log.info("installing %s build deps...", n_deps)
+            call_pkgstyle_fun(
+                pkgstyle, 'install_build_deps',
+                deps,
+                distro=distro,
+                interactive=interactive)
+        else:
+            log.info("no build deps to install")
 
     return deps
 

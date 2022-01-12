@@ -2,7 +2,8 @@ apkg-example-templates ({{ version }}-{{ release }}~{{ distro.tiny }}) unstable;
 
   * new upstream version {{ version }}
   * distro: {{ distro }} / {{ distro.idver }} / {{ distro.tiny }}
-  * {% include 'distro/common/shared.txt' %}
+  * include: {% include 'distro/common/shared.txt' %}
+  * raw include: {% include_raw 'distro/common/shared.txt' %}
 {%- if distro.match('debian >= 11', 'ubuntu > 20.04') %}
   * new Debian-based
 {%- elif distro.match('deb-old') %}

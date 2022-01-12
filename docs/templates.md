@@ -56,17 +56,34 @@ available:
 * `now`: current date and time in changelog format (provided only by pkgstyles
   with changelog dates such as `deb` and `rpm`)
 
-[include] tag is also supported and can be used to include
-files relative to project root.
-
 Example Debian `changelog`:
 
 ```jinja
 {{ 'examples/templates/distro/pkg/deb/changelog' | file_raw }}
 ```
 
-See [distro in templates] to learn howto use the magical `distro` object in
+See [distro in templates] to learn how to use the magical `distro` object in
 templates.
+
+
+### reusing code in templates
+
+Jinja [include] tag can be used to include file content **with** templating:
+
+```jinja
+{% include 'distro/common/foo.txt' %}
+```
+
+Custom `include_raw` tag is also provided to include file content **without** templating:
+
+```jinja
+{% include_raw 'distro/common/foo.txt' %}
+```
+
+This is especially useful when including files which might contain jinja control
+sequences but no templating is needed in them.
+
+Both `include` and `include_raw` expect file path relative to project root.
 
 
 ## template selection

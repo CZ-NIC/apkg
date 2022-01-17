@@ -21,7 +21,7 @@ def clone_path(tmpdir_factory):
     """
     tmpd = tmpdir_factory.mktemp("apkg_test_knot_git")
     p = '%s/knot-dns' % tmpd
-    git('clone', '--recursive', KNOT_REPO_URL, p)
+    git('clone', '--recursive', KNOT_REPO_URL, '-b', 'debhelper11', p)
     return Path(p)
 
 

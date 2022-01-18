@@ -45,9 +45,11 @@ DEFAULT_PLAIN_COPY_FILES = [
 
 class IncludeRawExtension(jinja2.ext.Extension):
     """
-    include raw file contents without templating
+    custom jinja tag include_raw to insert file contents without templating
 
-    Usage from template: {% include_raw distro/pkg/foo %}
+    Usage from template:
+
+        {% include_raw 'distro/pkg/foo' %}
     """
     tags = {"include_raw"}
 

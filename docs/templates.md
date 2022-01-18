@@ -70,6 +70,8 @@ templates.
 
 Jinja [include] tag can be used to include file content **with** templating:
 
+{% raw %}
+
 ```jinja
 {% include 'distro/common/foo.txt' %}
 ```
@@ -79,6 +81,8 @@ Custom `include_raw` tag is also provided to include file content **without** te
 ```jinja
 {% include_raw 'distro/common/foo.txt' %}
 ```
+
+{% endraw %}
 
 This is especially useful when including files which might contain jinja control
 sequences but no templating is needed in them.

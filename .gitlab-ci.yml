@@ -402,14 +402,6 @@ rocky-8-knot-dns:
     - *setup-project
     - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
-debian-9-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
-  <<: *knot-dns
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
 debian-10-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-10:apkg
   <<: *knot-dns
@@ -487,14 +479,6 @@ rocky-8-knot-resolver:
   script:
     - *setup-project
     - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-debian-9-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
-  <<: *knot-resolver
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
 
 debian-10-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-10:apkg

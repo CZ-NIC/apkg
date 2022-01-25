@@ -123,6 +123,9 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
 
 flake8:
   <<: *test
+  except:
+    variables:
+      - $MINIMAL
   script:
     - flake8
 
@@ -130,6 +133,9 @@ pylint:
   <<: *test
   script:
     - pylint apkg
+  except:
+    variables:
+      - $MINIMAL
   allow_failure: true
 
 unit:
@@ -148,6 +154,9 @@ self:
     - *setup-py-reqs
     - *setup-py-develop
     - py.test-3 -v tests/self --junitxml=report.xml
+  except:
+    variables:
+      - $MINIMAL
   artifacts:
     when: always
     reports:
@@ -555,3 +564,8 @@ pages:
   except:
     variables:
       - $INTEGRATION
+      - $TEST_APKG
+      - $TEST_BIRD
+      - $TEST_LIBYANG
+      - $TEST_KNOT_DNS
+      - $TEST_KNOT_RESOLVER

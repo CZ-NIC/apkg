@@ -3,6 +3,7 @@ integration tests for Knot Resolver
 """
 import glob
 from pathlib import Path
+import os
 import pytest
 
 from apkg.util.run import cd
@@ -21,7 +22,8 @@ def clone_path(tmpdir_factory):
     """
     tmpd = tmpdir_factory.mktemp("apkg_test_kresd_git")
     p = '%s/knot-resolver' % tmpd
-    git('clone', '--recursive', KRESD_REPO_URL, p)
+    branch = os.getenv('KNOT_RESOLVER_BRANCH') or 'master'
+    git('clone', '--recursive', '-b', branch, KRESD_REPO_URL, p)
     return Path(p)
 
 

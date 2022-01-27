@@ -3,6 +3,7 @@ integration tests for BIRD
 """
 import glob
 from pathlib import Path
+import os
 import pytest
 
 from apkg.util.run import cd
@@ -22,7 +23,8 @@ def clone_path(tmpdir_factory):
     tmpd = tmpdir_factory.mktemp("apkg_test_bird_git")
     p = '%s/bird' % tmpd
     # XXX: using apkg-jru branch for now
-    git('clone', '--recursive', '-b', 'apkg-jru',
+    branch = os.getenv('BIRD_BRANCH') or 'apkg-jru'
+    git('clone', '--recursive', '-b', branch,
         # fix SSL cert issues on old debian systems
         '-c', 'http.sslVerify=false',
         BIRD_REPO_URL, p)

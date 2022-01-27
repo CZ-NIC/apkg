@@ -1,5 +1,17 @@
 variables:
   LC_ALL: C.UTF-8
+  KNOT_DNS_BRANCH:
+    value: "master"
+    description: "Knot DNS branch to test"
+  KNOT_RESOLVER_BRANCH:
+    value: "master"
+    description: "Knot Resolver branch to test"
+  LIBYANG_BRANCH:
+    value: "master"
+    description: "libyang branch to test"
+  BIRD_BRANCH:
+    value: "apkg-jru"
+    description: "BIRD branch to test"
 
 
 stages:
@@ -58,6 +70,8 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     when: always
     reports:
       junit: report.xml
+  before_script:
+    - echo "Testing BIRD branch $BIRD_BRANCH"
 
 .libyang: &libyang
   stage: libyang
@@ -71,6 +85,8 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     when: always
     reports:
       junit: report.xml
+  before_script:
+    - echo "Testing libyang branch $LIBYANG_BRANCH"
 
 .knot-dns: &knot-dns
   stage: knot-dns
@@ -84,6 +100,8 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     when: always
     reports:
       junit: report.xml
+  before_script:
+    - echo "Testing Knot DNS branch $KNOT_DNS_BRANCH"
 
 .knot-resolver: &knot-resolver
   stage: knot-resolver
@@ -97,6 +115,8 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     when: always
     reports:
       junit: report.xml
+  before_script:
+    - echo "Testing Knot Resolver branch $KNOT_RESOLVER_BRANCH"
 
 .nixos: &nixos
   tags:

@@ -3,6 +3,7 @@ integration tests for Knot DNS
 """
 import glob
 from pathlib import Path
+import os
 import pytest
 
 from apkg.util.run import cd
@@ -21,7 +22,8 @@ def clone_path(tmpdir_factory):
     """
     tmpd = tmpdir_factory.mktemp("apkg_test_knot_git")
     p = '%s/knot-dns' % tmpd
-    git('clone', '--recursive', KNOT_REPO_URL, p)
+    branch = os.getenv('KNOT_DNS_BRANCH') or 'master'
+    git('clone', '--recursive', '-b', branch, KNOT_REPO_URL, p)
     return Path(p)
 
 

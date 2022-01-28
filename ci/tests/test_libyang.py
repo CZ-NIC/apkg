@@ -3,6 +3,7 @@ integration tests for libyang
 """
 import glob
 from pathlib import Path
+import os
 import pytest
 
 from apkg.util.run import cd
@@ -21,7 +22,8 @@ def clone_path(tmpdir_factory):
     """
     tmpd = tmpdir_factory.mktemp("apkg_test_libyang_git")
     p = '%s/libyang' % tmpd
-    git('clone', '--recursive', LIBYANG_REPO_URL, p)
+    branch = os.getenv('LIBYANG_BRANCH') or 'master'
+    git('clone', '--recursive', '-b', branch, LIBYANG_REPO_URL, p)
     return Path(p)
 
 

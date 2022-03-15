@@ -88,7 +88,7 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
   before_script:
     - echo "Testing libyang branch $LIBYANG_BRANCH"
 
-.knot-dns: &knot-dns
+.knot-dns-base: &knot-dns-base
   stage: knot-dns
   only:
     variables:
@@ -102,6 +102,13 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
       junit: report.xml
   before_script:
     - echo "Testing Knot DNS branch $KNOT_DNS_BRANCH"
+
+.knot-dns: &knot-dns
+  <<: *knot-dns-base
+  needs:
+    - make-archive-knot-dns
+  dependencies:
+    - make-archive-knot-dns
 
 .knot-resolver: &knot-resolver
   stage: knot-resolver
@@ -421,6 +428,19 @@ suse-15-libyang:
 
 
 # integration tests: Knot DNS
+
+make-archive-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/ci/debian-11:apkg
+  <<: *knot-dns-base
+  artifacts:
+    paths:
+      - knot-dns/pkg/archives/dev
+  script:
+    - *setup-project
+    - git clone --recursive -b $KNOT_DNS_BRANCH https://gitlab.nic.cz/knot/knot-dns.git
+    - cd knot-dns
+    - apkg build-dep
+    - apkg make-archive
 
 centos-7-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/ci/centos-7:apkg

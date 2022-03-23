@@ -10,7 +10,7 @@ from apkg.commands.get_archive import get_archive
 from apkg.commands.make_archive import make_archive
 from apkg.log import getLogger
 from apkg.project import Project
-from apkg.util.archive import unpack_archive, get_archive_version
+from apkg.util.archive import get_archive_version
 import apkg.util.shutil35 as shutil
 
 
@@ -128,12 +128,7 @@ def srcpkg(
 
     if upstream:
         # --upstream mode - use distro/ from archive
-        log.info("unpacking upstream archive: %s", ar_path)
-        unpack_path = unpack_archive(ar_path, proj.unpacked_archive_path)
-        input_path = unpack_path / 'distro'
-        log.info("loading upstream project input: %s", input_path)
-        # reload project with input_path from archive
-        proj.load(input_path=input_path, output_path=proj.output_path)
+        proj.load_upstream_archive(ar_path)
 
     # fetch correct package template
     template = proj.get_template_for_distro(distro)

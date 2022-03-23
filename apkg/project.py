@@ -16,6 +16,7 @@ from apkg import compat
 from apkg import ex
 from apkg.log import getLogger
 from apkg import pkgtemplate
+from apkg.util.archive import unpack_archive
 from apkg.util.git import git
 from apkg.util import upstreamversion
 
@@ -259,6 +260,15 @@ class Project:
                    "you can add it into: %s" % (distro.idver, tdir))
             raise ex.MissingPackagingTemplate(msg=msg)
         return template
+
+    def load_upstream_archive(self, ar_path):
+        """
+        load project config from --upstream archive
+        """
+        unpack_path = unpack_archive(ar_path, self.unpacked_archive_path)
+        input_path = unpack_path / 'distro'
+        # reload project with input_path from archive
+        self.load(input_path=input_path, output_path=self.output_path)
 
     def find_archives_by_name(self, name, upstream=False):
         """

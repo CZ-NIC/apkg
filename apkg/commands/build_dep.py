@@ -8,7 +8,6 @@ from apkg.commands.srcpkg import srcpkg as make_srcpkg
 from apkg.util import common
 from apkg.log import getLogger
 from apkg.project import Project
-from apkg.util.archive import unpack_archive
 
 
 log = getLogger(__name__)
@@ -71,10 +70,6 @@ def build_dep(
     distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
 
-    # fetch pkgstyle (deb, rpm, arch, ...)
-    template = proj.get_template_for_distro(distro)
-    pkgstyle = template.pkgstyle
-
     infiles = common.parse_input_files(input_files, input_file_lists)
 
     if srcpkg:
@@ -95,29 +90,30 @@ def build_dep(
         common.ensure_input_files(srcpkg_files)
         srcpkg_path = srcpkg_files[0]
 
+        # fetch pkgstyle (deb, rpm, arch, ...)
+        template = proj.get_template_for_distro(distro)
+        pkgstyle = template.pkgstyle
+
         log.info("build deps from srcpkg: %s", srcpkg_path)
         deps = call_pkgstyle_fun(
             pkgstyle, 'get_build_deps_from_srcpkg',
             srcpkg_path)
     else:
         # use tempalte to determine deps
-        if archive:
-            archive_files = infiles
+        archive_files = infiles
 
         if upstream:
             archive = True
-            archive_files = get_archive(project=proj)
+            if not archive_files:
+                archive_files = get_archive(project=proj)
 
         if archive:
             common.ensure_input_files(archive_files)
-            archive_path = archive_files[0]
-            log.info("unpacking archive: %s", archive_path)
-            unpack_path = unpack_archive(
-                archive_path, proj.unpacked_archive_path)
-            log.info("loading template from archive: %s", unpack_path)
-            # load project with input_path from archive
-            aproj = Project(path=unpack_path)
-            template = aproj.get_template_for_distro(distro)
+            proj.load_upstream_archive(archive_files[0])
+
+        # fetch pkgstyle (deb, rpm, arch, ...)
+        template = proj.get_template_for_distro(distro)
+        pkgstyle = template.pkgstyle
 
         log.info("build deps from template: %s", template.path)
         deps = call_pkgstyle_fun(

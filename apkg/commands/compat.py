@@ -81,7 +81,7 @@ def compat(latest=True, notes=None):
               "    {t.command}[apkg]\n"
               "    compat = {ccl}{t.normal}\n\n"
               "to project config: {t.bold}{cfg}{t.normal}\n".format(
-                  ccl=current_compat, cfg=proj.config_path, t=T))
+                  ccl=current_compat, cfg=proj.path.config, t=T))
         print("This will ensure compatibility between apkg versions.")
         return False
 
@@ -93,7 +93,7 @@ def compat(latest=True, notes=None):
               "    {t.command}[apkg]\n"
               "    compat = {ccl}{t.normal}\n\n"
               "in project config: {t.bold}{cfg}{t.normal}".format(
-                  ccl=current_compat, cfg=proj.config_path, t=T))
+                  ccl=current_compat, cfg=proj.path.config, t=T))
         print("\nInspect following upgrade notes:")
         print_notes(compat_.get_level_notes(proj_compat, current_compat))
         return False

@@ -127,11 +127,11 @@ def build(
 
     # get needed paths
     nvr = pkgstyle.get_srcpkg_nvr(srcpkg_path)
-    build_path = proj.package_build_path / distro.idver / nvr
+    build_path = proj.path.package_build / distro.idver / nvr
     if result_dir:
         result_path = Path(result_dir)
     else:
-        result_path = proj.package_out_path / distro.idver / nvr
+        result_path = proj.path.package_out / distro.idver / nvr
 
     # check cache
     if use_cache:

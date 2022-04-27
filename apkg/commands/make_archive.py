@@ -57,7 +57,7 @@ def make_archive(
                "be set in project config to a script that creates project\n"
                "archive and prints its path to stdout.\n\n"
                "Please update project config with required information:\n\n"
-               "%s" % proj.config_path)
+               "%s" % proj.path.config)
         raise ex.MissingRequiredConfigOption(msg=msg)
 
     log.info("running make_archive_script: %s", script)
@@ -75,7 +75,7 @@ def make_archive(
     if result_dir:
         ar_base_path = Path(result_dir)
     else:
-        ar_base_path = proj.dev_archive_path
+        ar_base_path = proj.path.dev_archive
     archive_fn = in_archive_path.name
     archive_path = ar_base_path / archive_fn
     if archive_path != in_archive_path:

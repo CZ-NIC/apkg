@@ -27,7 +27,7 @@ def config():
     """
     proj = Project()
     msg = "project config: {t.bold}{fn}{t.normal}\n"
-    msg = msg.format(fn=proj.config_path, t=T)
+    msg = msg.format(fn=proj.path.config, t=T)
     log.info(msg)
     print(toml.dumps(proj.config))
 

@@ -133,7 +133,7 @@ def srcpkg(
     # fetch correct package template
     template = proj.get_template_for_distro(distro)
     if not template:
-        tdir = proj.templates_path
+        tdir = proj.path.templates
         msg = ("missing package template for distro: %s\n\n"
                "you can add it into: %s" % (distro, tdir))
         raise ex.MissingPackagingTemplate(msg=msg)
@@ -145,11 +145,11 @@ def srcpkg(
     # get needed paths
     pkg_name = ps.get_template_name(template.path)
     nvr = "%s-%s-%s" % (pkg_name, version, release)
-    build_path = proj.srcpkg_build_path / distro.idver / nvr
+    build_path = proj.path.srcpkg_build / distro.idver / nvr
     if result_dir:
         out_path = Path(result_dir)
     else:
-        out_path = proj.srcpkg_out_path / distro.idver / nvr
+        out_path = proj.path.srcpkg_out / distro.idver / nvr
     log.info("package NVR: %s", nvr)
     log.info("build dir: %s", build_path)
     log.info("result dir: %s", out_path)

@@ -30,73 +30,103 @@ CONFIG_FN = 'apkg.toml'
 
 
 # pylint: disable=too-many-instance-attributes
-# TODO: consider moving paths to project.path.* to address this warning
+class ProjectPaths:
+    # pylint: disable=redefined-builtin
+    def __init__(self, base=None, input=None, output=None):
+        self.base = Path(base or '.')
+        if input:
+            self.input = Path(input)
+        else:
+            self.input = self.base / INPUT_BASE_DIR
+        if output:
+            self.output = Path(output)
+        else:
+            self.output = self.base / OUTPUT_BASE_DIR
+        self.update_paths()
+
+    def update_paths(self):
+        # project config: distro/config/apkg.toml
+        self.config_base = self.input / 'config'
+        self.config = self.config_base / CONFIG_FN
+        # package templates: distro/pkg
+        self.templates = self.input / 'pkg'
+        # archives: pkg/archives/{dev,upstream,unpacked}
+        self.archive = self.output / 'archives'
+        self.dev_archive = self.archive / 'dev'
+        self.upstream_archive = self.archive / 'upstream'
+        self.unpacked_archive = self.archive / 'unpacked'
+        # build: pkg/build/{src-,}pkg
+        self.build = self.output / 'build'
+        self.package_build = self.build / 'pkgs'
+        self.srcpkg_build = self.build / 'srcpkgs'
+        # output: pkg/{src-,}pkg
+        self.package_out = self.output / 'pkgs'
+        self.srcpkg_out = self.output / 'srcpkgs'
+        # cache: pkg/.cache.json
+        self.cache = self.output / '.cache.json'
+
+
 class Project:
     """
     Project class serves as high level interface to projecs in need of
     packaging
     """
+    name = None
     config = {}
     distro_aliases = {}
 
-    name = None
-    path = None
-    templates_path = None
-    cache_path = None
-    config_base_path = None
-    config_path = None
-    archive_path = None
-    dev_archive_path = None
-    upstream_archive_path = None
-    unpacked_archive_path = None
-    build_path = None
-    package_build_path = None
-    srcpkg_build_path = None
-    package_out_path = None
-    srcpkg_out_path = None
-
-    def __init__(self, path=None, auto_load=True, auto_compat=True):
-        if path:
-            self.path = path
-        else:
-            self.path = Path('.')
+    def __init__(
+            self,
+            base_path=None,
+            input_path=None,
+            output_path=None,
+            auto_load=True,
+            auto_compat=True):
+        self.auto_compat = auto_compat
+        self.cache = _cache.ProjectCache(self)
+        self.load_paths(
+            base=base_path,
+            input=input_path,
+            output=output_path)
         if auto_load:
             self.load()
-        if auto_compat:
-            self.ensure_compat()
-        self.cache = _cache.ProjectCache(self)
 
-    def load(self,
-             input_path=None,
-             output_path=None):
+    def load(self):
         """
         load project config and update attributes
         """
-        if not input_path:
-            input_path = self.path / INPUT_BASE_DIR
-        self.input_path = input_path
-
-        if not output_path:
-            output_path = self.path / OUTPUT_BASE_DIR
-        self.output_path = output_path
-
-        self.config_base_path = self.input_path / 'config'
-        self.config_path = self.config_base_path / CONFIG_FN
         self.load_config()
         self.update_attrs()
-        self.update_paths()
         self.update_distro_aliases()
+        if self.auto_compat:
+            self.ensure_compat()
+
+    def reload(self,
+               base_path=None,
+               input_path=None,
+               output_path=None):
+        """
+        reload project with new paths supplied
+        """
+        self.load_paths(
+            base=base_path or self.path.base,
+            input=input_path or self.path.input,
+            output=output_path or self.path.output)
+        self.load()
+
+    def load_paths(self, **kwargs):
+        self.path = ProjectPaths(**kwargs)
 
     def load_config(self):
         """
         load project config from file
         """
-        if self.config_path.exists():
-            log.verbose("loading project config: %s", self.config_path)
-            self.config = toml.load(self.config_path.open())
+        if self.path.config.exists():
+            log.verbose("loading project config: %s", self.path.config)
+            self.config = toml.load(self.path.config.open())
             return True
         else:
-            log.verbose("project config not found: %s", self.config_path)
+            log.verbose("project config not found: %s", self.path.config)
             return False
 
     def config_get(self, option, default=None):
@@ -121,30 +151,9 @@ class Project:
         if self.name:
             log.verbose("project name from config: %s", self.name)
         else:
-            self.name = self.path.resolve().name
+            self.name = self.path.base.resolve().name
             log.verbose("project name not in config - "
                         "guessing from path: %s", self.name)
-
-    def update_paths(self):
-        """
-        fill in projects paths based on current self.path and self.config
-        """
-        # package templates: distro/pkg
-        self.templates_path = self.input_path / 'pkg'
-        # archives: pkg/archives/{dev,upstream,unpacked}
-        self.archive_path = self.output_path / 'archives'
-        self.dev_archive_path = self.archive_path / 'dev'
-        self.upstream_archive_path = self.archive_path / 'upstream'
-        self.unpacked_archive_path = self.archive_path / 'unpacked'
-        # build: pkg/build/{src-,}pkg
-        self.build_path = self.output_path / 'build'
-        self.package_build_path = self.build_path / 'pkgs'
-        self.srcpkg_build_path = self.build_path / 'srcpkgs'
-        # output: pkg/{src-,}pkg
-        self.package_out_path = self.output_path / 'pkgs'
-        self.srcpkg_out_path = self.output_path / 'srcpkgs'
-        # cache: pkg/.cache.json
-        self.cache_path = self.output_path / '.cache.json'
 
     def update_distro_aliases(self):
         """
@@ -233,11 +242,11 @@ class Project:
 
     @cached_property
     def templates(self):
-        if self.templates_path.exists():
+        if self.path.templates.exists():
             ignore_files = self.config_get('template.ignore_files')
             plain_copy_files = self.config_get('template.plain_copy_files')
             return pkgtemplate.load_templates(
-                self.templates_path,
+                self.path.templates,
                 distro_aliases=self.distro_aliases,
                 ignore_files=ignore_files,
                 plain_copy_files=plain_copy_files)
@@ -255,7 +264,7 @@ class Project:
             distro = adistro.Distro(distro)
         template = self.get_template_for_distro_(distro)
         if not template:
-            tdir = self.templates_path
+            tdir = self.path.templates
             msg = ("missing package template for distro: %s\n\n"
                    "you can add it into: %s" % (distro.idver, tdir))
             raise ex.MissingPackagingTemplate(msg=msg)
@@ -265,17 +274,17 @@ class Project:
         """
         load project config from --upstream archive
         """
-        unpack_path = unpack_archive(ar_path, self.unpacked_archive_path)
+        unpack_path = unpack_archive(ar_path, self.path.unpacked_archive)
         input_path = unpack_path / 'distro'
         # reload project with input_path from archive
-        self.load(input_path=input_path, output_path=self.output_path)
+        self.reload(input_path=input_path)
 
     def find_archives_by_name(self, name, upstream=False):
         """
         find archive files with supplied name in expected project paths
         """
         if upstream:
-            ar_path = self.upstream_archive_path
+            ar_path = self.path.upstream_archive
         else:
-            ar_path = self.dev_archive_path
+            ar_path = self.path.dev_archive
         return glob.glob("%s/%s*" % (ar_path, name))

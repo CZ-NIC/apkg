@@ -11,6 +11,7 @@ disable=
     missing-docstring,
     no-else-return,
     no-self-use,
+    not-callable,
     raise-missing-from,
     too-few-public-methods,
     too-many-arguments,

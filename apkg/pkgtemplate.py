@@ -8,6 +8,7 @@ from pathlib import Path
 from packaging import version
 import jinja2
 import jinja2.ext
+from markupsafe import Markup
 
 from apkg import adistro
 from apkg.log import getLogger
@@ -61,7 +62,7 @@ class IncludeRawExtension(jinja2.ext.Extension):
 
     def _render(self, filename):
         src = self.environment.loader.get_source(self.environment, filename)[0]
-        return jinja2.Markup(src.rstrip('\n'))
+        return Markup(src.rstrip('\n'))
 
 
 # pylint: disable=too-many-instance-attributes

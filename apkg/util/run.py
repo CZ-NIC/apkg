@@ -3,9 +3,10 @@ from contextlib import contextmanager
 import os
 import subprocess
 import sys
+import shlex
 
 from apkg import ex
-from apkg.log import getLogger, T, LOG_LEVEL, INFO
+from apkg.log import getLogger, T, INFO, get_log_level
 
 
 log = getLogger(__name__)
@@ -44,9 +45,8 @@ def run(*cmd, **kwargs):
     print_output = kwargs.get('print_output', False)
     env = kwargs.get('env', None)
 
-    # TODO: escape parameters with whitespace
     cmd = [str(c) for c in cmd]
-    cmd_str = ' '.join(cmd)
+    cmd_str = ' '.join([shlex.quote(c) for c in cmd])
 
     if silent:
         log_cmd = False
@@ -66,7 +66,7 @@ def run(*cmd, **kwargs):
         stdin = None
 
     if direct == 'auto':
-        direct = bool(sys.stdout.isatty() and LOG_LEVEL <= INFO)
+        direct = bool(sys.stdout.isatty() and get_log_level() <= INFO)
     if direct:
         stdout = None
         stderr = None
@@ -106,12 +106,13 @@ def run(*cmd, **kwargs):
     cout = CommandOutput(out)
     cout.stderr = err
     cout.return_code = prc.returncode
-    cout.cmd = cmd_str
+    cout.cmd = cmd
+    cout.cmd_str = cmd_str
     if prc.returncode != 0:
         if log_fail:
             log_cmd_fail(cmd_str, cout)
         if fatal:
-            raise ex.CommandFailed(cmd=cmd, out=cout)
+            raise ex.CommandFailed(cmd=cmd_str, out=cout)
     return cout
 
 
@@ -164,6 +165,7 @@ class CommandOutput(str):
     Just a string subclass with attribute access.
     """
     cmd = None
+    cmd_str = None
     stderr = None
     return_code = None
 

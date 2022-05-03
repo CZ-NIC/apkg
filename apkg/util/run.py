@@ -5,7 +5,7 @@ import subprocess
 import sys
 
 from apkg import ex
-from apkg.log import getLogger, T, LOG_LEVEL, INFO
+from apkg.log import getLogger, T, INFO, get_log_level
 
 
 log = getLogger(__name__)
@@ -66,7 +66,7 @@ def run(*cmd, **kwargs):
         stdin = None
 
     if direct == 'auto':
-        direct = bool(sys.stdout.isatty() and LOG_LEVEL <= INFO)
+        direct = bool(sys.stdout.isatty() and get_log_level() <= INFO)
     if direct:
         stdout = None
         stderr = None

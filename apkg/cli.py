@@ -96,7 +96,7 @@ def cli(log_level='info'):
     level = CLI_LOG_LEVELS[log_level]
     _log.set_log_level(level)
     log.verbose("apkg version: %s", __version__)
-    log.verbose("log level: %s (%s)", log_level.upper(), _log.LOG_LEVEL)
+    log.verbose("log level: %s (%s)", log_level.upper(), _log.get_log_level())
 
 
 def apkg(*args):

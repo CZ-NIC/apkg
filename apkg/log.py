@@ -49,8 +49,56 @@ COMMAND = logging.INFO - 1
 VERBOSE = int((logging.INFO + logging.DEBUG) / 2)
 DEBUG = logging.DEBUG
 
-# current global log level - change with set_log_level()
+
+LOG_LEVEL_FORMATS_META = {
+    ERROR: ('E', 'error'),
+    SUCCESS: ('✓', 'success'),
+    WARN: ('W', 'warn'),
+    SUDO: ('#', 'sudo'),
+    BOLD: ('I', 'bold'),
+    INFO: ('I', None),
+    COMMAND: ('$', 'command'),
+    VERBOSE: ('V', None),
+    DEBUG: ('D', None),
+}
+
+
+# current global log level - DON'T IMPORT/USE THIS DIRECTLY
+# get LOG_LEVEL using get_log_level()
+# set LOG_LEVEL using set_log_level()
 LOG_LEVEL = INFO
+
+
+def get_log_level():
+    """
+    get global log level (int)
+    """
+    return LOG_LEVEL
+
+
+class ApkgLogger(logging.Logger):
+    """
+    standard logger with extra functions for custom log levels
+    """
+    def success(self, msg, *args, **kwargs):
+        if self.isEnabledFor(SUCCESS):
+            self._log(SUCCESS, msg, args, **kwargs)
+
+    def sudo(self, msg, *args, **kwargs):
+        if self.isEnabledFor(SUDO):
+            self._log(SUDO, msg, args, **kwargs)
+
+    def bold(self, msg, *args, **kwargs):
+        if self.isEnabledFor(BOLD):
+            self._log(BOLD, msg, args, **kwargs)
+
+    def verbose(self, msg, *args, **kwargs):
+        if self.isEnabledFor(VERBOSE):
+            self._log(VERBOSE, msg, args, **kwargs)
+
+    def command(self, msg, *args, **kwargs):
+        if self.isEnabledFor(COMMAND):
+            self._log(COMMAND, msg, args, **kwargs)
 
 
 class LogTerminal(terminal.Terminal):
@@ -107,19 +155,6 @@ def set_colors(colors):
     return False
 
 
-LOG_LEVEL_FORMATS_META = {
-    ERROR: ('E', 'error'),
-    SUCCESS: ('✓', 'success'),
-    WARN: ('W', 'warn'),
-    SUDO: ('#', 'sudo'),
-    BOLD: ('I', 'bold'),
-    INFO: ('I', None),
-    COMMAND: ('$', 'command'),
-    VERBOSE: ('V', None),
-    DEBUG: ('D', None),
-}
-
-
 def logfmt(prefix, color, levelno):
     """
     helper to generate loggin.Formatter compatible log format
@@ -160,31 +195,6 @@ def render_log_level_formats(levelno):
 
 # initialize global log formats
 LOG_LEVEL_FORMATS = render_log_level_formats(LOG_LEVEL)
-
-
-class ApkgLogger(logging.Logger):
-    """
-    standard logger with extra functions for custom log levels
-    """
-    def success(self, msg, *args, **kwargs):
-        if self.isEnabledFor(SUCCESS):
-            self._log(SUCCESS, msg, args, **kwargs)
-
-    def sudo(self, msg, *args, **kwargs):
-        if self.isEnabledFor(SUDO):
-            self._log(SUDO, msg, args, **kwargs)
-
-    def bold(self, msg, *args, **kwargs):
-        if self.isEnabledFor(BOLD):
-            self._log(BOLD, msg, args, **kwargs)
-
-    def verbose(self, msg, *args, **kwargs):
-        if self.isEnabledFor(VERBOSE):
-            self._log(VERBOSE, msg, args, **kwargs)
-
-    def command(self, msg, *args, **kwargs):
-        if self.isEnabledFor(COMMAND):
-            self._log(COMMAND, msg, args, **kwargs)
 
 
 class ApkgLogFormatter(logging.Formatter):

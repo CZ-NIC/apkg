@@ -29,17 +29,17 @@ def status(distro=None):
     msg = "project name:            {t.bold}{name}{t.normal}"
     print(msg.format(name=proj.name, t=T))
     msg = "project base path:       {t.bold}{path}{t.normal}"
-    print(msg.format(path=proj.path.resolve(), t=T))
+    print(msg.format(path=proj.path.base.resolve(), t=T))
 
     msg = "project VCS:             {t.bold}{vcs}{t.normal}"
     print(msg.format(vcs=proj.vcs or 'none', t=T))
 
     msg = "project config:          {t.bold}{path}{t.normal}"
-    if proj.config_path.exists():
+    if proj.path.config.exists():
         msg += " ({t.green}exists{t.normal})"
     else:
         msg += " ({t.warn}doesn't exist{t.normal})"
-    print(msg.format(path=proj.config_path, t=T))
+    print(msg.format(path=proj.path.config, t=T))
 
     msg = "project compat level:    {t.bold}{level}{t.normal}"
     level = proj.compat_level
@@ -54,17 +54,17 @@ def status(distro=None):
     print(msg.format(level=level, state=compat_state, t=T))
 
     msg = "package templates path:  {t.bold}{path}{t.normal}"
-    if proj.templates_path.exists():
+    if proj.path.templates.exists():
         msg += " ({t.green}exists{t.normal})"
     else:
         msg += " ({t.red}doesn't exist{t.normal})"
-    print(msg.format(path=proj.templates_path, t=T))
+    print(msg.format(path=proj.path.templates, t=T))
 
     print("package templates:")
     if proj.templates:
         msg_lines = []
         for template in proj.templates:
-            short_path = template.path.relative_to(proj.templates_path)
+            short_path = template.path.relative_to(proj.path.templates)
             msg_lines.append(
                 "    {t.bold}%s{t.normal}: {t.green}%s{t.normal} %s: %s"
                 % (short_path, template.pkgstyle.name,
@@ -72,7 +72,7 @@ def status(distro=None):
         msg = "\n".join(msg_lines)
     else:
         msg = "    {t.red}no package templates found{t.normal}"
-    print(msg.format(dir=proj.templates_path, t=T))
+    print(msg.format(dir=proj.path.templates, t=T))
 
     print()
     if distro:

@@ -24,15 +24,15 @@ class ProjectCache:
         self.checksum = None
 
     def save(self):
-        json.dump(self.cache, self.project.cache_path.open('w'))
+        json.dump(self.cache, self.project.path.cache.open('w'))
 
     def load(self):
-        cache_path = self.project.cache_path
+        cache_path = self.project.path.cache
         if not cache_path.exists():
             log.verbose("cache not found: %s", cache_path)
             return
         log.verbose("loading cache: %s", cache_path)
-        self.cache = json.load(self.project.cache_path.open('r'))
+        self.cache = json.load(cache_path.open('r'))
 
     def _ensure_load(self):
         """

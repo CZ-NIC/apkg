@@ -68,7 +68,7 @@ def test_template_render_rpm(proj, capsys, distro, extra):
     """
     test rendering of examples/templates/distro/pkg/rpm/*.spec
     """
-    with cd(proj.path):
+    with cd(proj.path.base):
         assert apkg('srcpkg', '--render-template', '-d', distro) == 0
         out, _ = capsys.readouterr()
         out_path = Path(out.strip()).resolve()
@@ -113,7 +113,7 @@ def test_template_render_deb(proj, capsys, distro, extra):
     """
     test rending of examples/templates/distro/pkg/deb/changelog
     """
-    with cd(proj.path):
+    with cd(proj.path.base):
         assert apkg('srcpkg', '--render-template', '-d', distro) == 0
         out, _ = capsys.readouterr()
         out_path = Path(out.strip()).resolve()

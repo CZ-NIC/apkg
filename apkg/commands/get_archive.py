@@ -71,7 +71,7 @@ def get_archive(
     if result_dir:
         ar_base_path = Path(result_dir)
     else:
-        ar_base_path = proj.upstream_archive_path
+        ar_base_path = proj.path.upstream_archive
 
     r = requests.get(archive_url, allow_redirects=True)
     if r.status_code != 200:

@@ -4,7 +4,7 @@
 {{ 'apkg/ex.py' | file_link }}.
 
 Each exception contains message explaining what went wrong as well as
-`exit_code` to return in case it's raised during CLI run.
+`returncode` to return in case it's raised during CLI run.
 
 A list of all `apkg` errors/exceptions with their default error message
 sorted by exit code:
@@ -17,6 +17,6 @@ sorted by exit code:
 {{ e.msg_fmt }}
 ```
 
-exit code: `{{ e.exit_code }}`
+exit code: `{{ e.returncode }}`
 
 {% endfor %}

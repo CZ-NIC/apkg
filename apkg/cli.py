@@ -127,13 +127,13 @@ def apkg(*args):
         code = 0
     except ex.CommandFailed as e:
         # this was logged already
-        code = e.exit_code
+        code = e.returncode
     except ex.ApkgException as e:
         print(T.bold_yellow(str(e)))
-        code = e.exit_code
+        code = e.returncode
     except click.exceptions.ClickException as e:
         print(T.yellow(str(e)))
-        code = ex.InvalidUsage.exit_code
+        code = ex.InvalidUsage.returncode
 
     return code
 

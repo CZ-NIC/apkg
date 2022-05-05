@@ -351,20 +351,6 @@ suse-15-bird:
 
 # integration tests: libyang
 
-centos-7-libyang:
-  image: $CI_REGISTRY/packaging/apkg/ci/centos-7:apkg
-  <<: *libyang
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_libyang.py --junitxml=report.xml
-
-rocky-8-libyang:
-  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
-  <<: *libyang
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_libyang.py --junitxml=report.xml
-
 debian-9-libyang:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
   <<: *libyang

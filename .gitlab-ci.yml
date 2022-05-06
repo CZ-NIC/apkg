@@ -391,13 +391,6 @@ ubuntu-20.04-libyang:
     - *setup-project
     - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
-fedora-34-libyang:
-  image: $CI_REGISTRY/packaging/apkg/ci/fedora-34:apkg
-  <<: *libyang
-  script:
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
 fedora-35-libyang:
   image: $CI_REGISTRY/packaging/apkg/ci/fedora-35:apkg
   <<: *libyang

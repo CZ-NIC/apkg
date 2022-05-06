@@ -120,7 +120,10 @@ class CommandNotFound(ApkgException):
 
 
 class CommandFailed(ApkgException):
-    msg_fmt = "Command failed: {cmd}"
+    msg_fmt = (
+        "Command failed: {cmdout.args_str} "
+        "(return code: {cmdout.returncode})"
+    )
     returncode = 62
 
 

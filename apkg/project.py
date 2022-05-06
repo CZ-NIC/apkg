@@ -169,8 +169,8 @@ class Project:
 
         possible outputs: 'git', None
         """
-        o = git('rev-parse', silent=True, fatal=False)
-        if o.return_code == 0:
+        o = git('rev-parse', quiet=True, check=False)
+        if o.returncode == 0:
             return 'git'
         return None
 
@@ -183,7 +183,7 @@ class Project:
         """
         if self.vcs == 'git':
             checksum = git.current_commit()[:10]
-            diff = git('diff', log_cmd=False)
+            diff = git('diff', quiet=True)
             if diff:
                 diff_hash = hashlib.sha256(diff.encode('utf-8'))
                 checksum += '-%s' % diff_hash.hexdigest()[:10]

@@ -145,7 +145,7 @@ def build_srcpkg(
             '-nc',  # do not pre clean source tree
             '-us',  # unsigned source package.
             '-uc',  # unsigned .changes file.
-            direct='auto')
+            )
 
     log.info("copying source package to result dir: %s", out_path)
     out_path.mkdir(parents=True)
@@ -181,14 +181,13 @@ def build_packages(
              '--buildresult', build_path,
              srcpkg_path,
              preserve_env=True,  # preserve env inc. DEB_BUILD_OPTIONS
-             direct='auto')
+             )
     else:
         # unpack source package
         log.info("unpacking source package for direct host build")
         srcpkg_abspath = srcpkg_path.resolve()
         with cd(build_path):
-            run('dpkg-source', '-x', srcpkg_abspath,
-                direct='auto')
+            run('dpkg-source', '-x', srcpkg_abspath)
         # find unpacked source dir
         try:
             source_glob = '%s/*/' % build_path
@@ -203,7 +202,7 @@ def build_packages(
             run('dpkg-buildpackage',
                 '-us',  # unsigned source package.
                 '-uc',  # unsigned .changes file.
-                direct='auto')
+                )
 
     pkgs = []
     log.info("copying built packages to result dir: %s", out_path)
@@ -227,7 +226,7 @@ def install_distro_packages(
         cmd += ['-y']
 
     cmd += packages
-    sudo(*cmd, env=env, direct=True)
+    sudo(cmd, env=env)
 
 
 def install_custom_packages(
@@ -253,7 +252,7 @@ def install_custom_packages(
         cmd += ['-y']
 
     cmd += list(map(local_path, packages))
-    sudo(*cmd, env=env, direct=True)
+    sudo(cmd, env=env)
 
 
 def install_build_deps(
@@ -281,7 +280,7 @@ def install_build_deps(
             env['DEBIAN_FRONTEND'] = 'noninteractive'
             cmd += ['-y']
         cmd += deps
-        sudo(*cmd, env=env, direct=True)
+        sudo(cmd, env=env)
     else:
         # satisfy not available, strip special strings and use install
         packages = [strip_dep_(d) for d in deps]
@@ -352,7 +351,7 @@ def has_aptget_satisfy_():
     """
     is `apt-get satisfy` command available?
     """
-    o = run('apt-get', '-h', log_cmd=False, fatal=False)
+    o = run('apt-get', '-h', check=False, quiet=True)
     return 'satisfy' in o
 
 

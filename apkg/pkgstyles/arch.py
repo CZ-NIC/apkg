@@ -76,7 +76,7 @@ def build_packages(
     # build package using makepkg
     log.info("starting arch package build using makepkg")
     with cd(build_path):
-        run('makepkg', direct='auto')
+        run('makepkg')
     log.info("copying built packages to result dir: %s", out_path)
     out_path.mkdir(parents=True, exist_ok=True)
     pkgs = []
@@ -97,7 +97,7 @@ def install_distro_packages(
     if not interactive:
         cmd += ['--noconfirm']
     cmd += packages
-    sudo(*cmd, direct=True)
+    sudo(cmd)
 
 
 def install_custom_packages(
@@ -108,7 +108,7 @@ def install_custom_packages(
     if not interactive:
         cmd += ['--noconfirm']
     cmd += packages
-    sudo(*cmd, direct=True)
+    sudo(cmd)
 
 
 def install_build_deps(
@@ -160,9 +160,9 @@ def get_build_deps_from_srcpkg(
 
 def parse_pkgbuild_(pkgbuild, bash):
     return run('bash', '-c', '. "%s" && %s'
-               % (pkgbuild, bash), log_cmd=False)
+               % (pkgbuild, bash), quiet=True)
 
 
 def parse_pkgbuild_content_(pkgbuild_text, bash):
     pkgb = '%s\n%s' % (pkgbuild_text, bash)
-    return run('bash', '-s', input=pkgb, log_cmd=False)
+    return run('bash', '-s', input=pkgb, quiet=True)

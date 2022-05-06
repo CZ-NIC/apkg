@@ -239,6 +239,14 @@ ubuntu-20.04-apkg:
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
+ubuntu-22.04-apkg:
+  image: $CI_REGISTRY/packaging/apkg/ci/ubuntu-22.04:apkg
+  <<: *apkg
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
+
 fedora-34-apkg:
   image: $CI_REGISTRY/packaging/apkg/ci/fedora-34:apkg
   <<: *apkg
@@ -327,6 +335,14 @@ ubuntu-20.04-bird:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
+ubuntu-22.04-bird:
+  image: $CI_REGISTRY/packaging/apkg/ci/ubuntu-22.04:apkg
+  <<: *bird
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
+
 fedora-34-bird:
   image: $CI_REGISTRY/packaging/apkg/ci/fedora-34:apkg
   <<: *bird
@@ -385,6 +401,14 @@ ubuntu-18.04-libyang:
 
 ubuntu-20.04-libyang:
   image: $CI_REGISTRY/packaging/apkg/ci/ubuntu-20.04:apkg
+  <<: *libyang
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
+
+ubuntu-22.04-libyang:
+  image: $CI_REGISTRY/packaging/apkg/ci/ubuntu-22.04:apkg
   <<: *libyang
   script:
     - apt update
@@ -467,6 +491,14 @@ ubuntu-20.04-knot-dns:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
+ubuntu-22.04-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/ci/ubuntu-22.04:apkg
+  <<: *knot-dns
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+
 fedora-34-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/ci/fedora-34:apkg
   <<: *knot-dns
@@ -531,6 +563,14 @@ debian-11-knot-resolver:
 
 ubuntu-20.04-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/ci/ubuntu-20.04:apkg
+  <<: *knot-resolver
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+
+ubuntu-22.04-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/ci/ubuntu-22.04:apkg
   <<: *knot-resolver
   script:
     - apt update

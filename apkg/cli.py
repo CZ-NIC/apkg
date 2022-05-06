@@ -11,6 +11,7 @@ from apkg import __version__
 from apkg import commands
 from apkg import ex
 from apkg.log import getLogger, T
+from apkg.util.run import log_cmd_fail
 import apkg.log as _log
 
 
@@ -126,14 +127,14 @@ def apkg(*args):
         cli(args, standalone_mode=False)
         code = 0
     except ex.CommandFailed as e:
-        # this was logged already
-        code = e.exit_code
+        log_cmd_fail(e.kwargs['cmdout'])
+        code = e.returncode
     except ex.ApkgException as e:
         print(T.bold_yellow(str(e)))
-        code = e.exit_code
+        code = e.returncode
     except click.exceptions.ClickException as e:
         print(T.yellow(str(e)))
-        code = ex.InvalidUsage.exit_code
+        code = ex.InvalidUsage.returncode
 
     return code
 

@@ -1,9 +1,17 @@
-# -*- encoding: utf-8 -*-
+"""
+run system commands easily
+
+see primary run() function
+"""
+import asyncio
 from contextlib import contextmanager
 import os
 import subprocess
 import sys
-import shlex
+try:
+    from shlex import join
+except ImportError:
+    from subprocess import list2cmdline as join
 
 from apkg import ex
 from apkg.log import getLogger, T, INFO, get_log_level
@@ -17,106 +25,158 @@ if os.geteuid() == 0:
     IS_ROOT = True
 
 
-def log_cmd_fail(cmd, cout):
-    log.error("command failed: %s", T.command(cmd))
-    if cout:
-        log.bold("stdout:")
-        log.info(cout)
-    if cout.stderr:
-        log.bold("stderr:")
-        log.info(cout.stderr)
-
-
-def run(*cmd, **kwargs):
+def run(cmd,
+        *args,
+        check=True,
+        tee='auto',
+        quiet=False,
+        log_fun=log.command,
+        **kwargs):
     """
-    run system commands easily - a subprocess.Popen wrapper
+    subprocess.run wrapper with tee and logging powers
 
-    run('echo', 'hello world')
+    You can use this in following ways:
+
+        run('command', 'arg1', 'arg2', tee=False)
+        run(['command', 'arg1', 'arg2'], check=False)
+        run('command arg1 arg2', quiet=True)
+
+    Differences from subprocess.run:
+
+    * can both capture and output stdout/stderr when tee is set (asyncio)
+    * return str subclass with CompletedProcess args - easy to process
+    * log commands by default for easy debugging
+    * check=True by default - failing commands will raise ex.CommandFailed
+    * ex.CommandFailed and ex.CommandNotFound can be raised
+
+    Params:
+        cmd: command to run - a str or a List[str]
+        *args: optional List[str] of command arguments
+        check: raise ex.CommandFailed on command failure
+        tee: both capture and output stdout/stderr (using asyncio)
+        quiet: disable tee and command logging
+        log_fun: function to log command with (None to disable)
+
+    Return:
+        CommandOutput is a str subclass with subprocess.ProcessCompleted
+        args allowing for direct string processing with optional access to
+        process information:
+
+        out = run('echo', 'hello world')
+
+        assert out == 'hello world'
+        print(f'command: {out.args_str})
+        print(f'return code: {out.returncode}')
+        print(f'stdout:\n{out}')
+        print(f'stderr:\n{out.stderr}')
     """
-    fatal = kwargs.get('fatal', True)
-    direct = kwargs.get('direct', False)
-    silent = kwargs.get('silent', False)
-    log_cmd = kwargs.get('log_cmd', True)
-    log_fail = kwargs.get('log_fail', True)
-    log_fun = kwargs.get('log_fun', log.command)
-    _input = kwargs.get('input')
-    print_stdout = kwargs.get('print_stdout', False)
-    print_stderr = kwargs.get('print_stderr', False)
-    print_output = kwargs.get('print_output', False)
-    env = kwargs.get('env', None)
 
+    if isinstance(cmd, str):
+        cmd = [cmd]
+
+    if args:
+        cmd += args
+
+    # convert Path and others to str
     cmd = [str(c) for c in cmd]
-    cmd_str = ' '.join([shlex.quote(c) for c in cmd])
 
-    if silent:
-        log_cmd = False
-        log_fail = False
-        print_stdout = False
-        print_stderr = False
+    cmd_str = join(cmd)
 
-    if print_output:
-        print_stdout = True
-        print_stderr = True
+    if quiet:
+        log_fun = None
+        tee = False
+    elif tee == 'auto':
+        tee = bool(get_log_level() <= INFO)
 
-    if _input:
-        stdin = subprocess.PIPE
-        if not isinstance(_input, bytes):
-            _input = bytes(_input, 'utf-8')
-    else:
-        stdin = None
-
-    if direct == 'auto':
-        direct = bool(sys.stdout.isatty() and get_log_level() <= INFO)
-    if direct:
-        stdout = None
-        stderr = None
-    else:
-        stdout = subprocess.PIPE
-        stderr = subprocess.PIPE
-
-    if log_cmd:
+    if log_fun:
         log_fun(cmd_str)
 
-    try:
-        prc = subprocess.Popen(cmd, stdin=stdin, stdout=stdout,
-                               stderr=stderr, env=env)
-    except OSError:
-        raise ex.CommandNotFound(cmd=cmd[0])
-    out, err = prc.communicate(input=_input)
-
-    if isinstance(out, bytes):
-        out = out.decode('utf-8')
-    if isinstance(err, bytes):
-        err = err.decode('utf-8')
-
-    if out:
-        out = out.rstrip()
-        if print_stdout:
-            log.info(out)
+    if tee:
+        try:
+            loop = asyncio.get_event_loop_policy().get_event_loop()
+            result = loop.run_until_complete(_tee(*cmd, **kwargs))
+        except FileNotFoundError:
+            raise ex.CommandNotFound(cmd=cmd_str)
     else:
-        out = ''
+        try:
+            result = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+                universal_newlines=True,
+                **kwargs)
+        except OSError:
+            raise ex.CommandNotFound(cmd=cmd_str)
 
-    if err:
-        err = err.rstrip()
-        if print_stderr:
-            log.info(err)
-    else:
-        err = ''
+    cmdout = CommandOutput(result)
 
-    cout = CommandOutput(out)
-    cout.stderr = err
-    cout.return_code = prc.returncode
-    cout.cmd = cmd
-    cout.cmd_str = cmd_str
-    if prc.returncode != 0:
-        if log_fail:
-            log_cmd_fail(cmd_str, cout)
-        if fatal:
-            raise ex.CommandFailed(cmd=cmd_str, out=cout)
-    return cout
+    if check and result.returncode != 0:
+        raise ex.CommandFailed(cmdout=cmdout)
+
+    return cmdout
+
+
+async def _tee(*args, **kwargs):
+    """
+    async version of subprocess.run() which can both
+    stream and capture stdout/stderr like unix tee
+
+    Print both stdout/stderr to stderr in order not to polute
+    stdout with random command output.
+
+    Use run() function from this module with tee=True
+    to use this in a convenient way.
+    """
+    process = await asyncio.create_subprocess_exec(
+        *args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        **kwargs
+    )
+    out = []
+    err = []
+
+    def tee_fun(line, sink):
+        line_str = line.decode("utf-8").rstrip()
+        sink.append(line_str)
+        print(line_str, file=sys.stderr)
+
+    loop = asyncio.get_event_loop_policy().get_event_loop()
+    tasks = []
+    if process.stdout:
+        tasks.append(loop.create_task(_read_stream(
+            process.stdout, lambda l: tee_fun(l, out))))
+    if process.stderr:
+        tasks.append(loop.create_task(_read_stream(
+            process.stderr, lambda l: tee_fun(l, err))))
+
+    await asyncio.wait(set(tasks))
+
+    stdout = os.linesep.join(out) + os.linesep
+    stderr = os.linesep.join(err) + os.linesep
+
+    return subprocess.CompletedProcess(
+        args=args,
+        returncode=await process.wait(),
+        stdout=stdout,
+        stderr=stderr,
+    )
+
+
+async def _read_stream(stream, callback):
+    while True:
+        line = await stream.readline()
+        if line:
+            callback(line)
+        else:
+            break
 
 
 def sudo(*cmd, **kwargs):
+    """
+    run command with sudo
+    """
     preserve_env = kwargs.pop('preserve_env', False)
     if 'env' in kwargs:
         preserve_env = True
@@ -149,6 +209,33 @@ def cd(newdir):
             del os.environ['PWD']
 
 
+class CommandOutput(str):
+    """
+    A str subclass with CompletedProcess args
+
+    Useful for returning command stdout for easy processing
+    while preserving command run information
+
+    Additionally, args_str is available with command args
+    properly joined into a string.
+    """
+    def __new__(cls, result):
+        out = result.stdout.rstrip()
+        return str.__new__(cls, out)
+
+    def __init__(self, result):
+        self.args = result.args
+        self.args_str = join(self.args)
+        self.returncode = result.returncode
+        self.stdout = self
+        self.stderr = result.stderr.rstrip()
+        str.__init__(self)
+
+    @property
+    def success(self):
+        return self.returncode == 0
+
+
 class ShellCommand:
     command = None
 
@@ -160,15 +247,11 @@ class ShellCommand:
         return run(self.command, *params, **kwargs)
 
 
-class CommandOutput(str):
-    """
-    Just a string subclass with attribute access.
-    """
-    cmd = None
-    cmd_str = None
-    stderr = None
-    return_code = None
-
-    @property
-    def success(self):
-        return self.return_code == 0
+def log_cmd_fail(cmdout):
+    log.error("command failed: %s", T.command(cmdout.args_str))
+    if cmdout.stdout:
+        log.bold("stdout:")
+        log.info(cmdout.stdout)
+    if cmdout.stderr:
+        log.bold("stderr:")
+        log.info(cmdout.stderr)

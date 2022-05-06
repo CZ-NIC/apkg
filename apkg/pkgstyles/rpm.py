@@ -162,8 +162,7 @@ def build_packages(
         sudo('mock',
              '--resultdir', build_path,
              srcpkg_path,
-             preserve_env=True,
-             direct='auto')
+             preserve_env=True)
         log.info("copying built packages to result dir: %s", out_path)
         out_path.mkdir(parents=True)
         for rpm in glob.iglob('%s/*.rpm' % build_path):
@@ -225,7 +224,7 @@ def install_distro_packages(
     if not interactive:
         cmd += ['-y']
     cmd += packages
-    sudo(*cmd, direct=True)
+    sudo(cmd)
 
 
 def get_build_deps_from_template(

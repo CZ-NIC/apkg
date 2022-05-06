@@ -70,8 +70,8 @@ def define_env(env):
 
 def get_exceptions():
     """
-    return all apkg exceptions sorted by exit_code
+    return all apkg exceptions sorted by returncode
     """
     exs = [e for _, e in inspect.getmembers(ex, inspect.isclass)]
-    exs.sort(key=lambda x: x.exit_code)
+    exs.sort(key=lambda x: x.returncode)
     return exs

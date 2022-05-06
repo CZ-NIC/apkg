@@ -69,7 +69,7 @@ class Git(ShellCommand):
         return output
 
     def remote_branches(self, remote=""):
-        res = self("branch", "-r", "--no-color", log_cmd=False)
+        res = self("branch", "-r", "--no-color", quiet=True)
         branches = self._parse_branch_output(res)
         branches = [b.replace("remotes/", "")
                     for b in branches if b.startswith(remote)]
@@ -82,20 +82,20 @@ class Git(ShellCommand):
         return res
 
     def current_branch(self):
-        branch = self('rev-parse', '--abbrev-ref', 'HEAD', log_cmd=False)
+        branch = self('rev-parse', '--abbrev-ref', 'HEAD', quiet=True)
         return branch
 
     def current_commit(self):
-        commit = self('rev-parse', 'HEAD', log_cmd=False)
+        commit = self('rev-parse', 'HEAD', quiet=True)
         return commit
 
     def current_commit_message(self):
-        commit_msg = self('log', '-n1', '--pretty=%B', log_cmd=False)
+        commit_msg = self('log', '-n1', '--pretty=%B', quiet=True)
         return commit_msg
 
     def ref_exists(self, ref):
         o = self('show-ref', '--verify', '--quiet', ref,
-                 fatal=False, log_cmd=False, log_fail=False)
+                 check=False, quiet=True)
         return o.success
 
     def branch_exists(self, branch):
@@ -103,19 +103,19 @@ class Git(ShellCommand):
 
     def object_type(self, ref):
         o = self('cat-file', '-t', ref,
-                 fatal=False, log_cmd=False, log_fail=False)
+                 check=False, quiet=True)
         if not o:
             return None
         return o
 
     def is_clean(self):
-        o = self('status', '-uno', '--porcelain', log_cmd=False)
+        o = self('status', '-uno', '--porcelain', quiet=True)
         if o:
             return False
         return True
 
     def remotes(self):
-        res = self("remote", "show", log_cmd=False)
+        res = self("remote", "show", quiet=True)
         return self._parse_branch_output(res)
 
     def remote_branch_split(self, branch):
@@ -133,7 +133,7 @@ class Git(ShellCommand):
     def remote_of_local_branch(self, branch):
         try:
             o = self('for-each-ref', '--format=%(upstream:short)',
-                     'refs/heads/%s' % branch, log_cmd=False, log_fail=False)
+                     'refs/heads/%s' % branch, quiet=True)
         except ex.CommandFailed:
             return None
         if not o:
@@ -180,25 +180,25 @@ class Git(ShellCommand):
 
     def get_commits(self, from_revision, to_revision=None):
         rng = self.rev_range(from_revision, to_revision)
-        log_out = self('log', '--format=%h %s', rng, log_cmd=False)
+        log_out = self('log', '--format=%h %s', rng, quiet=True)
         commits = self._parse_output(log_out)
         return map(lambda x: tuple(x.split(' ', 1)), commits)
 
     def get_commit_subjects(self, from_revision, to_revision=None):
         rng = self.rev_range(from_revision, to_revision)
-        log_out = self('log', '--format=%s', rng, log_cmd=False)
+        log_out = self('log', '--format=%s', rng, quiet=True)
         return self._parse_output(log_out)
 
     def get_commit_hashes(self, from_revision, to_revision=None):
         rng = self.rev_range(from_revision, to_revision)
-        log_out = self('log', '--format=%h', rng, log_cmd=False)
+        log_out = self('log', '--format=%h', rng, quiet=True)
         return self._parse_output(log_out)
 
     def get_latest_commit_hash(self, ref=None):
         cmd = ['log', '-n', '1', '--format=%H']
         if ref:
             cmd.append(ref)
-        out = self(*cmd, log_cmd=False, log_fail=False, fatal=False)
+        out = self(cmd, quiet=True, check=False)
         return out
 
     def get_commits_of_branch(self, branch=None,
@@ -207,7 +207,7 @@ class Git(ShellCommand):
                '--format="%H %ct"']
         if not branch:
             return []
-        out = self(*cmd, log_cmd=False, log_fail=False, fatal=False)
+        out = self(cmd, quiet=True, check=False)
         out = out.replace('"', '')
         if not out:
             return []
@@ -222,7 +222,7 @@ class Git(ShellCommand):
         cmd = ['describe', '--abbrev=0', '--tags']
         if branch:
             cmd.append(branch)
-        out = self(*cmd, log_cmd=False)
+        out = self(cmd, quiet=True)
         return out
 
     def get_file_authors(self, path, with_email=True):
@@ -231,13 +231,13 @@ class Git(ShellCommand):
         else:
             pf = '%an'
         authors = self('log', '--oneline', "--pretty=%s" % pf, path,
-                       log_cmd=False)
+                       quiet=True)
         authors = reversed(authors.split('\n'))
         return authors
 
     def get_file_content(self, rev, path):
         obj = '%s:%s' % (rev, path)
-        return self('show', obj, log_cmd=False)
+        return self('show', obj, quiet=True)
 
     def config_get(self, param, default=None):
         '''Return the value of a git configuration option.  This will
@@ -245,8 +245,7 @@ class Git(ShellCommand):
         None) if the given option does not exist.'''
 
         try:
-            return self("config", "--get", param,
-                        log_fail=False, log_cmd=False)
+            return self("config", "--get", param, quiet=True)
         except ex.CommandFailed:
             return default
 
@@ -257,7 +256,7 @@ class Git(ShellCommand):
         return self("config", *params)
 
     def checkout(self, branch):
-        self("checkout", branch, log_cmd=False)
+        self("checkout", branch, quiet=True)
 
     def remove(self, ref):
         self('rebase', '--onto', ref + '^', ref, '--preserve-merges',
@@ -265,7 +264,7 @@ class Git(ShellCommand):
 
     def get_timestamp_by_ref(self, ref):
         timestamp = self('show', '-s', '--oneline', '--format="%ct"',
-                         ref, log_cmd=False)
+                         ref, quiet=True)
         return timestamp.replace('"', '')
 
 

@@ -127,4 +127,4 @@ def install_custom_packages(
     # they could be parameters, distro package names, etc.
     cmd += packages
 
-    run(*cmd, env=os.environ.copy(), direct=True)
+    run(cmd, env=os.environ.copy())

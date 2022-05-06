@@ -29,7 +29,7 @@ def cli_compat(*args, **kwargs):
     ok = compat(*args, **kwargs)
     if not ok:
         raise ex.CommandFailed(
-            msg="Compat level check failed", exit_code=1)
+            msg="Compat level check failed", returncode=1)
 
 
 def compat(latest=True, notes=None):

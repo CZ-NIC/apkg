@@ -3,8 +3,9 @@ import click
 from apkg import adistro
 from apkg.cli import cli
 from apkg.pkgstyle import call_pkgstyle_fun
-from apkg.commands.get_archive import get_archive
-from apkg.commands.srcpkg import srcpkg as make_srcpkg
+from apkg.commands.get_archive import parse_archive_args
+from apkg.commands.srcpkg import srcpkg as cmd_srcpkg
+from apkg.commands.test_dep import test_dep as cmd_test_dep
 from apkg.util import common
 from apkg.log import getLogger
 from apkg.project import Project
@@ -17,6 +18,8 @@ log = getLogger(__name__)
 @click.argument('input_files', nargs=-1)
 @click.option('-l', '--list', 'install', default=True, flag_value=False,
               help="list build deps only, don't install")
+@click.option('-t', '--test-dep', is_flag=True,
+              help="include testing deps as well")
 @click.option('-u', '--upstream', is_flag=True,
               help="use upstream template / archive / srcpkg")
 @click.option('-s', '--srcpkg', is_flag=True,
@@ -37,7 +40,6 @@ log = getLogger(__name__)
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_build_dep(*args, **kwargs):
-
     """
     install or list build dependencies
     """
@@ -47,6 +49,7 @@ def cli_build_dep(*args, **kwargs):
 
 
 def build_dep(
+        test_dep=False,
         upstream=False,
         srcpkg=False,
         archive=False,
@@ -76,7 +79,7 @@ def build_dep(
         # use source package to determine deps
         if archive or not infiles:
             # build source package
-            srcpkg_files = make_srcpkg(
+            srcpkg_files = cmd_srcpkg(
                 archive=archive,
                 distro=distro,
                 input_files=input_files,
@@ -98,18 +101,13 @@ def build_dep(
         deps = call_pkgstyle_fun(
             pkgstyle, 'get_build_deps_from_srcpkg',
             srcpkg_path)
+
+        if test_dep:
+            log.warning("unable to load test deps from --srcpkg - skipping")
     else:
         # use tempalte to determine deps
-        archive_files = infiles
-
-        if upstream:
-            archive = True
-            if not archive_files:
-                archive_files = get_archive(project=proj)
-
-        if archive:
-            common.ensure_input_files(archive_files)
-            proj.load_upstream_archive(archive_files[0])
+        archive, archive_files = parse_archive_args(
+            proj, archive, upstream, infiles)
 
         # fetch pkgstyle (deb, rpm, arch, ...)
         template = proj.get_template_for_distro(distro)
@@ -119,6 +117,15 @@ def build_dep(
         deps = call_pkgstyle_fun(
             pkgstyle, 'get_build_deps_from_template',
             template.path, distro=distro)
+
+        if test_dep:
+            # include test deps as well
+            tdeps = cmd_test_dep(
+                install=False,
+                upstream=upstream,
+                archive=archive,
+                input_files=archive_files)
+            deps = sorted(set(deps).union(tdeps))
 
     if install:
         n_deps = len(deps)

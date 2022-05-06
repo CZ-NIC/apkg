@@ -1,0 +1,14 @@
+Test-Command: echo distro: {{ distro }}
+
+Tests: test-common.sh
+{% if distro.match('centos < 7') -%}
+Depends: tree
+{%- endif %}
+
+{% if distro.match('fedora') -%}
+Tests: test-fedora.sh
+{% elif distro.match('debian') -%}
+Tests: test-debian.sh
+{% elif distro.match('arch') -%}
+Test-Command: pacman --version
+{%- endif %}

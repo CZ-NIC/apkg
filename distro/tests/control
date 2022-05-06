@@ -1,0 +1,16 @@
+Test-Command: apkg --version
+
+Test-Command: apkg status
+
+Test-Command: python3 -m apkg test --info
+
+Tests: test-import-apkg.py
+
+Tests: test-root.sh
+Restrictions: needs-root
+
+Test-Command: whoami | grep root
+Restrictions: needs-root
+
+Tests: upstream-version.py
+Tests-Directory: scripts

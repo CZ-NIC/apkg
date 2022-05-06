@@ -16,6 +16,7 @@ from packaging import version
 import distro
 
 from apkg.log import getLogger
+from apkg.util import common
 
 
 log = getLogger(__name__)
@@ -115,7 +116,21 @@ class DistroRule(DistroRuleBase):
         return self.rule_str
 
     def __repr__(self):
-        return "<ApkgDistroRule('%s')>" % self.rule_str
+        return "<DistroRule('%s')>" % self.rule_str
+
+
+class DistroRuleAll(DistroRuleBase):
+    """
+    rule matching any distro
+    """
+    def match(self, _):
+        return True
+
+    def __str__(self):
+        return 'all distros'
+
+    def __repr__(self):
+        return "<DistroRuleAll>"
 
 
 class DistroRules(DistroRuleBase):
@@ -173,6 +188,52 @@ def distro_rules(rules, aliases=None):
     else:
         # multiple DistroRules
         return DistroRules(drules)
+
+
+def name2rule(name):
+    """
+    return distro rule based on distro-specific (file) name
+    """
+    rule_str, _, ver = name.partition('-')
+    if ver:
+        rule_str += ' == %s' % ver
+    return DistroRule(rule_str)
+
+
+def sort_by_name(objs, name_attr='name'):
+    """
+    sort objects by distro-specific (file) name
+
+    Params:
+        objs: list of objects with name_attr attribute
+        name_attr: object attribute (distro name) to sort by
+
+    Return:
+        objs list ordered by name_attr which is assumed to be
+        distro name such as 'debian' or 'ubuntu-20.04':
+
+        * names with release first
+        * primary sort by name
+        * secondary sort by release desc (for determinism)
+    """
+
+    def sort_key(o):
+        distro_, _, rls = getattr(o, name_attr).rpartition('-')
+        rlsv = version.parse(rls)
+        return distro_, common.SortReversor(rlsv)
+
+    plain_objs = []
+    rls_objs = []
+    for o in objs:
+        if '-' in getattr(o, name_attr):
+            rls_objs.append(o)
+        else:
+            plain_objs.append(o)
+
+    rls_objs.sort(key=sort_key)
+    plain_objs.sort(key=lambda x: getattr(x, name_attr))
+
+    return rls_objs + plain_objs
 
 
 def parse_distro_aliases(config):

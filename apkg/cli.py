@@ -129,6 +129,9 @@ def apkg(*args):
     except ex.CommandFailed as e:
         log_cmd_fail(e.kwargs['cmdout'])
         code = e.returncode
+    except ex.PkgTestFail as e:
+        # already logged
+        code = e.returncode
     except ex.ApkgException as e:
         print(T.bold_yellow(str(e)))
         code = e.returncode

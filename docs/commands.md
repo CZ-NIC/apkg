@@ -97,3 +97,15 @@ i.e. `apkg get-archive -v 1.2.3`
 ## clean
 
 {{ 'clean' | cmd_help }}
+
+
+## test
+
+{{ 'test' | cmd_help }}
+
+See [test command examples](test.md#test-command-examples)
+
+
+## test-dep
+
+{{ 'test-dep' | cmd_help }}

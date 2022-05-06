@@ -122,4 +122,24 @@ def get_archive(
     return results
 
 
+def parse_archive_args(proj, archive, upstream, infiles):
+    """
+    Helper to parse archive arguments,
+    use get-archive,
+    and reload project config from archive
+    as appropriate.
+
+    Useful for other commands.
+    """
+    archive_files = infiles
+    if upstream:
+        archive = True
+        if not archive_files:
+            archive_files = get_archive(project=proj)
+    if archive:
+        common.ensure_input_files(archive_files)
+        proj.load_upstream_archive(archive_files[0])
+    return archive, archive_files
+
+
 APKG_CLI_COMMANDS = [cli_get_archive]

@@ -1,0 +1,9 @@
+Test-Command: echo 'shell command' | grep shell
+
+Tests: test-bash.sh, test-skip.sh
+
+Tests: test-python.py
+Depends: python3
+
+Tests: test-flaky.sh, test-fail.sh
+Restrictions: flaky

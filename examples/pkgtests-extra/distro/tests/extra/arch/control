@@ -1,0 +1,4 @@
+Tests: test-client.sh, test-server.sh
+
+Tests: test-arch-specific.sh
+Depends: pacman

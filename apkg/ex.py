@@ -147,3 +147,9 @@ class UnableToDetectUpstreamVersion(ApkgException):
         "2) set upstream.version_script to custom script\n"
         "3) manually supply version using -v/--version option")
     returncode = 84
+
+
+# 100-110: package tests
+class PkgTestFail(ApkgException):
+    msg_fmt = "Packaging tests failed."
+    returncode = 100

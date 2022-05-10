@@ -6,6 +6,7 @@ see primary run() function
 import asyncio
 from contextlib import contextmanager
 import os
+from pathlib import Path
 import subprocess
 import sys
 try:
@@ -37,9 +38,9 @@ def run(cmd,
 
     You can use this in following ways:
 
-        run('command', 'arg1', 'arg2', tee=False)
-        run(['command', 'arg1', 'arg2'], check=False)
-        run('command arg1 arg2', quiet=True)
+        run('command', 'arg1', 'arg2')
+        run(['command', 'arg1', 'arg2'])
+        run('command arg1 arg2', shell=True)
 
     Differences from subprocess.run:
 
@@ -70,17 +71,13 @@ def run(cmd,
         print(f'stdout:\n{out}')
         print(f'stderr:\n{out.stderr}')
     """
+    cmd = parse_cmd_args(cmd, *args)
 
-    if isinstance(cmd, str):
-        cmd = [cmd]
-
-    if args:
-        cmd += args
-
-    # convert Path and others to str
-    cmd = [str(c) for c in cmd]
-
-    cmd_str = join(cmd)
+    shell = kwargs.get('shell', False)
+    if shell:
+        cmd_str = cmd[0]
+    else:
+        cmd_str = join(cmd)
 
     if quiet:
         log_fun = None
@@ -109,7 +106,7 @@ def run(cmd,
         except OSError:
             raise ex.CommandNotFound(cmd=cmd_str)
 
-    cmdout = CommandOutput(result)
+    cmdout = CommandOutput(result, shell=shell)
 
     if check and result.returncode != 0:
         raise ex.CommandFailed(cmdout=cmdout)
@@ -117,7 +114,7 @@ def run(cmd,
     return cmdout
 
 
-async def _tee(*args, **kwargs):
+async def _tee(*args, shell=False, **kwargs):
     """
     async version of subprocess.run() which can both
     stream and capture stdout/stderr like unix tee
@@ -128,12 +125,20 @@ async def _tee(*args, **kwargs):
     Use run() function from this module with tee=True
     to use this in a convenient way.
     """
-    process = await asyncio.create_subprocess_exec(
-        *args,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        **kwargs
-    )
+    if shell:
+        process = await asyncio.create_subprocess_shell(
+            args[0],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            **kwargs
+        )
+    else:
+        process = await asyncio.create_subprocess_exec(
+            *args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            **kwargs
+        )
     out = []
     err = []
 
@@ -157,7 +162,7 @@ async def _tee(*args, **kwargs):
     stderr = os.linesep.join(err) + os.linesep
 
     return subprocess.CompletedProcess(
-        args=args,
+        args=list(args),
         returncode=await process.wait(),
         stdout=stdout,
         stderr=stderr,
@@ -181,12 +186,23 @@ def sudo(*cmd, **kwargs):
     if 'env' in kwargs:
         preserve_env = True
     if not IS_ROOT:
+        cmd = parse_cmd_args(*cmd)
         sudo_cmd = ['sudo']
         if preserve_env:
             sudo_cmd.append('-E')
-        cmd = sudo_cmd + list(cmd)
+        cmd = sudo_cmd + cmd
         kwargs['log_fun'] = log.sudo
     return run(*cmd, **kwargs)
+
+
+def parse_cmd_args(cmd, *args):
+    if isinstance(cmd, (str, Path)):
+        cmd = [cmd]
+    if args:
+        cmd.extend(args)
+    # convert Path and others to str
+    cmd = [str(c) for c in cmd]
+    return cmd
 
 
 @contextmanager
@@ -219,13 +235,18 @@ class CommandOutput(str):
     Additionally, args_str is available with command args
     properly joined into a string.
     """
-    def __new__(cls, result):
+    # pylint: disable=unused-argument
+    def __new__(cls, result, shell):
         out = result.stdout.rstrip()
         return str.__new__(cls, out)
 
-    def __init__(self, result):
+    def __init__(self, result, shell=False):
         self.args = result.args
-        self.args_str = join(self.args)
+        self.shell = shell
+        if shell:
+            self.args_str = self.args[0]
+        else:
+            self.args_str = join(self.args)
         self.returncode = result.returncode
         self.stdout = self
         self.stderr = result.stderr.rstrip()

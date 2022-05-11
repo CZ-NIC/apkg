@@ -286,6 +286,6 @@ def get_build_deps_from_spec_(spec_text):
     # done through temp file because rpmspec doesn't work
     # on /dev/stdin on openSUSE for some reason :-/
     with common.text_tempfile(spec_text, prefix='apkg_rpm.spec_') as spec_path:
-        spec_parsed = run('rpmspec', '-P', spec_path)
+        spec_parsed = run('rpmspec', '-P', spec_path, quiet=True)
 
     return re.findall(RE_BUILD_REQUIRES, spec_parsed)

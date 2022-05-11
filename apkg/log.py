@@ -31,7 +31,7 @@ import logging
 # while making sure logging.setLoggerClass(ApkgLogger) was called
 # (see below in this module) so that extra log level functions
 # are available
-from logging import getLogger # noqa
+from logging import getLogger  # noqa
 
 import sys
 from apkg import terminal
@@ -40,14 +40,15 @@ from apkg import terminal
 # add custom log levels and handle formatting
 # including color based on log level
 ERROR = logging.ERROR
-SUCCESS = logging.WARN + 1
 WARN = logging.WARN
-SUDO = logging.WARN - 1
-BOLD = logging.INFO + 1
 INFO = logging.INFO
-COMMAND = logging.INFO - 1
 VERBOSE = int((logging.INFO + logging.DEBUG) / 2)
 DEBUG = logging.DEBUG
+SUCCESS = WARN + 1
+SUDO = WARN - 1
+BOLD = INFO + 2
+COMMAND = INFO + 1
+VERBOSE_COMMAND = VERBOSE + 1
 
 
 LOG_LEVEL_FORMATS_META = {
@@ -57,9 +58,10 @@ LOG_LEVEL_FORMATS_META = {
     SUDO: ('#', 'sudo'),
     BOLD: ('I', 'bold'),
     INFO: ('I', None),
-    COMMAND: ('$', 'command'),
     VERBOSE: ('V', None),
     DEBUG: ('D', None),
+    COMMAND: ('$', 'command'),
+    VERBOSE_COMMAND: ('$', 'command'),
 }
 
 
@@ -99,6 +101,10 @@ class ApkgLogger(logging.Logger):
     def command(self, msg, *args, **kwargs):
         if self.isEnabledFor(COMMAND):
             self._log(COMMAND, msg, args, **kwargs)
+
+    def verbose_command(self, msg, *args, **kwargs):
+        if self.isEnabledFor(VERBOSE_COMMAND):
+            self._log(VERBOSE_COMMAND, msg, args, **kwargs)
 
 
 class LogTerminal(terminal.Terminal):

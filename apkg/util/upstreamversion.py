@@ -21,7 +21,7 @@ def version_from_script(script, script_name='script'):
     get version from last stdout line of a script
     """
     log.verbose("getting upstream version from %s: %s", script_name, script)
-    out = run(script)
+    out = run(script, quiet=True)
     _, _, last_line = out.rpartition('\n')
     v = version.parse(last_line.strip())
     return v

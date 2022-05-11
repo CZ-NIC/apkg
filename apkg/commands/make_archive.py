@@ -61,7 +61,7 @@ def make_archive(
         raise ex.MissingRequiredConfigOption(msg=msg)
 
     log.info("running make_archive_script: %s", script)
-    out = run(script)
+    out = run(script, quiet=True)
     # last script stdout line is expected to be path to resulting archive
     _, _, last_line = out.rpartition('\n')
     in_archive_path = Path(last_line)

@@ -15,7 +15,7 @@ except ImportError:
     from subprocess import list2cmdline as join
 
 from apkg import ex
-from apkg.log import getLogger, T, INFO, get_log_level
+from apkg.log import getLogger, T, COMMAND, get_log_level
 
 
 log = getLogger(__name__)
@@ -80,10 +80,10 @@ def run(cmd,
         cmd_str = join(cmd)
 
     if quiet:
-        log_fun = None
+        log_fun = log.verbose_command
         tee = False
     elif tee == 'auto':
-        tee = bool(get_log_level() <= INFO)
+        tee = bool(get_log_level() <= COMMAND)
 
     if log_fun:
         log_fun(cmd_str)

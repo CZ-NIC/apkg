@@ -1,6 +1,7 @@
-import click
+import json
 import toml
 
+import click
 import distro as distro_
 
 from apkg.pkgstyle import PKGSTYLES
@@ -21,15 +22,35 @@ def cli_info():
 
 @cli_info.command()
 @click.help_option('-h', '--help', help='show command help')
+def cache():
+    """
+    show apkg cache contents
+    """
+    proj = Project()
+    cache_str = "{t.bold}{fn}{t.normal}".format(fn=proj.path.cache, t=T)
+    if proj.path.cache.exists():
+        log.info("apkg cache: %s", cache_str)
+        cdata = json.load(proj.path.cache.open('rt'))
+        print(json.dumps(cdata, indent=4))
+    else:
+        log.info("apkg cache doesn't exist: %s", cache_str)
+
+
+@cli_info.command()
+@click.help_option('-h', '--help', help='show command help')
 def config():
     """
     show apkg project configuration
     """
     proj = Project()
-    msg = "project config: {t.bold}{fn}{t.normal}\n"
-    msg = msg.format(fn=proj.path.config, t=T)
-    log.info(msg)
-    print(toml.dumps(proj.config))
+    config_str = "{t.bold}{fn}{t.normal}".format(fn=proj.path.config, t=T)
+    if proj.path.config.exists():
+        log.info("project config: %s\n", config_str)
+    else:
+        log.info("project config doesn't exist: %s", config_str)
+
+    if proj.config:
+        print(toml.dumps(proj.config))
 
 
 @cli_info.command()

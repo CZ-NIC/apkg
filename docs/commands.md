@@ -92,3 +92,8 @@ i.e. `apkg get-archive -v 1.2.3`
 ## install
 
 {{ 'install' | cmd_help }}
+
+
+## clean
+
+{{ 'clean' | cmd_help }}

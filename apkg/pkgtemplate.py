@@ -5,7 +5,6 @@ import glob
 import os
 
 from pathlib import Path
-from packaging import version
 import jinja2
 import jinja2.ext
 from markupsafe import Markup
@@ -231,6 +230,14 @@ def load_templates(path,
             log.warning("ignoring unknown package style in %s", entry_path)
             continue
 
+        alias_rules = aliases.get(template.name)
+        if alias_rules:
+            # distro alias template (name match)
+            template.selection = TS_ALIAS
+            template.distro_rules = alias_rules
+            alias_tps.append(template)
+            continue
+
         dstyle = _pkgstyle.PKGSTYLES.get(template.name)
         if dstyle:
             # pkgstyle default template (name match)
@@ -240,63 +247,12 @@ def load_templates(path,
             pkgstyle_tps.append(template)
             continue
 
-        alias_rules = aliases.get(template.name)
-        if alias_rules:
-            # distro alias template (name match)
-            template.selection = TS_ALIAS
-            template.distro_rules = alias_rules
-            alias_tps.append(template)
-            continue
-
         # distro-specific template
-        template.distro_rules = distro_template_rules(template.name)
+        template.distro_rules = adistro.name2rule(template.name)
         distro_tps.append(template)
 
-    distro_tps = sort_distro_templates(distro_tps)
+    distro_tps = adistro.sort_by_name(distro_tps)
     alias_tps.sort(key=lambda x: x.name)
     pkgstyle_tps.sort(key=lambda x: x.name)
     templates = alias_tps + distro_tps + pkgstyle_tps
     return templates
-
-
-def distro_template_rules(name):
-    """
-    return distro rules based on distro-specific template name
-    """
-    rule_str, _, ver = name.partition('-')
-    if ver:
-        rule_str += ' == %s' % ver
-    return adistro.DistroRule(rule_str)
-
-
-def sort_distro_templates(dts):
-    """
-    sort distro templates by evaluation priority
-
-    Params:
-        dts: list of distro templates (PackageTemplate)
-
-    Return:
-        same list ordered by priority:
-
-        * specific templates that include release first
-        * secondary sort by release desc (for determinism)
-    """
-
-    def sort_key(t):
-        distro, _, rls = t.name.rpartition('-')
-        rlsv = version.parse(rls)
-        return distro, common.SortReversor(rlsv)
-
-    plain_dts = []
-    rls_dts = []
-    for t in dts:
-        if '-' in t.name:
-            rls_dts.append(t)
-        else:
-            plain_dts.append(t)
-
-    rls_dts.sort(key=sort_key)
-    plain_dts.sort(key=lambda x: x.name)
-
-    return rls_dts + plain_dts

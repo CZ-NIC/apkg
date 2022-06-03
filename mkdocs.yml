@@ -15,6 +15,7 @@ nav:
   - distro.md
   - pkgstyles.md
   - templates.md
+  - test.md
   - errors.md
 
 markdown_extensions:

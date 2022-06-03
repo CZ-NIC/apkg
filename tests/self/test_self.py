@@ -133,3 +133,8 @@ def test_apkg_build_dep_srcpkg(repo_path, capsys):
     out, _ = capsys.readouterr()
     # check for a common build dep
     assert_build_deps(out)
+
+
+def test_apkg_test(repo_path):
+    with cd(repo_path):
+        assert apkg('test', '--test-dep') == 0

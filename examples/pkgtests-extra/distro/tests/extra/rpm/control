@@ -1,0 +1,4 @@
+Tests: test-client.sh, test-server.sh
+
+Tests: test-rpm-specific.sh
+Depends: rpm-build

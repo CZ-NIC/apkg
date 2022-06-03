@@ -16,6 +16,7 @@ from apkg import compat
 from apkg import ex
 from apkg.log import getLogger
 from apkg import pkgtemplate
+from apkg import pkgtest
 from apkg.util.archive import unpack_archive
 from apkg.util.git import git
 from apkg.util import upstreamversion
@@ -62,6 +63,12 @@ class ProjectPaths:
         # output: pkg/{src-,}pkg
         self.package_out = self.output / 'pkgs'
         self.srcpkg_out = self.output / 'srcpkgs'
+        # packaging tests: distro/tests
+        self.tests = self.input / 'tests'
+        # packaging tests extras: distro/tests/extra
+        self.tests_extras = self.tests / 'extra'
+        # packaging tests render/run: pkg/tests
+        self.tests_out = self.output / 'tests'
         # cache: pkg/.cache.json
         self.cache = self.output / '.cache.json'
 
@@ -276,8 +283,33 @@ class Project:
         """
         unpack_path = unpack_archive(ar_path, self.path.unpacked_archive)
         input_path = unpack_path / 'distro'
+        log.info("reloading project from upstream archive: %s", unpack_path)
         # reload project with input_path from archive
         self.reload(input_path=input_path)
+
+    @cached_property
+    def tests_extras(self):
+        if self.path.tests_extras.exists():
+            return pkgtest.load_tests_extras(
+                self.path.tests_extras,
+                distro_aliases=self.distro_aliases)
+        else:
+            return []
+
+    def get_tests_extra_for_distro(self, distro):
+        for e in self.tests_extras:
+            if e.match_distro(distro):
+                return e
+        return None
+
+    def get_tests_for_distro(self, distro):
+        extra = self.get_tests_extra_for_distro(distro)
+        tests = pkgtest.PackageTests(
+            tests_in_path=self.path.tests,
+            tests_out_path=self.path.tests_out,
+            extra=extra,
+            distro=distro)
+        return tests
 
     def find_archives_by_name(self, name, upstream=False):
         """

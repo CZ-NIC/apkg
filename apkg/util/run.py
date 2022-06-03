@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import shlex
 try:
     from shlex import join
 except ImportError:
@@ -72,7 +73,6 @@ def run(cmd,
         print(f'stderr:\n{out.stderr}')
     """
     cmd = parse_cmd_args(cmd, *args)
-
     shell = kwargs.get('shell', False)
     if shell:
         cmd_str = cmd[0]
@@ -186,12 +186,18 @@ def sudo(*cmd, **kwargs):
     if 'env' in kwargs:
         preserve_env = True
     if not IS_ROOT:
-        cmd = parse_cmd_args(*cmd)
+        shell = kwargs.get('shell', False)
         sudo_cmd = ['sudo']
         if preserve_env:
             sudo_cmd.append('-E')
-        cmd = sudo_cmd + cmd
-        kwargs['log_fun'] = log.sudo
+        if shell:
+            shcmd = shlex.quote(cmd[0])
+            cmd = ["%s bash -c %s" % (join(sudo_cmd), shcmd)]
+        else:
+            cmd = parse_cmd_args(*cmd)
+            cmd = sudo_cmd + cmd
+        if 'log_fun' not in kwargs:
+            kwargs['log_fun'] = log.sudo
     return run(*cmd, **kwargs)
 
 

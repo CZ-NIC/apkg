@@ -37,15 +37,18 @@ import apkg.util.shutil35 as shutil
 log = getLogger(__name__)
 
 
-SUPPORTED_DISTROS = [
-    "fedora",
+EL_FAMILY_DISTROS = [
+    "almalinux",
     "centos",
     "rocky",
     "rhel",
-    "opensuse",
     "oracle",
-    "pidora",
     "scientific",
+]
+SUPPORTED_DISTROS = EL_FAMILY_DISTROS + [
+    "fedora",
+    "opensuse",
+    "pidora",
 ]
 DISTRO_REQUIRES = {
     'core': ['rpm-build'],
@@ -267,7 +270,7 @@ def get_package_manager_(distro):
         return default
     if distro.id == 'opensuse':
         return 'zypper'
-    if (distro.id in ['centos', 'rhel', 'oracle', 'scientific']
+    if (distro.id in EL_FAMILY_DISTROS
             and distro.version
             and Version(distro.version) <= Version("7")):
         # use yum on EL <= 7

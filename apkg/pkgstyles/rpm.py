@@ -24,6 +24,8 @@ import re
 import subprocess
 import sys
 
+from packaging.version import Version
+
 from apkg import ex
 from apkg.util import common
 from apkg.log import getLogger
@@ -266,7 +268,8 @@ def get_package_manager_(distro):
     if distro.id == 'opensuse':
         return 'zypper'
     if (distro.id in ['centos', 'rhel', 'oracle', 'scientific']
-            and distro.version and int(distro.version) <= 7):
+            and distro.version
+            and Version(distro.version) <= Version("7")):
         # use yum on EL <= 7
         return 'yum'
     return default

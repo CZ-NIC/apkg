@@ -89,15 +89,18 @@ def is_valid_template(path):
 
 
 def get_template_name(path):
-    spec = get_spec_(path)
+    spec_path = get_spec_(path)
 
-    for line in spec.open(encoding='utf-8'):
+    with spec_path.open(encofing='utf-8') as spec_f:
+        spec_text = spec_f.read()
+
+    for line in parse_spec(spec_text):
         m = re.match(RE_PKG_NAME, line)
         if m:
             return m.group(1)
 
     raise ex.ParsingFailed(
-        msg="unable to determine Name from: %s" % spec)
+        msg="unable to determine Name from: %s" % spec_path)
 
 
 def get_srcpkg_nvr(path):

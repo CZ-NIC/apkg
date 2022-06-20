@@ -69,6 +69,31 @@ RE_RPMBUILD_OUT_RPM = r'Wrote:\s+(.*\.rpm)\s*'
 RE_RPMBUILD_OUT_SRPM = r'Wrote:\s+(.*\.src.rpm)\s*'
 
 
+def render_spec(template_path, **kwargs):
+    """
+    render the templated spec using jinja2 engine
+    """
+    distro = kwargs.get('distro')
+    spec_path = get_spec_(template_path).relative_to(template_path)
+    # render .spec file
+    this_style = sys.modules[__name__]
+    t = pkgtemplate.PackageTemplate(template_path, style=this_style)
+    tvars = pkgtemplate.DUMMY_VARS.copy()
+    if distro:
+        tvars['distro'] = distro
+    return t.render_file_content(spec_path, tvars=tvars)
+
+
+def parse_spec(spec_text):
+    """
+    parse spec to expand macros
+    done through temp file because rpmspec doesn't work
+    on /dev/stdin on openSUSE for some reason :-/
+    """
+    with common.text_tempfile(spec_text, prefix='apkg_rpm.spec_') as spec_path:
+        return run('rpmspec', '-P', spec_path, quiet=True)
+
+
 def is_valid_template(path):
     return bool(get_spec_(path))
 
@@ -233,15 +258,7 @@ def get_build_deps_from_template(
     """
     parse BuildRequires from packaging template
     """
-    distro = kwargs.get('distro')
-    spec_path = get_spec_(template_path).relative_to(template_path)
-    # render .spec file
-    this_style = sys.modules[__name__]
-    t = pkgtemplate.PackageTemplate(template_path, style=this_style)
-    tvars = pkgtemplate.DUMMY_VARS.copy()
-    if distro:
-        tvars['distro'] = distro
-    spec_text = t.render_file_content(spec_path, tvars=tvars)
+    spec_text = render_spec(template_path, **kwargs)
     return get_build_deps_from_spec_(spec_text)
 
 
@@ -282,10 +299,5 @@ def get_build_deps_from_spec_(spec_text):
     """
     parse BuildRequires from .spec file content
     """
-    # parse spec to expand macros
-    # done through temp file because rpmspec doesn't work
-    # on /dev/stdin on openSUSE for some reason :-/
-    with common.text_tempfile(spec_text, prefix='apkg_rpm.spec_') as spec_path:
-        spec_parsed = run('rpmspec', '-P', spec_path, quiet=True)
-
+    spec_parsed = parse_spec(spec_text)
     return re.findall(RE_BUILD_REQUIRES, spec_parsed)

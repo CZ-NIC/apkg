@@ -74,6 +74,16 @@ RE_RPMBUILD_OUT_RPM = r'Wrote:\s+(.*\.rpm)\s*'
 RE_RPMBUILD_OUT_SRPM = r'Wrote:\s+(.*\.src.rpm)\s*'
 
 
+def parse_spec(spec_text):
+    """
+    parse spec to expand macros
+    done through temp file because rpmspec doesn't work
+    on /dev/stdin on openSUSE for some reason :-/
+    """
+    with common.text_tempfile(spec_text, prefix='apkg_rpm.spec_') as spec_path:
+        return run('rpmspec', '-P', spec_path, quiet=True)
+
+
 def is_valid_template(path):
     return bool(get_spec_(path))
 
@@ -288,10 +298,5 @@ def get_build_deps_from_spec_(spec_text):
     """
     parse BuildRequires from .spec file content
     """
-    # parse spec to expand macros
-    # done through temp file because rpmspec doesn't work
-    # on /dev/stdin on openSUSE for some reason :-/
-    with common.text_tempfile(spec_text, prefix='apkg_rpm.spec_') as spec_path:
-        spec_parsed = run('rpmspec', '-P', spec_path, quiet=True)
-
+    spec_parsed = parse_spec(spec_text)
     return re.findall(RE_BUILD_REQUIRES, spec_parsed)

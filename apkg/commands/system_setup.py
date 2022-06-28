@@ -51,6 +51,7 @@ def system_setup(
         pkgstyle.call_pkgstyle_fun(
             style, 'install_distro_packages',
             reqs,
+            distro=distro,
             interactive=interactive)
     else:
         log.info("no distro packages required")

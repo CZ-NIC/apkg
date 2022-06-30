@@ -1,0 +1,17 @@
+# Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
+
+pkgname=apkg-ex-minimal-no-git
+pkgver={{ version }}
+pkgrel={{ release }}
+pkgdesc="testing package containing a single script"
+arch=('any')
+url="https://gitlab.nic.cz/packaging/apkg"
+license=('GPL3')
+depends=('bash')
+source=("${pkgname}-v${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+package() {
+  mkdir -p "$pkgdir/usr/bin"
+  cp $pkgname-v$pkgver/$pkgname "$pkgdir/usr/bin/$pkgname"
+}

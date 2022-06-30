@@ -1,0 +1,9 @@
+[project]
+name = "apkg-test-minimal-no-git"
+make_archive_script = "distro/scripts/make-archive.sh"
+
+[cache]
+source = false
+
+[apkg]
+compat = 2

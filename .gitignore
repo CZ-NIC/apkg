@@ -10,3 +10,4 @@
 /pkg
 /site
 /knot-dns
+/examples/*/pkg

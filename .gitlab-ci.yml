@@ -604,6 +604,11 @@ suse-15-knot-resolver:
   script:
     - *setup-project
     - py.test3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+  only:
+    # python-breathe issues on SUSE 15.4 are hard to debug >:(
+    # only run this for Knot Resolver CI runs
+    variables:
+      - $TEST_KNOT_RESOLVER
 
 nixos-unstable-knot-resolver:
   <<: *knot-resolver

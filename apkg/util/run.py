@@ -15,6 +15,8 @@ try:
 except ImportError:
     from subprocess import list2cmdline as join
 
+from packaging import version
+
 from apkg import ex
 from apkg.log import getLogger, T, COMMAND, get_log_level
 
@@ -22,9 +24,10 @@ from apkg.log import getLogger, T, COMMAND, get_log_level
 log = getLogger(__name__)
 
 
-IS_ROOT = False
-if os.geteuid() == 0:
-    IS_ROOT = True
+IS_ROOT = os.geteuid() == 0
+PY_VERSION = version.parse('%s.%s' % (sys.version_info[:2]))
+# Require python 3.6 for tee feature.
+CAN_TEE = PY_VERSION >= version.parse('3.6')
 
 
 def run(cmd,
@@ -84,6 +87,11 @@ def run(cmd,
         tee = False
     elif tee == 'auto':
         tee = bool(get_log_level() <= COMMAND)
+
+    if tee and not CAN_TEE:
+        log.warning("can't tee on python < 3.6"
+                    " - command output won't be printed")
+        tee = False
 
     if log_fun:
         log_fun(cmd_str)

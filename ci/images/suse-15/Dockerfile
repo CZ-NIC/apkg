@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM opensuse/leap
+FROM opensuse/leap:15.3
 
 WORKDIR /root
 CMD ["/bin/bash"]

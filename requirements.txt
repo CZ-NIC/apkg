@@ -4,7 +4,7 @@ build            # apkg distribution
 cached_property  # @cached_property for python <= 3.7
 click            # nice CLI framework
 distro           # current distro detection
-jinja2           # templating
+jinja2<3.1       # templating (COMPAT: <3.1 in order not to break systems, apkg works fine)
 packaging        # version parsing
 requests         # HTTP for humans™
 toml             # config files

@@ -55,7 +55,8 @@ def get_archive(
             raise ex.UnableToDetectUpstreamVersion()
     archive_url = proj.upstream_archive_url(version)
 
-    use_cache = proj.cache.enabled(cache)
+    use_cache = proj.cache.enabled(
+        'remote', cmd='get_archive', use_cache=cache)
     if use_cache:
         cache_key = 'archive/upstream/%s' % archive_url
         cached = common.get_cached_paths(proj, cache_key, result_dir)

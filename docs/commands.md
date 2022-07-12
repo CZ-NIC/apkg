@@ -55,6 +55,9 @@ followed by one line for each additional file (like signature).
 
 Resulting archive is copied to `pkg/archives/dev/` or to `--result-dir`.
 
+Resulting archive is cached if [cache.source](config.md#cachesource)
+is enabled. See [source cache](cache.md#source-cache) for requirements.
+
 
 ## get-archive
 
@@ -73,16 +76,24 @@ If automatic latest upstream version detection doesn't work,
 you can always supply version manually with `-v`/`--version` option,
 i.e. `apkg get-archive -v 1.2.3`
 
+Resulting archive is cached if [cache.remote](config.md#cacheremote)
+is enabled.
+
 
 ## srcpkg
 
 {{ 'srcpkg' | cmd_help }}
 
+Resulting source package is cached if both [cache.local](config.md#cachelocal) and
+[cache.source](config.md#cachesources) are enabled, unless using `--upstream`
+which only requires [cache.local](config.md#cachelocal).
+See [source cache](cache.md#source-cache) for more info.
 
 ## build
 
 {{ 'build' | cmd_help }}
 
+Resulting packages are cached if [cache.local](config.md#cachelocal) is enabled.
 
 ## build-dep
 

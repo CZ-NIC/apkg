@@ -45,36 +45,32 @@ class ProjectCache:
         self.load()
         self.loaded = True
 
-    def update(self, cache_name, key, paths):
+    def update(self, key, paths):
         """
         update cache entry
         """
-        log.verbose("cache update for %s: %s -> %s",
-                    cache_name, key, paths[0])
+        log.verbose("cache update: %s -> %s", key, paths[0])
         assert key
         self._ensure_load()
-        if cache_name not in self.cache:
-            self.cache[cache_name] = {}
         entries = list(map(path2entry, paths))
-        self.cache[cache_name][key] = entries
+        self.cache[key] = entries
         self.save()
 
-    def get(self, cache_name, key):
+    def get(self, key):
         """
         get cache entry or None
         """
-        log.verbose("cache query for %s: %s",
-                    cache_name, key)
+        log.verbose("cache query: %s", key)
 
         def validate(path, checksum):
             if not path.exists():
                 log.info("removing missing file from cache: %s", path)
-                self.delete(cache_name, key)
+                self.delete(key)
                 return False
             real_checksum = file_checksum(path)
             if real_checksum != checksum:
                 log.info("removing invalid cache entry: %s", path)
-                self.delete(cache_name, key)
+                self.delete(key)
                 return False
             return True
 
@@ -83,7 +79,7 @@ class ProjectCache:
 
         assert key
         self._ensure_load()
-        entries = self.cache.get(cache_name, {}).get(key)
+        entries = self.cache.get(key)
         if not entries:
             return None
         paths = list(map(entry2path_valid, entries))
@@ -92,11 +88,11 @@ class ProjectCache:
             return None
         return paths
 
-    def delete(self, cache_name, key):
+    def delete(self, key):
         """
         delete cache entry
         """
-        self.cache[cache_name].pop(key, None)
+        self.cache.pop(key, None)
         self.save()
 
     def enabled(self, use_cache=True):

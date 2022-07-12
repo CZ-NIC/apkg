@@ -57,10 +57,8 @@ def get_archive(
 
     use_cache = proj.cache.enabled(cache)
     if use_cache:
-        cache_name = 'archive/upstream'
-        cache_key = archive_url
-        cached = common.get_cached_paths(
-            proj, cache_name, cache_key, result_dir)
+        cache_key = 'archive/upstream/%s' % archive_url
+        cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
             log.success("reuse cached archive: %s", cached[0])
             return cached
@@ -116,8 +114,7 @@ def get_archive(
                     " - skipping signature download")
 
     if use_cache:
-        proj.cache.update(
-            cache_name, cache_key, results)
+        proj.cache.update(cache_key, results)
 
     return results
 

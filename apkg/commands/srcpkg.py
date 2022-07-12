@@ -111,17 +111,16 @@ def srcpkg(
     version = get_archive_version(ar_path)
 
     if use_cache:
-        cache_name = 'srcpkg/%s/%s' % (srcpkg_type, distro)
+        cache_key = 'srcpkg/%s/%s/' % (srcpkg_type, distro.idver)
         if upstream:
-            cache_key = '%s:%s' % (ar_path.name, file_checksum(ar_path))
+            cache_key += '%s:%s' % (ar_path.name, file_checksum(ar_path))
         else:
-            cache_key = '{v}-{r}:{pch}-{ach}'.format(
+            cache_key += '{v}-{r}:{ach}-{pch}'.format(
                 v=version,
                 r=release,
-                pch=proj.checksum,
-                ach=file_checksum(ar_path))
-        cached = common.get_cached_paths(
-            proj, cache_name, cache_key, result_dir)
+                ach=file_checksum(ar_path),
+                pch=proj.checksum)
+        cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
             log.success("reuse cached source package: %s", cached[0])
             return cached
@@ -204,8 +203,7 @@ def srcpkg(
     log.success("made source package: %s", srcpkg_path)
 
     if use_cache:
-        proj.cache.update(
-            cache_name, cache_key, results)
+        proj.cache.update(cache_key, results)
 
     return results
 

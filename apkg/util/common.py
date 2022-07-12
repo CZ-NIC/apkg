@@ -32,12 +32,11 @@ def copy_paths(paths, dst):
     return new_paths
 
 
-def get_cached_paths(proj, cache_name, cache_key,
-                     result_dir=None):
+def get_cached_paths(proj, cache_key, result_dir=None):
     """
     get cached files and move them to result_dir if specified
     """
-    paths = proj.cache.get(cache_name, cache_key)
+    paths = proj.cache.get(cache_key)
     if not paths:
         return None
     if result_dir:

@@ -135,10 +135,9 @@ def build(
 
     # check cache
     if use_cache:
-        cache_name = 'pkg/%s' % distro
-        cache_key = '%s:%s' % (nvr, file_checksum(srcpkg_path))
-        cached = common.get_cached_paths(
-            proj, cache_name, cache_key, result_dir)
+        cache_key = 'pkg/%s/%s:%s' % (
+            distro.idver, nvr, file_checksum(srcpkg_path))
+        cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
             log.success("reuse %d cached packages", len(cached))
             return cached
@@ -175,8 +174,7 @@ def build(
         unfiles = [p for p in pkgs if not p.is_file()]
         if not unfiles:
             # only cache regular files for now
-            proj.cache.update(
-                cache_name, cache_key, pkgs)
+            proj.cache.update(cache_key, pkgs)
 
     return pkgs
 

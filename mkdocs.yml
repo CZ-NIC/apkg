@@ -11,6 +11,7 @@ nav:
   - users.md
   - commands.md
   - config.md
+  - cache.md
   - compat.md
   - distro.md
   - pkgstyles.md

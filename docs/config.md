@@ -31,11 +31,22 @@ This is available to templates through {% raw %}`{{ project.name }}`{% endraw %}
 In order to create packages from your project source, `apkg` requires a script
 which creates archive from current project state.
 
-The script MUST return the path to created archive on first line of its
+The script MUST return the path to created archive on the first line of its
 `stdout`.
 
-The script can output additional files (such as signatures) and print their
+The created archive MUST contain version string, for example:
+
+```
+banana-v1.2.3.tar.gz
+```
+
+The script MAY output additional files (such as signatures) and print their
 paths on individual `stdout` lines after the main archive.
+
+!!! Tip
+    The script SHOULD create archives with **unique version strings** for individual
+    VCS commits if using VCS. This isn't strictly required by `apkg`, but it will
+    save you a lot of conflicts and needless work later on.
 
 Include such script in your project and then point to it using `make_archive_script`:
 
@@ -169,6 +180,55 @@ To template all files instead of using defaults, simply set to an empty list:
 ```toml
 [template]
 plain_copy_files = []
+```
+
+## [cache]
+
+Config section for [cache](cache.md) control.
+
+### cache.source
+
+Set to `true` or `false` to enable or disable cache for operations
+on project source files such as [make-archive](commands.md#make-archive)
+and [srcpkg](commands.md#srcpkg) commands.
+
+Project MUST be maintained in VCS (`git`) in order to enable `cache.source`.
+
+When `cache.source = true` but VCS isn't available,
+`apkg` will compain with a warning and disable it.
+
+Read more in [source cache](cache.md#source-cache) docs.
+
+`cache.source` is enabled by default if VCS is available:
+
+```toml
+[cache]
+source = true
+```
+
+### cache.local
+
+Set to `true` or `false` to enable or disable cache for operations
+on local files such as [srcpkg](commands.md#srcpkg)
+and [build](commands.md#build) commands.
+
+`cache.local` is enabled by default:
+
+```toml
+[cache]
+local = true
+```
+
+### cache.remote
+
+Set to `true` or `false` to enable or disable cache for operations
+on remote files such as [get-archive](commands.md#get-archive) command.
+
+`cache.remote` is enabled by default:
+
+```toml
+[cache]
+remote = true
 ```
 
 

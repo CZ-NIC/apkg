@@ -41,7 +41,8 @@ def make_archive(
     log.bold("creating dev archive")
     proj = project or Project()
 
-    use_cache = proj.cache.enabled(cache)
+    use_cache = proj.cache.enabled(
+        'source', cmd='make_archive', use_cache=cache)
     if use_cache:
         cache_key = 'archive/dev/%s' % proj.checksum
         cached = common.get_cached_paths(proj, cache_key, result_dir)

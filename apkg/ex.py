@@ -24,6 +24,10 @@ class ApkgException(Exception):
         super().__init__(msg)
 
 
+class QuietExit(ApkgException):
+    msg_fmt = ""
+
+
 # 10-29: Invalid
 class InvalidUsage(ApkgException):
     msg_fmt = "Invalid usage: {fail}"

@@ -12,4 +12,4 @@ version_script = "scripts/upstream-version.py"
 
 [apkg]
 # recommended - apkg compat level
-compat = 2
+compat = 3

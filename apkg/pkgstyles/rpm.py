@@ -40,16 +40,16 @@ log = getLogger(__name__)
 EL_FAMILY_DISTROS = [
     "almalinux",
     "centos",
-    "rocky",
-    "rhel",
     "oracle",
+    "rhel",
+    "rocky",
     "scientific",
 ]
-SUPPORTED_DISTROS = EL_FAMILY_DISTROS + [
+SUPPORTED_DISTROS = sorted(EL_FAMILY_DISTROS + [
     "fedora",
     "opensuse",
     "pidora",
-]
+])
 DISTRO_REQUIRES = {
     'core': ['rpm-build'],
     'isolated': ['mock'],

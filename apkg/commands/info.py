@@ -16,7 +16,7 @@ log = getLogger(__name__)
 @click.help_option('-h', '--help', help='show command help')
 def cli_info():
     """
-    display various apkg information
+    show various apkg information
     """
 
 
@@ -57,7 +57,7 @@ def config():
 @click.help_option('-h', '--help', help='show command help')
 def distro():
     """
-    display current distro information
+    show current distro information
     """
     info = distro_.info()
     print(toml.dumps(info))

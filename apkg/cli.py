@@ -132,6 +132,8 @@ def apkg(*args):
     except ex.PkgTestFail as e:
         # already logged
         code = e.returncode
+    except ex.QuietExit as e:
+        code = e.returncode
     except ex.ApkgException as e:
         print(T.bold_yellow(str(e)))
         code = e.returncode

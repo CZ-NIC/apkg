@@ -1,5 +1,50 @@
 # apkg news
 
+## apkg 0.4.0
+
+Released 2022-07-18
+
+### Compat Level 3 News
+
+- new [apkg test](test.md) packaging tests runner based on Debian `autopkgtest`
+- new [apkg info](commands.md#info) command with subcommands to display various info:
+    - `apkg info cache`: show apkg cache contents
+    - `apkg info config`: show apkg project configuration
+    - `apkg info distro`: show current distro information
+    - `apkg info distro-aliases`: list available distro aliases
+    - `apkg info pkgstyles`: list available packaging styles
+    - `apkg info upstream-version`: show detected project upstream version
+- new [apkg clean](commands.md#clean) command to clean output dir `pkg/`
+    - `apkg clean`: remove apkg output directory `pkg/`
+    - `apkg clean --cache`: remove apkg cache file `pkg/.cache.json`
+    - `apkg clean --hard`: HARD RESET project from VCS and remove extra files
+- new `include_raw` tag available from [templates](templates.md#reusing-code-in-templates)
+    to include files without templating
+- support for AlmaLinux in `rpm` pkgstyle (`almalinux`)
+
+### Improvements
+
+- command runner was refactored using `asyncio`
+    - `run()` can `tee` command output - it's **finally** possible to both read
+      and display `stdout` at the same time resulting in better real-time/log
+      output and debugging when invoking external commands
+    - `run()` logging was fixed and improved, use `-L verbose` to see all commands
+      run in the background
+- [cache](cache.md) was refactored to be more flexible and reliable in edge cases
+    - cache false positives should no longer appear
+    - individual cache targets can be [configured](config.md#cache) indpendently
+    - only [source cache](cache.md#source-cache) is disabled when VCS isn't available
+    - new [cache docs](cache.md) as well as updated other docs with useful info and links
+- new minimal example project `examples/minimal-no-git`
+
+### Fixes
+
+- fix package manager detection in `rpm` pkgstyle
+- parse `makedepends` as well as `depends` in `arch` pkgstyle
+- fix `--archive`/`--upstream` operation in `build-dep`
+- don't install 0 build deps
+- use temporary dir for archive unpack (more reliable)
+
 
 ## apkg 0.3.1
 

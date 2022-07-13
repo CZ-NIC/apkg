@@ -6,14 +6,18 @@ import json
 from pathlib import Path
 
 from apkg.log import getLogger
-from apkg.util.common import hash_file
+from apkg.util.common import hash_file, hash_path
 
 
 log = getLogger(__name__)
 
 
-def file_checksum(path):
-    return hash_file(path).hexdigest()[:20]
+def file_checksum(*paths):
+    return hash_file(*paths).hexdigest()[:20]
+
+
+def path_checksum(*paths):
+    return hash_path(*paths).hexdigest()[:20]
 
 
 class ProjectCache:

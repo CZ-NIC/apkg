@@ -110,20 +110,37 @@ def text_tempfile(text, prefix='apkg_tmp_'):
         path.unlink()
 
 
-def hash_file(filename, algo='sha256'):
+def hash_file(*paths, algo='sha256'):
     """
     return hashlib's hash computed over the contents of the specified file
 
-    typical use case: `file_hash('/path').hexdigest()`
+    typical use case: `hash_file('/path').hexdigest()`
     """
-    # Code taken from https://stackoverflow.com/a/44873382/587396
+    # code based on https://stackoverflow.com/a/44873382/587396
     h = getattr(hashlib, algo)()
     b = bytearray(128*1024)
     mv = memoryview(b)
-    # NOTE(py35): explicit Path -> str conversion for python 3.5
-    with open(str(filename), 'rb', buffering=0) as f:
-        for n in iter(lambda: f.readinto(mv), 0):
-            h.update(mv[:n])
+    for path in paths:
+        # NOTE(py35): explicit Path -> str conversion for python 3.5
+        with open(str(path), 'rb', buffering=0) as f:
+            while True:
+                # NOTE: pylint's cell-var-from-loop cries made me do this >:(
+                n = f.readinto(mv)
+                if n == 0:
+                    break
+                h.update(mv[:n])
+    return h
+
+
+def hash_path(*paths, algo='sha256'):
+    """
+    return hashlib's hash computed over the supplied file paths (as strings)
+
+    typical use case: `hash_path('/path').hexdigest()`
+    """
+    h = getattr(hashlib, algo)()
+    for path in paths:
+        h.update(str(path).encode('utf-8'))
     return h
 
 

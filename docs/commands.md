@@ -120,3 +120,50 @@ See [test command examples](test.md#test-command-examples)
 ## test-dep
 
 {{ 'test-dep' | cmd_help }}
+
+
+## info
+
+{{ 'apkg info' | run }}
+
+### info cache
+
+```
+$> apkg info cache
+
+I apkg cache: pkg/.cache.json
+{
+    "archive/dev/194e7c1ba5": [
+        [
+            "pkg/archives/dev/apkg-v0.3.1.dev34+g194e7c1.tar.gz",
+            "739f1da7fc4bd49bdb81"
+        ]
+    ],
+    ...
+}
+```
+
+### info config
+
+{{ 'apkg info config' | run }}
+
+### info distro
+
+{{ 'apkg info distro' | run }}
+
+### info distro
+
+```
+$> apkg info distro-aliases
+
+deb-old: debian <= 9 | ubuntu < 20.04
+el-8: rocky == 8 | centos == 8 | rhel == 8
+```
+
+### info pkgstyles
+
+{{ 'apkg info pkgstyles' | run }}
+
+### info upstream-version
+
+{{ 'apkg info upstream-version' | run }}

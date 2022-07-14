@@ -130,13 +130,12 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     - docker
     - linux
     - amd64
-  # TODO: untag after resolving problems around https://github.com/NixOS/nix/issues/5776
-  image: nixos/nix:2.3.12
+  image: nixos/nix
   variables:
     #NIX_PATH: nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz
     NIX_PATH: nixpkgs=https://github.com/vcunat/nixpkgs/archive/p/apkg.tar.gz
   before_script:
-    - nix-env -f '<nixpkgs>' -iA gitMinimal
+    # - nix-env -f '<nixpkgs>' -iA gitMinimal
     - *setup-git
     # The image auto-detects as alpine distro, and tests don't allow overriding easily :-/
     - echo 'ID=nixos' > /etc/os-release

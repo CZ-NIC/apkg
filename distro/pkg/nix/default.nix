@@ -14,11 +14,6 @@ python3Packages.buildPythonApplication rec {
     sha256 = "FIXME"; # would be {{ src_hash }} if tarball was used
   };
 
-  # Old jinja2 isn't in nixpkgs anymore.
-  postPatch = ''
-    substituteInPlace setup.cfg --replace 'jinja2<3.1' 'jinja2'
-  '';
-
   propagatedBuildInputs = with python3Packages; [
     # copy&pasted requirements.txt (almost exactly)
     beautifulsoup4   # upstream version detection

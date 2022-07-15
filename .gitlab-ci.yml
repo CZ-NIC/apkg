@@ -535,7 +535,7 @@ nixos-unstable-knot-dns:
   script:
     # Knot Resolver's make-archive needs basically all build-time dependencies (meson dist),
     # so we add them on top of the normal apkg's development shell - and run the tests.
-    - nix-shell "$(apkg srcpkg | head -n 1)" --argstr extraDepsFor knot-dns --argstr extraDeps libmnl --run 'py.test -v ci/tests/test_knot_dns.py --junitxml=report.xml'
+    - nix-shell "$(nix-shell -p apkg --run 'apkg srcpkg' | head -n 1)" --argstr extraDepsFor knot-dns --argstr extraDeps libmnl --run 'py.test -v ci/tests/test_knot_dns.py --junitxml=report.xml'
 
 
 # integration tests: Knot Resolver

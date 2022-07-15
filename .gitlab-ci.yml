@@ -143,6 +143,7 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     - nix-build '<nixpkgs>' -QA bash && ln -s "$(realpath ./result/bin/bash)" /bin/bash
     # Use bootstrap apkg to install itself from the current commit
     - nix-shell '<nixpkgs>' -p apkg --run 'apkg install'
+  allow_failure: true
 
 
 # basic tests

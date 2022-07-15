@@ -131,6 +131,7 @@ image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
     - linux
     - amd64
   image: nixos/nix
+  only:
   variables:
     #NIX_PATH: nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz
     NIX_PATH: nixpkgs=https://github.com/vcunat/nixpkgs/archive/p/apkg.tar.gz
@@ -442,6 +443,7 @@ suse-15-libyang:
 make-archive-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-11:apkg
   <<: *knot-dns-base
+  only:
   artifacts:
     paths:
       - knot-dns/pkg/archives/dev

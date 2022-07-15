@@ -41,12 +41,11 @@ def make_archive(
     log.bold("creating dev archive")
     proj = project or Project()
 
-    use_cache = proj.cache.enabled(cache)
+    use_cache = proj.cache.enabled(
+        'source', cmd='make_archive', use_cache=cache)
     if use_cache:
-        cache_name = 'archive/dev'
-        cache_key = proj.checksum
-        cached = common.get_cached_paths(
-            proj, cache_name, cache_key, result_dir)
+        cache_key = 'archive/dev/%s' % proj.checksum
+        cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
             log.success("reuse cached archive: %s", cached[0])
             return cached
@@ -85,8 +84,7 @@ def make_archive(
     log.success("made archive: %s", archive_path)
     results = [archive_path]
     if use_cache:
-        proj.cache.update(
-            cache_name, cache_key, results)
+        proj.cache.update(cache_key, results)
     return results
 
 

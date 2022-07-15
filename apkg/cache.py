@@ -6,14 +6,22 @@ import json
 from pathlib import Path
 
 from apkg.log import getLogger
-from apkg.util.common import hash_file
+from apkg.util.common import hash_file, hash_path
 
 
 log = getLogger(__name__)
 
 
-def file_checksum(path):
-    return hash_file(path).hexdigest()[:20]
+def file_checksum(*paths):
+    return hash_file(*paths).hexdigest()[:20]
+
+
+def path_checksum(*paths):
+    return hash_path(*paths).hexdigest()[:20]
+
+
+def enabled_str(enabled):
+    return 'ENABLED' if enabled else 'DISABLED'
 
 
 class ProjectCache:
@@ -45,36 +53,32 @@ class ProjectCache:
         self.load()
         self.loaded = True
 
-    def update(self, cache_name, key, paths):
+    def update(self, key, paths):
         """
         update cache entry
         """
-        log.verbose("cache update for %s: %s -> %s",
-                    cache_name, key, paths[0])
+        log.verbose("cache update: %s -> %s", key, paths[0])
         assert key
         self._ensure_load()
-        if cache_name not in self.cache:
-            self.cache[cache_name] = {}
         entries = list(map(path2entry, paths))
-        self.cache[cache_name][key] = entries
+        self.cache[key] = entries
         self.save()
 
-    def get(self, cache_name, key):
+    def get(self, key):
         """
         get cache entry or None
         """
-        log.verbose("cache query for %s: %s",
-                    cache_name, key)
+        log.verbose("cache query: %s", key)
 
         def validate(path, checksum):
             if not path.exists():
                 log.info("removing missing file from cache: %s", path)
-                self.delete(cache_name, key)
+                self.delete(key)
                 return False
             real_checksum = file_checksum(path)
             if real_checksum != checksum:
                 log.info("removing invalid cache entry: %s", path)
-                self.delete(cache_name, key)
+                self.delete(key)
                 return False
             return True
 
@@ -83,7 +87,7 @@ class ProjectCache:
 
         assert key
         self._ensure_load()
-        entries = self.cache.get(cache_name, {}).get(key)
+        entries = self.cache.get(key)
         if not entries:
             return None
         paths = list(map(entry2path_valid, entries))
@@ -92,30 +96,77 @@ class ProjectCache:
             return None
         return paths
 
-    def delete(self, cache_name, key):
+    def delete(self, key):
         """
         delete cache entry
         """
-        self.cache[cache_name].pop(key, None)
+        self.cache.pop(key, None)
         self.save()
 
-    def enabled(self, use_cache=True):
+    def enabled(self, *targets, cmd=None, use_cache=True):
         """
-        helper to tell and log if caching is enabled and supported
+        helper to tell and log if caching should be enabled
 
-        optional use_cache argument provided for shared
-        argument parsing and logging from apkg.commands
+        targets is a list of cache targets that must be enabled:
+
+        * local: cache local files
+        * remote: cache remote files
+        * source: cache project source (requires VCS)
+
+        optional use_cache utility argument to disable all cache
         """
-        if use_cache:
-            vcs = self.project.vcs
-            if vcs:
-                log.verbose("%s VCS detected -> cache ENABLED", vcs)
-                return True
+
+        def enabled_result(value):
+            en_str = enabled_str(value)
+            if cmd:
+                log.verbose("cache %s for %s", en_str, cmd)
             else:
-                log.verbose("VCS not detected -> cache DISABLED")
-        else:
-            log.verbose("cache DISABLED")
-        return False
+                log.verbose("cache %s", en_str)
+            return value
+
+        if not use_cache:
+            # all cache disabled
+            return enabled_result(use_cache)
+
+        r = True
+        for target in targets:
+            option = 'cache.%s' % target
+            value = self.project.config_get(option)
+            cache = True
+
+            if value is not None:
+                # set in project config
+                if value and target == 'source' and not self.project.vcs:
+                    # source cache requires VCS
+                    msg = ("cache.{target} {en} in project config, "
+                           "but VCS isn't available - cache.{target} {di}.\n"
+                           "Please update your project config.").format(
+                        target=target,
+                        en=enabled_str(value),
+                        di=enabled_str(False))
+                    log.warning(msg)
+                    cache = False
+                else:
+                    log.verbose("cache.%s %s in project config",
+                                target, enabled_str(value))
+                    cache = value
+
+            else:
+                # auto cache settings
+                if target == 'source':
+                    # source cache requires VCS
+                    cache = bool(self.project.vcs)
+                    log.verbose("cache.%s %s by default (VCS=%s)",
+                                target, enabled_str(cache), self.project.vcs)
+                else:
+                    # other cache types are ENABLED by default
+                    log.verbose("cache.%s %s by default",
+                                target, enabled_str(True))
+
+            # always go through all targets to get complete logs
+            r = r and cache
+
+        return enabled_result(r)
 
 
 def path2entry(path):

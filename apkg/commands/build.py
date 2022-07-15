@@ -3,7 +3,7 @@ from pathlib import Path
 import click
 
 from apkg import adistro
-from apkg.cache import file_checksum
+from apkg.cache import file_checksum, path_checksum
 from apkg import ex
 from apkg.commands.build_dep import build_dep as cmd_build_dep
 from apkg.commands.srcpkg import srcpkg as make_srcpkg
@@ -79,7 +79,8 @@ def build(
     proj = project or Project()
     distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
-    use_cache = proj.cache.enabled(cache)
+    use_cache = proj.cache.enabled(
+        'local', cmd='build', use_cache=cache)
 
     infiles = common.parse_input_files(input_files, input_file_lists)
 
@@ -135,10 +136,10 @@ def build(
 
     # check cache
     if use_cache:
-        cache_name = 'pkg/%s' % distro
-        cache_key = '%s:%s' % (nvr, file_checksum(srcpkg_path))
-        cached = common.get_cached_paths(
-            proj, cache_name, cache_key, result_dir)
+        cache_key = 'pkg/%s/%s/' % (distro.idver, nvr)
+        cache_key += '%s:%s' % (
+            path_checksum(*infiles), file_checksum(*infiles))
+        cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
             log.success("reuse %d cached packages", len(cached))
             return cached
@@ -175,8 +176,7 @@ def build(
         unfiles = [p for p in pkgs if not p.is_file()]
         if not unfiles:
             # only cache regular files for now
-            proj.cache.update(
-                cache_name, cache_key, pkgs)
+            proj.cache.update(cache_key, pkgs)
 
     return pkgs
 

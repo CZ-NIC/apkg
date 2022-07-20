@@ -9,13 +9,21 @@ minimum overhead while respecting individual distro's standards and policies.
 
 ## status
 
-apkg is in **BETA** since [v0.1.0](https://gitlab.nic.cz/packaging/apkg/-/releases/v0.1.0) 🥳
+`apkg` is in **beta**, maturing towards `v1.0` 🚀
+
+**[apkg news](news.md)**
+
+Several projects [use apkg](users.md) in CI as well as in manual development and
+testing.
+
+[apkg CI](https://gitlab.nic.cz/packaging/apkg/-/pipelines) runs tests
+on multiple projects across supported distros.
 
 * [source code](https://gitlab.nic.cz/packaging/apkg)
+* [issues](https://gitlab.nic.cz/packaging/apkg/-/issues) (bugs and requests)
 * [merge requests](https://gitlab.nic.cz/packaging/apkg/-/merge_requests)
-* [issues](https://gitlab.nic.cz/packaging/apkg/-/issues)
 
-patches, issues, comments and other contributions are welcome **ᕕ( ᐛ )ᕗ**
+Patches, issues, comments, and other contributions are welcome **ᕕ( ᐛ )ᕗ**
 
 
 ## installation

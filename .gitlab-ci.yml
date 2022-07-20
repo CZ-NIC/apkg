@@ -192,13 +192,6 @@ self:
 
 # integration tests: apkg
 
-rocky-8-apkg:
-  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
-  <<: *apkg
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_apkg.py --junitxml=report.xml
-
 debian-9-apkg:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
   <<: *apkg
@@ -261,6 +254,20 @@ fedora-36-apkg:
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
+rocky-8-apkg:
+  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
+  <<: *apkg
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_apkg.py --junitxml=report.xml
+
+alma-9-apkg:
+  image: $CI_REGISTRY/packaging/apkg/ci/alma-9:apkg
+  <<: *apkg
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_apkg.py --junitxml=report.xml
+
 suse-15-apkg:
   image: $CI_REGISTRY/packaging/apkg/ci/suse-15:apkg
   <<: *apkg
@@ -280,20 +287,6 @@ nixos-unstable-apkg:
 
 
 # integration tests: BIRD
-
-centos-7-bird:
-  image: $CI_REGISTRY/packaging/apkg/ci/centos-7:apkg
-  <<: *bird
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_bird.py --junitxml=report.xml
-
-rocky-8-bird:
-  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
-  <<: *bird
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_bird.py --junitxml=report.xml
 
 debian-9-bird:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-9:apkg
@@ -356,6 +349,27 @@ fedora-36-bird:
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
+
+centos-7-bird:
+  image: $CI_REGISTRY/packaging/apkg/ci/centos-7:apkg
+  <<: *bird
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_bird.py --junitxml=report.xml
+
+rocky-8-bird:
+  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
+  <<: *bird
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_bird.py --junitxml=report.xml
+
+alma-9-bird:
+  image: $CI_REGISTRY/packaging/apkg/ci/alma-9:apkg
+  <<: *bird
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_bird.py --junitxml=report.xml
 
 suse-15-bird:
   image: $CI_REGISTRY/packaging/apkg/ci/suse-15:apkg
@@ -452,20 +466,6 @@ make-archive-knot-dns:
     - apkg build-dep
     - apkg make-archive
 
-centos-7-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/ci/centos-7:apkg
-  <<: *knot-dns
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-rocky-8-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
-  <<: *knot-dns
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
 debian-10-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-10:apkg
   <<: *knot-dns
@@ -520,6 +520,27 @@ fedora-36-knot-dns:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
+centos-7-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/ci/centos-7:apkg
+  <<: *knot-dns
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
+
+rocky-8-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
+  <<: *knot-dns
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
+
+alma-9-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/ci/alma-9:apkg
+  <<: *knot-dns
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
+
 suse-15-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/ci/suse-15:apkg
   <<: *knot-dns
@@ -535,20 +556,6 @@ nixos-unstable-knot-dns:
 
 
 # integration tests: Knot Resolver
-
-centos-7-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/ci/centos-7:apkg
-  <<: *knot-resolver
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-rocky-8-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
-  <<: *knot-resolver
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
 
 debian-10-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/ci/debian-10:apkg
@@ -595,6 +602,27 @@ fedora-36-knot-resolver:
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+
+centos-7-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/ci/centos-7:apkg
+  <<: *knot-resolver
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+
+rocky-8-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/ci/rocky-8:apkg
+  <<: *knot-resolver
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+
+alma-9-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/ci/alma-9:apkg
+  <<: *knot-resolver
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
 
 suse-15-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/ci/suse-15:apkg

@@ -460,6 +460,7 @@ make-archive-knot-dns:
     paths:
       - knot-dns/pkg/archives/dev
   script:
+    - apt update
     - *setup-project
     - git clone --recursive -b $KNOT_DNS_BRANCH https://gitlab.nic.cz/knot/knot-dns.git
     - cd knot-dns

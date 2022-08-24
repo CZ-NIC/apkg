@@ -72,10 +72,9 @@ def parse_test_config(test_text):
 
     if deps_text:
         deps = re.split(r'[\s\n]*,[\s\n]*', deps_text.strip())
-        if '@' in deps:
-            # @ means "all packages built from source package"
-            # this is implicit with apkg tests
-            deps.remove('@')
+        # @ means "all packages built from source package"
+        # this is implicit with apkg tests
+        deps = [d for d in deps if d and d != '@']
 
     if restrictions_text:
         restrictions = re.split(r'[\s\n]+', restrictions_text.strip())

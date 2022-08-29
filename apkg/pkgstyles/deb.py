@@ -44,7 +44,7 @@ SUPPORTED_DISTROS = [
     "raspbian",
 ]
 DISTRO_REQUIRES = {
-    'core': ['devscripts'],
+    'core': ['build-essential'],
     'isolated': ['pbuilder'],
 }
 

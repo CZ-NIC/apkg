@@ -458,7 +458,7 @@ make-archive-knot-dns:
   <<: *knot-dns-base
   artifacts:
     paths:
-      - knot-dns/pkg/archives/dev
+      - knot-dns/pkg/
   script:
     - apt update
     - *setup-project

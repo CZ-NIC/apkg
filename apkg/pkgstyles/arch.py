@@ -22,7 +22,8 @@ log = getLogger(__name__)
 
 
 SUPPORTED_DISTROS = [
-    'arch'
+    'arch',
+    'manjaro',
 ]
 
 

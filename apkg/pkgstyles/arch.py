@@ -25,6 +25,9 @@ SUPPORTED_DISTROS = [
     'arch',
     'manjaro',
 ]
+DISTRO_REQUIRES = {
+    'core': ['base-devel'],
+}
 
 
 RE_PKG_NAME = r'pkgname\s*=\s*(\S+)'

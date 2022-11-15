@@ -22,8 +22,12 @@ log = getLogger(__name__)
 
 
 SUPPORTED_DISTROS = [
-    'arch'
+    'arch',
+    'manjaro',
 ]
+DISTRO_REQUIRES = {
+    'core': ['base-devel'],
+}
 
 
 RE_PKG_NAME = r'pkgname\s*=\s*(\S+)'
@@ -93,7 +97,7 @@ def install_distro_packages(
         packages,
         **kwargs):
     interactive = kwargs.get('interactive', False)
-    cmd = ['pacman', '-S']
+    cmd = ['pacman', '-S', '--needed']
     if not interactive:
         cmd += ['--noconfirm']
     cmd += packages

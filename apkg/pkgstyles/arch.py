@@ -97,7 +97,7 @@ def install_distro_packages(
         packages,
         **kwargs):
     interactive = kwargs.get('interactive', False)
-    cmd = ['pacman', '-S']
+    cmd = ['pacman', '-S', '--needed']
     if not interactive:
         cmd += ['--noconfirm']
     cmd += packages

@@ -1,4 +1,4 @@
-FROM registry.nic.cz/labs/lxc-gitlab-runner/opensuse-15.4
+FROM registry.nic.cz/packaging/apkg/systemd/opensuse-15.4
 ENV LC_ALL=C.UTF-8
 ENV PATH="~/.local/bin:${PATH}"
 

@@ -1,4 +1,4 @@
-FROM registry.nic.cz/labs/lxc-gitlab-runner/debian-10
+FROM registry.nic.cz/packaging/apkg/systemd/debian-10
 ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /root

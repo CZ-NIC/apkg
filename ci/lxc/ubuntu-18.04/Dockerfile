@@ -1,4 +1,4 @@
-FROM registry.nic.cz/labs/lxc-gitlab-runner/ubuntu-18.04
+FROM registry.nic.cz/packaging/apkg/systemd/ubuntu-18.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LC_ALL=C.UTF-8
 

@@ -1,4 +1,4 @@
-FROM registry.nic.cz/labs/lxc-gitlab-runner/fedora-36
+FROM registry.nic.cz/packaging/apkg/systemd/fedora-36
 
 WORKDIR /root
 CMD ["/bin/bash"]

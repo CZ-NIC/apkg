@@ -1,4 +1,4 @@
-FROM registry.nic.cz/labs/lxc-gitlab-runner/ubuntu-22.04
+FROM registry.nic.cz/packaging/apkg/systemd/ubuntu-22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /root

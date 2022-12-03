@@ -1,4 +1,4 @@
-FROM registry.nic.cz/labs/lxc-gitlab-runner/centos-7
+FROM registry.nic.cz/packaging/apkg/systemd/centos-7
 
 WORKDIR /root
 CMD ["/bin/bash"]

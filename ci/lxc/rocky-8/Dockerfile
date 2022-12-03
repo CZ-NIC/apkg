@@ -1,4 +1,4 @@
-FROM registry.nic.cz/labs/lxc-gitlab-runner/rocky-8
+FROM registry.nic.cz/packaging/apkg/systemd/rocky-8
 ENV LC_ALL=C.UTF-8
 
 WORKDIR /root

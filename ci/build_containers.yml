@@ -1,0 +1,17 @@
+
+
+build_oci_images:
+  image: quay.io/podman/stable
+  stage: deploy
+  tags:
+    - amd64
+    - lxc
+  script:
+    - unset $TMPDIR  # prevents errors in the LXC runners
+    - "ln -s \"$(which podman)\" /usr/bin/docker"
+    - cd ci
+    - "podman login -u \"${CI_REGISTRY_USER}\" -p \"${CI_REGISTRY_PASSWORD}\" \"${CI_REGISTRY}\""
+    - pushd systemd && ./update.sh * && popd
+    #- pushd lxc && ./update.sh * && popd
+    #- pushd images && ./update.sh * && popd
+  when: manual

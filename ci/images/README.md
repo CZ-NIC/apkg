@@ -1,32 +1,5 @@
-# apkg CI images
+# OCI images for use in CI
 
-## build image
-
-use `build.sh` to build docker image, for example:
-
-```
-./build.sh debian-10
-```
-
-## push (upload) image into apkg CI
-
-you need to **login** first:
-
-```
-$ docker login registry.nic.cz
-```
-
-then you can use `push.sh` script:
-
-```
-./push.sh debian-10
-```
-
-## build & push images
-
-use `update.sh` wrapper to build and push multiple images
-using `build.sh` and `push.sh` scripts described above:
-
-```
-./update.sh debian-10 debian-11 rocky-8
-```
+- `full/` - images with both apkg and systemd installed (in general, use this for your own CI jobs)
+- `systemd/` - basic system images with systemd preinstalled and configured to run first (can be used in non-Docker runtimes)
+- `test/` - images for testing apkg - all requirements of tested projects installed, apkg not present

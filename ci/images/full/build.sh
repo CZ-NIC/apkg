@@ -8,4 +8,4 @@ if [ -z "$IMAGE" ]; then
     exit 1
 fi
 set -ex
-docker build --no-cache -t "registry.nic.cz/packaging/apkg/lxc/$IMAGE" "$IMAGE"
+docker build --no-cache -t "registry.nic.cz/packaging/apkg/full/$IMAGE" "$IMAGE"

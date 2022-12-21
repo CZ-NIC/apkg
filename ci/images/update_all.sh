@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # fail early
 set -e
@@ -8,6 +8,6 @@ set -e
 for dir in test systemd full; do
 	echo "Building $dir"
 	cd $dir
-	./update.sh *
+	./update.sh $(ls -p | grep / | sed 's#/##')
 	cd ..
 done

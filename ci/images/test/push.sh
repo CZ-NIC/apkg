@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # upload docker image into apkg registry
 
 IMAGE=$1

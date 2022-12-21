@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # build specified docker image
 
 IMAGE=$1

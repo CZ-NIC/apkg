@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # build and upload docker image(s) into registry
 #
 # this is a simple wrapper around build.sh and update.sh

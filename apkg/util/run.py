@@ -159,10 +159,10 @@ async def _tee(*args, shell=False, **kwargs):
     tasks = []
     if process.stdout:
         tasks.append(loop.create_task(_read_stream(
-            process.stdout, lambda l: tee_fun(l, out))))
+            process.stdout, lambda x: tee_fun(x, out))))
     if process.stderr:
         tasks.append(loop.create_task(_read_stream(
-            process.stderr, lambda l: tee_fun(l, err))))
+            process.stderr, lambda x: tee_fun(x, err))))
 
     await asyncio.wait(set(tasks))
 

@@ -662,3 +662,7 @@ pages:
       - $TEST_LIBYANG
       - $TEST_KNOT_DNS
       - $TEST_KNOT_RESOLVER
+
+# include jobs to build the containers
+include:
+  local: 'ci/build_containers.yml'

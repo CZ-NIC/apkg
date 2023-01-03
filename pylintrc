@@ -9,6 +9,7 @@ disable=
     invalid-name,
     line-too-long,  # checked by flake8
     missing-docstring,
+    missing-timeout,  # TODO: consider adding timeout config option
     no-else-return,
     not-callable,
     raise-missing-from,

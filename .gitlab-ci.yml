@@ -27,6 +27,13 @@ stages:
 image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
 
 
+default:
+  tags:
+    - docker
+    - linux
+    - amd64
+
+
 .setup-git: &setup-git
   - git config --global user.name CI
   - git config --global user.email ci@nic

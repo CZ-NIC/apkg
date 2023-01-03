@@ -10,7 +10,6 @@ disable=
     line-too-long,  # checked by flake8
     missing-docstring,
     no-else-return,
-    no-self-use,
     not-callable,
     raise-missing-from,
     too-few-public-methods,

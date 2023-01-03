@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # define common variables for image build scripts
 
 REGISTRY="registry.nic.cz/packaging/apkg"

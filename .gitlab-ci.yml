@@ -24,7 +24,7 @@ stages:
   - deploy
 
 
-image: $CI_REGISTRY/packaging/apkg/ci/debian-10-full:apkg
+image: $CI_REGISTRY/packaging/apkg/ci/debian-11-full:apkg
 
 
 default:

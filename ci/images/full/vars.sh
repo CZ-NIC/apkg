@@ -6,7 +6,7 @@ if [ -z "${IMAGE}" ]; then
     echo "ERROR: please provide IMAGE name as argument"
     exit 1
 fi
-IMAGE_GROUP="lxc"
+IMAGE_GROUP="full"
 REGISTRY="registry.nic.cz"
 REGISTRY_BASE="$REGISTRY/packaging/apkg/$IMAGE_GROUP"
 TAG="latest"

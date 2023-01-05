@@ -1,4 +1,4 @@
-FROM centos:8
+FROM almalinux:9
 
 ARG ARCH=amd64
 
@@ -12,8 +12,5 @@ RUN dnf install -y \
 # autologin as root on console
 RUN mkdir -p /etc/systemd/system/console-getty.service.d
 COPY console-getty.conf /etc/systemd/system/console-getty.service.d/override.conf
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=1778740
-RUN systemctl disable kdump.service
 
 CMD ["/sbin/init"]

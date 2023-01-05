@@ -11,6 +11,8 @@ RUN localedef -i en_US -f UTF-8 C.UTF-8
 RUN yum upgrade -y
 # enable EPEL
 RUN yum install -y epel-release
+# enable centos-release-scl
+RUN yum install -y centos-release-scl
 
 # packaging deps
 RUN yum install -y \

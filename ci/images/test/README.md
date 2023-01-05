@@ -1,4 +1,7 @@
-# apkg CI images
+# apkg CI testing images
+
+Plain docker, contains requirements for all projects but not apkg itself.
+
 
 ## build image
 

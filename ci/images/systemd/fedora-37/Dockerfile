@@ -1,4 +1,4 @@
-FROM fedora:35
+FROM fedora:37
 
 ARG ARCH=amd64
 
@@ -12,5 +12,14 @@ RUN dnf install -y \
 # autologin as root on console
 RUN mkdir -p /etc/systemd/system/console-getty.service.d
 COPY console-getty.conf /etc/systemd/system/console-getty.service.d/override.conf
+
+# disable systemd-oomd
+RUN systemctl disable systemd-oomd.socket systemd-oomd.service && \
+	systemctl mask systemd-oomd.service
+# disable systemd-resolved
+RUN systemctl disable systemd-resolved.service
+
+# allow installation of man pages
+RUN sed -i 's/tsflags=nodocs//' /etc/dnf/dnf.conf
 
 CMD ["/sbin/init"]

@@ -1,6 +1,7 @@
-# apkg LXC images
+# apkg full images
 
-These are per-distro LXC images based on `systemd` images..
+These are per-distro images based on `systemd` images but with apkg installed
+and ready for packaging.
 
 Unlike native gitlab docker, LXC can run systemd and these images contain it
 so you can
@@ -11,7 +12,7 @@ etc.
 
 Use those images from your `Dockerfile`:
 
-    FROM registry.nic.cz/packaging/apkg/lxc/debian-11
+    FROM registry.nic.cz/packaging/apkg/full/debian-11
 
 ## build image
 

@@ -1,4 +1,4 @@
-# Container images with systemd
+# per-distro images with systemd
 
 ## Why?
 
@@ -19,8 +19,7 @@ LXC executor (this repo).
 To avoid copying common files, they are placed directly in `images/` directory.
 Consequently, it needs to be used as the context directory for the build.
 
-The `images/` directory also contains utility scripts to build, push or update
-the container images.
+Utility scripts can be used to build, push or update the container images.
 
 ```
 $ ./build.sh debian-11    # builds a debian-11 image locally

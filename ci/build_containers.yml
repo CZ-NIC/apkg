@@ -1,10 +1,10 @@
 
-
 build_oci_images:
   image: docker.io/docker:dind
   stage: deploy
   tags:
     - dind
+    - amd64
   script:
 #    - unset $TMPDIR  # prevents errors in the LXC runners
 #    - "ln -s \"$(which podman)\" /usr/bin/docker"

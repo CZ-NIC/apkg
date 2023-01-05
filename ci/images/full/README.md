@@ -1,8 +1,6 @@
 # apkg LXC images
 
-These are per-distro LXC images based on
-[lxc-gitlab-runner](https://gitlab.nic.cz/labs/lxc-gitlab-runner) with
-packaging deps and latest stable apkg installed.
+These are per-distro LXC images based on `systemd` images..
 
 Unlike native gitlab docker, LXC can run systemd and these images contain it
 so you can

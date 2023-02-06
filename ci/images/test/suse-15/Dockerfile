@@ -6,7 +6,7 @@ WORKDIR /root
 CMD ["/bin/bash"]
 
 # add Knot Resolver build deps repo
-RUN zypper addrepo -G -f https://download.opensuse.org/repositories/home:CZ-NIC:knot-resolver-build/openSUSE_Leap_15.3/home:CZ-NIC:knot-resolver-build.repo
+RUN zypper addrepo -G -f https://download.opensuse.org/repositories/home:CZ-NIC:knot-resolver-build/openSUSE_Leap_15.4/home:CZ-NIC:knot-resolver-build.repo
 
 
 # packaging deps

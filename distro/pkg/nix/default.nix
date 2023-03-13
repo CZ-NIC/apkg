@@ -28,7 +28,8 @@ python3Packages.buildPythonApplication rec {
     toml             # config files
 
     # further deps?
-    setuptools
+    poetry-core
+    poetry-dynamic-versioning
   ];
 
   makeWrapperArgs = [ # deps for `srcpkg` operation for other distros; could be optional

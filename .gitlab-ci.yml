@@ -64,6 +64,8 @@ default:
     when: always
     reports:
       junit: report.xml
+  before_script:
+    - python3 -m pip install dunamai
 
 .bird: &bird
   stage: bird
@@ -185,6 +187,7 @@ unit:
 self:
   <<: *test
   script:
+    - *setup-git
     - *setup-py-reqs
     - *setup-py-develop
     - py.test-3 -v tests/self --junitxml=report.xml

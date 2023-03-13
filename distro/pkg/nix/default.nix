@@ -22,6 +22,7 @@ python3Packages.buildPythonApplication rec {
     cached-property  # for python <= 3.7; but pip complains even with 3.8
     click            # nice CLI framework
     distro           # current distro detection
+    dunamai          # version from VCS
     jinja2           # templating
     packaging        # version parsing
     requests         # HTTP for humans™

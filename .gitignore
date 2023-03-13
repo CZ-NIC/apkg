@@ -3,6 +3,7 @@
 *.egg
 *.egg-info
 *.tar.gz
+poetry.lock
 /AUTHORS
 /ChangeLog
 /build

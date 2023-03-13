@@ -5,6 +5,7 @@ import re
 
 from apkg.util import test
 from apkg.util.run import cd
+from apkg.util.git import git
 from apkg.cli import apkg
 
 
@@ -18,6 +19,10 @@ APKG_BASE_DIR = Path(__file__).parents[2]
 def repo_path(tmpdir_factory):
     tmpdir = tmpdir_factory.mktemp("apkg_test_repo_")
     repo_path = test.init_testing_repo(APKG_BASE_DIR, str(tmpdir))
+    with cd(repo_path):
+        # commit all changes for the purposes of testing, if any
+        git('commit', '-a', '-m', 'TEST: uncommited changes from source',
+            check=False)
     return repo_path
 
 

@@ -56,8 +56,8 @@ class Git(ShellCommand):
                 if branch in [rbr, br]:
                     remote_branch = rbr
         elif remote_branch not in self.remote_branches():
-            raise Exception("Branch %s doesn't exist in remotes" %
-                            remote_branch)
+            raise ex.InvalidUsage(
+                msg="Branch %s doesn't exist in remotes" % remote_branch)
         self.create_branch(branch, remote_branch)
 
     def _parse_output(self, out):

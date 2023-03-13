@@ -22,7 +22,6 @@ python3Packages.buildPythonApplication rec {
     cached-property  # for python <= 3.7; but pip complains even with 3.8
     click            # nice CLI framework
     distro           # current distro detection
-    dunamai          # version from VCS
     jinja2           # templating
     packaging        # version parsing
     requests         # HTTP for humans™
@@ -36,8 +35,8 @@ python3Packages.buildPythonApplication rec {
     "--prefix" "PATH" ":" (lib.makeBinPath [ gitMinimal rpm dpkg fakeroot ])
   ];
 
-  checkInputs = with python3Packages; [ pytest ];
-  checkPhase = "py.test"; # inspiration: .gitlab-ci.yml
+  nativeCheckInputs = with python3Packages; [ pytest dunamai ];
+  checkPhase = "py.test"; # inspiration: .gitlab-ci.yml; TODO: do more tests, probably
 
   meta = with lib; {
     description = "Upstream packaging automation tool";

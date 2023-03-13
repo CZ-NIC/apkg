@@ -141,8 +141,7 @@ default:
     - amd64
   image: nixos/nix
   variables:
-    #NIX_PATH: nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz
-    NIX_PATH: nixpkgs=https://github.com/vcunat/nixpkgs/archive/p/apkg.tar.gz
+    NIX_PATH: nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz
   before_script:
     # - nix-env -f '<nixpkgs>' -iA gitMinimal
     - *setup-git
@@ -150,6 +149,9 @@ default:
     - echo 'ID=nixos' > /etc/os-release
     # Some archive scripts need /bin/bash
     - nix-build '<nixpkgs>' -QA bash && ln -s "$(realpath ./result/bin/bash)" /bin/bash
+    # dunamai is needed for apkg's make-archive script, i.e. for `apkg install` here
+    # and also for tests in nixos-unstable-apkg below.
+    - nix-env -f '<nixpkgs>' -iQA python3.pkgs.dunamai
     # Use bootstrap apkg to install itself from the current commit
     - nix-shell '<nixpkgs>' -p apkg --run 'apkg install'
   allow_failure: true
@@ -289,6 +291,7 @@ nixos-unstable-apkg:
   <<: *apkg
   <<: *nixos
   script:
+    - nix-env -f '<nixpkgs>' -iQA gnused
     # This test has issues when some step is cached.
     # Therefore we simplify by taking test dependencies just from the bootstrap apkg
     # (but use $PATH to force the new apkg binary built above).

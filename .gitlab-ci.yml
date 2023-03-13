@@ -152,6 +152,10 @@ default:
     # dunamai is needed for apkg's make-archive script, i.e. for `apkg install` here
     # and also for tests in nixos-unstable-apkg below.
     - nix-env -f '<nixpkgs>' -iQA python3.pkgs.dunamai
+    # build deps when using modern packaging through pyproject.toml
+    # which are also needed when running apkg self tests
+    - nix-env -f '<nixpkgs>' -iQA python3.pkgs.poetry-core
+    - nix-env -f '<nixpkgs>' -iQA python3.pkgs.poetry-dynamic-versioning
     # Use bootstrap apkg to install itself from the current commit
     - nix-shell '<nixpkgs>' -p apkg --run 'apkg install'
   allow_failure: true

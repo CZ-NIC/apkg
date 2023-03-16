@@ -28,15 +28,16 @@ python3Packages.buildPythonApplication rec {
     toml             # config files
 
     # further deps?
-    setuptools
+    poetry-core
+    poetry-dynamic-versioning
   ];
 
   makeWrapperArgs = [ # deps for `srcpkg` operation for other distros; could be optional
     "--prefix" "PATH" ":" (lib.makeBinPath [ gitMinimal rpm dpkg fakeroot ])
   ];
 
-  checkInputs = with python3Packages; [ pytest ];
-  checkPhase = "py.test"; # inspiration: .gitlab-ci.yml
+  nativeCheckInputs = with python3Packages; [ pytest dunamai ];
+  checkPhase = "py.test"; # inspiration: .gitlab-ci.yml; TODO: do more tests, probably
 
   meta = with lib; {
     description = "Upstream packaging automation tool";

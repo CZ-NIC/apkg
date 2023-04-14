@@ -41,6 +41,7 @@ SUPPORTED_DISTROS = [
     "ubuntu",
     "debian",
     "linuxmint",
+    "pop",
     "raspbian",
 ]
 DISTRO_REQUIRES = {

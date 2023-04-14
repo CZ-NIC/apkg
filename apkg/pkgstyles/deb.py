@@ -38,10 +38,11 @@ log = getLogger(__name__)
 
 
 SUPPORTED_DISTROS = [
-    "ubuntu",
     "debian",
     "linuxmint",
+    "pop",
     "raspbian",
+    "ubuntu",
 ]
 DISTRO_REQUIRES = {
     'core': ['build-essential'],

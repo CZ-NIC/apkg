@@ -41,7 +41,13 @@ def version_from_listing(html_listing_url):
         m = re.match(RE_ARCHIVE_VERSION, a.string)
         if not m:
             continue
-        v = version.parse(m.group(1))
+        v_str = m.group(1)
+        try:
+            v = version.parse(v_str)
+        except version.InvalidVersion:
+            log.verbose("Ignoring invalid upstream version: %s in %s",
+                        v_str, a.string)
+            continue
         v_max = max(v, v_max)
         found = True
     if found:

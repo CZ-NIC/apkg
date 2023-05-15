@@ -208,14 +208,6 @@ self:
 
 # integration tests: apkg
 
-debian-9-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-9
-  <<: *apkg
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
 debian-10-apkg:
   image: $CI_REGISTRY/packaging/apkg/test/debian-10
   <<: *apkg
@@ -305,14 +297,6 @@ nixos-unstable-apkg:
 
 # integration tests: BIRD
 
-debian-9-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-9
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
 debian-10-bird:
   image: $CI_REGISTRY/packaging/apkg/test/debian-10
   <<: *bird
@@ -397,14 +381,6 @@ suse-15-bird:
 
 
 # integration tests: libyang
-
-debian-9-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-9
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
 debian-10-libyang:
   image: $CI_REGISTRY/packaging/apkg/test/debian-10

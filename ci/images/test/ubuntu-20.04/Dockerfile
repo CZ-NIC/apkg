@@ -37,6 +37,7 @@ RUN apt-get install -y -qqq \
     python3-bs4 \
     python3-blessings \
     python3-click \
+    python3-distro \
     python3-jinja2 \
     python3-packaging \
     python3-requests \

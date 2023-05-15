@@ -256,15 +256,15 @@ ubuntu-22.04-apkg:
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
-fedora-36-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-apkg:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *apkg
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
-fedora-37-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-apkg:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *apkg
   script:
     - *setup-project
@@ -353,15 +353,15 @@ ubuntu-22.04-bird:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
-fedora-36-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-bird:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *bird
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
-fedora-37-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-bird:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *bird
   script:
     - *setup-project
@@ -446,15 +446,15 @@ ubuntu-22.04-libyang:
     - *setup-project
     - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
-fedora-36-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-libyang:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *libyang
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
-fedora-37-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-libyang:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *libyang
   script:
     - *setup-project
@@ -524,15 +524,15 @@ ubuntu-22.04-knot-dns:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
-fedora-36-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *knot-dns
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
-fedora-37-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *knot-dns
   script:
     - *setup-project
@@ -607,15 +607,15 @@ ubuntu-22.04-knot-resolver:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
 
-fedora-36-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *knot-resolver
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
 
-fedora-37-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *knot-resolver
   script:
     - *setup-project

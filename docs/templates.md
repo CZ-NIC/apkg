@@ -147,9 +147,9 @@ matches its name:
 
 Additionally, specific distro version can be requested using `-` (dash) separator:
 
-* `debian-10`: Debian 10
-* `ubuntu-20.04`: Ubuntu 20.04
-* `fedora-36`: Fedora 36
+* `debian-12`: Debian 12
+* `ubuntu-22.04`: Ubuntu 22.04
+* `fedora-38`: Fedora 38
 
 Only numeric versions are supported, codenames such as `buster` or `Focal Fosa`
 won't work.

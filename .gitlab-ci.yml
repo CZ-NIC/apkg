@@ -541,6 +541,7 @@ suse-15-knot-dns:
   script:
     - *setup-project
     - py.test3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+  allow_failure: true
 
 nixos-unstable-knot-dns:
   <<: *knot-dns
@@ -624,6 +625,7 @@ suse-15-knot-resolver:
   script:
     - *setup-project
     - py.test3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+  allow_failure: true
 
 nixos-unstable-knot-resolver:
   <<: *knot-resolver

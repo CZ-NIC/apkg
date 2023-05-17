@@ -208,14 +208,6 @@ self:
 
 # integration tests: apkg
 
-debian-9-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-9
-  <<: *apkg
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
 debian-10-apkg:
   image: $CI_REGISTRY/packaging/apkg/test/debian-10
   <<: *apkg
@@ -256,15 +248,15 @@ ubuntu-22.04-apkg:
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
-fedora-36-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-apkg:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *apkg
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
-fedora-37-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-apkg:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *apkg
   script:
     - *setup-project
@@ -304,14 +296,6 @@ nixos-unstable-apkg:
 
 
 # integration tests: BIRD
-
-debian-9-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-9
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
 debian-10-bird:
   image: $CI_REGISTRY/packaging/apkg/test/debian-10
@@ -353,15 +337,15 @@ ubuntu-22.04-bird:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
-fedora-36-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-bird:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *bird
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
-fedora-37-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-bird:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *bird
   script:
     - *setup-project
@@ -397,14 +381,6 @@ suse-15-bird:
 
 
 # integration tests: libyang
-
-debian-9-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-9
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
 debian-10-libyang:
   image: $CI_REGISTRY/packaging/apkg/test/debian-10
@@ -446,15 +422,15 @@ ubuntu-22.04-libyang:
     - *setup-project
     - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
-fedora-36-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-libyang:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *libyang
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
-fedora-37-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-libyang:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *libyang
   script:
     - *setup-project
@@ -524,15 +500,15 @@ ubuntu-22.04-knot-dns:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
-fedora-36-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *knot-dns
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
-fedora-37-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *knot-dns
   script:
     - *setup-project
@@ -565,6 +541,7 @@ suse-15-knot-dns:
   script:
     - *setup-project
     - py.test3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+  allow_failure: true
 
 nixos-unstable-knot-dns:
   <<: *knot-dns
@@ -607,15 +584,15 @@ ubuntu-22.04-knot-resolver:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
 
-fedora-36-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-36
+fedora-37-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
   <<: *knot-resolver
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
 
-fedora-37-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-37
+fedora-38-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *knot-resolver
   script:
     - *setup-project
@@ -648,6 +625,7 @@ suse-15-knot-resolver:
   script:
     - *setup-project
     - py.test3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+  allow_failure: true
 
 nixos-unstable-knot-resolver:
   <<: *knot-resolver

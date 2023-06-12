@@ -24,7 +24,7 @@ stages:
   - deploy
 
 
-image: $CI_REGISTRY/packaging/apkg/test/debian-11-full
+image: $CI_REGISTRY/packaging/apkg/test/debian-12-full
 
 
 default:
@@ -43,6 +43,10 @@ default:
 
 .setup-py-develop: &setup-py-develop
   - python3 setup.py develop
+
+.setup-pip: &setup-pip
+  - mkdir -p ~/.config/pip
+  - echo -e "[global]\nbreak-system-packages = true" >> ~/.config/pip/pip.conf
 
 .setup-project: &setup-project
   - *setup-git
@@ -65,6 +69,7 @@ default:
     reports:
       junit: report.xml
   before_script:
+    - *setup-pip
     - python3 -m pip install dunamai
 
 .bird: &bird
@@ -194,6 +199,7 @@ self:
   <<: *test
   script:
     - *setup-git
+    - *setup-pip
     - *setup-py-reqs
     - *setup-py-develop
     - py.test-3 -v tests/self --junitxml=report.xml
@@ -221,6 +227,15 @@ debian-11-apkg:
   <<: *apkg
   script:
     - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
+
+debian-12-apkg:
+  image: $CI_REGISTRY/packaging/apkg/test/debian-12
+  <<: *apkg
+  script:
+    - apt update
+    - *setup-pip
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
@@ -313,6 +328,15 @@ debian-11-bird:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
+debian-12-bird:
+  image: $CI_REGISTRY/packaging/apkg/test/debian-12
+  <<: *bird
+  script:
+    - apt update
+    - *setup-pip
+    - *setup-project
+    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
+
 ubuntu-18.04-bird:
   image: $CI_REGISTRY/packaging/apkg/test/ubuntu-18.04
   <<: *bird
@@ -398,6 +422,15 @@ debian-11-libyang:
     - *setup-project
     - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
+debian-12-libyang:
+  image: $CI_REGISTRY/packaging/apkg/test/debian-12
+  <<: *libyang
+  script:
+    - apt update
+    - *setup-pip
+    - *setup-project
+    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
+
 ubuntu-18.04-libyang:
   image: $CI_REGISTRY/packaging/apkg/test/ubuntu-18.04
   <<: *libyang
@@ -447,13 +480,14 @@ suse-15-libyang:
 # integration tests: Knot DNS
 
 make-archive-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-11
+  image: $CI_REGISTRY/packaging/apkg/test/debian-12
   <<: *knot-dns-base
   artifacts:
     paths:
       - knot-dns/pkg/
   script:
     - apt update
+    - *setup-pip
     - *setup-project
     - git clone --recursive -b $KNOT_DNS_BRANCH https://gitlab.nic.cz/knot/knot-dns.git
     - cd knot-dns
@@ -470,6 +504,14 @@ debian-10-knot-dns:
 
 debian-11-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/test/debian-11
+  <<: *knot-dns
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+
+debian-12-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/test/debian-12
   <<: *knot-dns
   script:
     - apt update
@@ -562,6 +604,14 @@ debian-10-knot-resolver:
 
 debian-11-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/test/debian-11
+  <<: *knot-resolver
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+
+debian-12-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/test/debian-12
   <<: *knot-resolver
   script:
     - apt update

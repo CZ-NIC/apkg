@@ -38,3 +38,9 @@ RUN apt-get install -y -qqq \
     python3-packaging \
     python3-requests \
     python3-toml
+
+# add pipx/pip bin dir to $PATH
+RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+
+# workaround PEP668 breaking pip installs
+RUN mkdir -p ~/.config/pip && printf '[global]\nbreak-system-packages = true\n\n' >> ~/.config/pip/pip.conf

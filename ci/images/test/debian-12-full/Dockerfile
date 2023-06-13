@@ -49,3 +49,9 @@ RUN pip3 install --break-system-packages \
     mkdocs-material \
     mkdocs-macros-plugin \
     pymdown-extensions
+
+# add pipx/pip bin dir to $PATH
+RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+
+# workaround PEP668 breaking pip installs
+RUN mkdir -p ~/.config/pip && printf '[global]\nbreak-system-packages = true\n\n' >> ~/.config/pip/pip.conf

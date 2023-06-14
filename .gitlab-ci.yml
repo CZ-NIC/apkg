@@ -44,10 +44,6 @@ default:
 .setup-py-develop: &setup-py-develop
   - python3 setup.py develop
 
-.setup-pip: &setup-pip
-  - mkdir -p ~/.config/pip
-  - echo -e "[global]\nbreak-system-packages = true" >> ~/.config/pip/pip.conf
-
 .setup-project: &setup-project
   - *setup-git
   - *setup-py-develop
@@ -69,7 +65,6 @@ default:
     reports:
       junit: report.xml
   before_script:
-    - *setup-pip
     - python3 -m pip install dunamai
 
 .bird: &bird
@@ -199,7 +194,6 @@ self:
   <<: *test
   script:
     - *setup-git
-    - *setup-pip
     - *setup-py-reqs
     - *setup-py-develop
     - py.test-3 -v tests/self --junitxml=report.xml
@@ -235,7 +229,6 @@ debian-12-apkg:
   <<: *apkg
   script:
     - apt update
-    - *setup-pip
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
@@ -333,7 +326,6 @@ debian-12-bird:
   <<: *bird
   script:
     - apt update
-    - *setup-pip
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
@@ -427,7 +419,6 @@ debian-12-libyang:
   <<: *libyang
   script:
     - apt update
-    - *setup-pip
     - *setup-project
     - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
 
@@ -487,7 +478,6 @@ make-archive-knot-dns:
       - knot-dns/pkg/
   script:
     - apt update
-    - *setup-pip
     - *setup-project
     - git clone --recursive -b $KNOT_DNS_BRANCH https://gitlab.nic.cz/knot/knot-dns.git
     - cd knot-dns

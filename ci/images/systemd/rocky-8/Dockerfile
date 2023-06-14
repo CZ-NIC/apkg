@@ -1,4 +1,4 @@
-FROM docker.io/rockylinux/rockylinux:8
+FROM rockylinux:8
 
 ARG ARCH=amd64
 

@@ -50,8 +50,8 @@ This package contains apkg module for Python 3.
 
 %prep
 %autosetup -n %{name}-v%{version} -S git
-# blessings are in install_requires for PyPI, but they're optional for colors
-sed -i '/blessings/d' setup.cfg
+# blessed are in install_requires for PyPI, but they're optional for colors
+sed -i '/blessed/d' setup.cfg
 
 %build
 %py3_build

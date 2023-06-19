@@ -2,23 +2,29 @@ Source: apkg
 Section: python
 Priority: optional
 Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
-Uploaders:
- Jakub Ružička <jakub.ruzicka@nic.cz>,
 Build-Depends:
- debhelper,
+ debhelper (>= 12),
  dh-python,
- python3-all,
+ python3,
  python3-setuptools,
+ python3-pytest,
 Build-Depends-Indep:
  python3-blessings
+Standards-Version: 4.6.1
 Homepage: https://gitlab.nic.cz/packaging/apkg
 
 Package: python3-apkg
 Architecture: all
+Provides: apkg
 Depends:
  python3-blessings,
+ python3-bs4,
  python3-click,
  python3-jinja2,
  ${misc:Depends},
  ${python3:Depends},
 Description: cross-distro packaging automation tool
+ apkg is a minimalist cross-distro upstream packaging automation tool aimed at
+ producing high quality native packages for many different OS
+ distributions/packaging systems directly from upstream sources with minimum
+ overhead while respecting individual distro's standards and policies.

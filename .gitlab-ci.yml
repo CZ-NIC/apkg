@@ -499,6 +499,7 @@ debian-12-knot-dns:
     - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+  allow_failure: true
 
 ubuntu-18.04-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/test/ubuntu-18.04

@@ -1,42 +1,50 @@
-[tool.poetry]
-name = "apkg"
-version = "0.0.0"
-description = "cross-distro upstream packaging automation tool"
-authors = ["Jakub Ružička <jakub.ruzicka@nic.cz>"]
-readme = "README.md"
-homepage = "https://gitlab.nic.cz/packaging/apkg"
-repository = "https://gitlab.nic.cz/packaging/apkg"
-documentation = "https://apkg.readthedocs.io/"
-keywords = ["packaging", "devops", "CI", "cli"]
-packages = [
-    { include = "apkg" },
-]
-exclude = ["docs"]
-
-[tool.poetry.urls]
-Issues = "https://gitlab.nic.cz/packaging/apkg/-/issues"
-
-[tool.poetry.scripts]
-apkg = 'apkg.cli:main'
-
-[tool.poetry.dependencies]
-python = "^3.7"
-beautifulsoup4 = "^4.11.2"
-blessings = "^1.7"
-click = "^8.1.3"
-distro = "^1.8.0"
-jinja2 = "^3.1.2"
-packaging = "^23.0"
-requests = "^2.28.2"
-toml = "^0.10.2"
-
-[tool.poetry-dynamic-versioning]
-enable = true
-bump = true
-
-[tool.poetry-dynamic-versioning.substitution]
-files = ["apkg/__init__.py"]
-
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
-build-backend = "poetry_dynamic_versioning.backend"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "apkg"
+description = "cross-distro upstream packaging automation tool"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+keywords = ["packaging", "devops", "CI", "cli"]
+authors = [
+  { name = "Jakub Ružička", email = "jakub.ruzicka@nic.cz" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+    "beautifulsoup4",
+    "blessed",
+    "click",
+    "distro",
+    "jinja2",
+    "packaging",
+    "requests",
+    "toml",
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://gitlab.nic.cz/packaging/apkg/-/blob/master/README.md"
+Issues = "https://gitlab.nic.cz/packaging/apkg/-/issues"
+Source = "https://gitlab.nic.cz/packaging/apkg"
+
+[project.scripts]
+apkg = "apkg.cli:main"
+
+[tool.hatch.version]
+path = "apkg/__init__.py"
+
+[tool.setuptools.packages.find]
+include = ["apkg"]

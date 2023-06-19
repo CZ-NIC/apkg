@@ -1,5 +1,4 @@
-# setuptools read this version through setup.py.
-# poetry updates this from git using poetry-dynamic-versioning / dunamai
-#   also works during `python -m build`.
+# hatchling uses this version when using python3 -m build
+# setuptools read this version through setup.py
 # scripts/make-archive.sh updates this using dunamai for `apkg make-archive`
-__version__ = "0.0.0"
+__version__ = '0.4.0'

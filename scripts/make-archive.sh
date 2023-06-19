@@ -20,19 +20,17 @@ ARPATH=$OUTPATH/$ARCHIVE
 (git diff-index --quiet HEAD && git diff-index --cached --quiet HEAD) || \
     (echo "git index has uncommitted changes, can't commit version change :("; exit 1)
 
-# update version
-sed -i "s#0.0.0#$VERSION#" apkg/__init__.py
-sed -i "s#0.0.0#$VERSION#" pyproject.toml
-# TODO: more robust, possibly using toml editor
-#       lookg how poetry-dynamic-verisoning does it
-sed -i "s#enable = true#enable = false#" pyproject.toml
-git add apkg/__init__.py pyproject.toml
-if git commit -a -m "DROP: update __version__ = $VERSION"; then
-    # undo commit in the end
-    cleanup() {
-        git reset --hard HEAD^ >/dev/null
-    }
-    trap cleanup EXIT
+if [[ $VERSION = *"dev"* ]]; then
+    # update version
+    sed -i "s/\(__version__ *= *'\)[^']\+'/\1$VERSION'/" apkg/__init__.py 
+    git add apkg/__init__.py
+    if git commit -a -m "DROP: update __version__ = $VERSION"; then
+        # undo commit in the end
+        cleanup() {
+            git reset --hard HEAD^ >/dev/null
+        }
+        trap cleanup EXIT
+    fi
 fi
 
 mkdir -p "$OUTPATH"

@@ -5,6 +5,7 @@
 python3Packages.buildPythonApplication rec {
   pname = "apkg";
   version = "{{ version }}";
+  format = "pyproject";
 
   src = fetchFromGitLab {
     domain = "gitlab.nic.cz";
@@ -28,8 +29,7 @@ python3Packages.buildPythonApplication rec {
     toml             # config files
 
     # further deps?
-    poetry-core
-    poetry-dynamic-versioning
+    hatchling
   ];
 
   makeWrapperArgs = [ # deps for `srcpkg` operation for other distros; could be optional

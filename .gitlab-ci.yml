@@ -232,14 +232,6 @@ debian-12-apkg:
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
-ubuntu-18.04-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-18.04
-  <<: *apkg
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
 ubuntu-20.04-apkg:
   image: $CI_REGISTRY/packaging/apkg/test/ubuntu-20.04
   <<: *apkg

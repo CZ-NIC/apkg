@@ -219,7 +219,10 @@ def sort_by_name(objs, name_attr='name'):
 
     def sort_key(o):
         distro_, _, rls = getattr(o, name_attr).rpartition('-')
-        rlsv = version.parse(rls)
+        try:
+            rlsv = version.parse(rls)
+        except version.InvalidVersion:
+            rlsv = rls
         return distro_, common.SortReversor(rlsv)
 
     plain_objs = []

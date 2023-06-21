@@ -22,7 +22,7 @@ ARPATH=$OUTPATH/$ARCHIVE
 
 if [[ $VERSION = *"dev"* ]]; then
     # update version
-    sed -i "s/\(__version__ *= *'\)[^']\+'/\1$VERSION'/" apkg/__init__.py 
+    sed -i "s/\(__version__ *= *'\)[^']\+'/\1$VERSION'/" apkg/__init__.py
     git add apkg/__init__.py
     if git commit -a -m "DROP: update __version__ = $VERSION"; then
         # undo commit in the end
@@ -30,6 +30,10 @@ if [[ $VERSION = *"dev"* ]]; then
             git reset --hard HEAD^ >/dev/null
         }
         trap cleanup EXIT
+    else
+        echo "Failed to commit version changes :("
+        git reset --hard >/dev/null
+        exit 1
     fi
 fi
 

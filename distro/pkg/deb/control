@@ -4,12 +4,16 @@ Priority: optional
 Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
 Build-Depends:
  debhelper (>= 12),
+{%- if distro.match('debian <= 11', 'ubuntu <= 22.04') %}
  dh-python,
- python3,
  python3-setuptools,
+{%- else %}
+ dh-sequence-python3,
+ pybuild-plugin-pyproject,
+ python3-hatchling,
+{%- endif %}
+ python3,
  python3-pytest,
-Build-Depends-Indep:
- python3-blessings
 Standards-Version: 4.6.1
 Homepage: https://gitlab.nic.cz/packaging/apkg
 
@@ -17,10 +21,6 @@ Package: python3-apkg
 Architecture: all
 Provides: apkg
 Depends:
- python3-blessings,
- python3-bs4,
- python3-click,
- python3-jinja2,
  ${misc:Depends},
  ${python3:Depends},
 Description: cross-distro packaging automation tool

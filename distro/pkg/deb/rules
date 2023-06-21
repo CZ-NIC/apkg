@@ -3,5 +3,10 @@
 %:
 	dh $@ --with python3 --buildsystem=pybuild
 
+override_dh_auto_build:
+	# blessed is in install_requires for PyPI, but it's optional for colors
+	sed -i '/blessed/d' setup.cfg
+	dh_auto_build
+
 override_dh_auto_test:
 	python3 -m pytest

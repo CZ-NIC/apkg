@@ -1,5 +1,5 @@
 beautifulsoup4   # upstream version detection
-blessings        # terminal colors
+blessed          # terminal colors
 build            # apkg distribution
 cached_property  # @cached_property for python <= 3.7
 click            # nice CLI framework

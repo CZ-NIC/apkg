@@ -10,7 +10,7 @@ license=('GPL3')
 depends=('python-click'
          'python-distro'
          'python-toml'
-         'python-blessings')
+         'python-blessed')
 #checkdepends=('python-pytest')
 source=("${pkgname}-v${pkgver}.tar.gz")
 sha256sums=('SKIP')

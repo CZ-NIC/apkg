@@ -1,6 +1,6 @@
 class NullCallableString(str):
     """
-    This emulates blessings class for cases when blessings aren't available
+    This emulates blessed class for cases when blessed isn't available
     """
     def __new__(cls):
         return str.__new__(cls, '')
@@ -13,7 +13,7 @@ class NullCallableString(str):
 
 class PlainTerminal:
     """
-    Mock of blessings Terminal that ignores formatting
+    Mock of blessed Terminal that ignores formatting
     """
     nullstr = NullCallableString()
 
@@ -24,11 +24,14 @@ class PlainTerminal:
 
 COLOR_TERMINAL = False
 try:
-    import blessings
+    try:
+        import blessed
+    except Exception:
+        import blessings as blessed
     # this can throw _curses.error: setupterm: could not find terminal
     # better find out now
-    blessings.Terminal()
-    Terminal = blessings.Terminal
+    blessed.Terminal()
+    Terminal = blessed.Terminal
     COLOR_TERMINAL = True
 except Exception:
     Terminal = PlainTerminal

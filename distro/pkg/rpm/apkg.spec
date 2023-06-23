@@ -1,6 +1,6 @@
 Name:             apkg
 Version:          {{ version }}
-Release:          {{ release }}%{?dist}
+Release:          cznic.{{ release }}%{?dist}
 Summary:          cross-distro packaging automation tool
 
 License:          GPL 3.0
@@ -10,26 +10,11 @@ Source0:          %{name}-v%{version}.tar.gz
 BuildArch:        noarch
 
 BuildRequires:    git-core
-
-Requires:         python3-apkg == %{version}-%{release}
-
-%description
-Universal Free and Open Source minimalist cross-distro packaging automation
-tool aimed at producing high quality packages for many different OS
-distributions/packaging systems with minimum overhead.
-
-This package contains apkg CLI executable.
-
-
-%package -n python3-apkg
-Summary:          cross-distro packaging automation tool
-
 BuildRequires:    python3-devel
 BuildRequires:    python3-setuptools
 
 Requires:         git-core
 Requires:         rpm-build
-
 Requires:         python3-click
 Requires:         python3-distro
 %if "x%{?suse_version}" == "x"
@@ -40,18 +25,17 @@ Requires:         python3-Jinja2
 Requires:         python3-requests
 Requires:         python3-toml
 
-%description -n python3-apkg
+Provides:         python3-%{name} = %{version}-%{release}
+
+%description
 Universal Free and Open Source minimalist cross-distro packaging automation
 tool aimed at producing high quality packages for many different OS
 distributions/packaging systems with minimum overhead.
 
-This package contains apkg module for Python 3.
-
-
 %prep
 %autosetup -n %{name}-v%{version} -S git
-# blessings are in install_requires for PyPI, but they're optional for colors
-sed -i '/blessings/d' setup.cfg
+# blessed is in install_requires for PyPI, but it's optional for colors
+sed -i '/blessed/d' setup.cfg
 
 %build
 %py3_build
@@ -59,13 +43,10 @@ sed -i '/blessings/d' setup.cfg
 %install
 %py3_install
 
-%files -n apkg
-%doc README.md
-%{_bindir}/apkg
-
-%files -n python3-apkg
+%files
 %doc README.md
 %license COPYING
+%{_bindir}/apkg
 %{python3_sitelib}/apkg
 %{python3_sitelib}/*.egg-info
 

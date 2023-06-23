@@ -5,6 +5,7 @@
 python3Packages.buildPythonApplication rec {
   pname = "apkg";
   version = "{{ version }}";
+  format = "pyproject";
 
   src = fetchFromGitLab {
     domain = "gitlab.nic.cz";
@@ -17,7 +18,7 @@ python3Packages.buildPythonApplication rec {
   propagatedBuildInputs = with python3Packages; [
     # copy&pasted requirements.txt (almost exactly)
     beautifulsoup4   # upstream version detection
-    blessings        # terminal colors
+    blessed          # terminal colors
     build            # apkg distribution
     cached-property  # for python <= 3.7; but pip complains even with 3.8
     click            # nice CLI framework
@@ -28,8 +29,7 @@ python3Packages.buildPythonApplication rec {
     toml             # config files
 
     # further deps?
-    poetry-core
-    poetry-dynamic-versioning
+    hatchling
   ];
 
   makeWrapperArgs = [ # deps for `srcpkg` operation for other distros; could be optional

@@ -108,7 +108,7 @@ def test_apkg_srcpkg(repo_path, capsys):
 
 def test_apkg_build(repo_path, capsys):
     with cd(repo_path):
-        assert apkg('build') == 0
+        assert apkg('build', '-b') == 0
     out, _ = capsys.readouterr()
     # at least one package should be printed
     assert re.match(r"pkg/pkgs/\S+/apkg\S+", out)

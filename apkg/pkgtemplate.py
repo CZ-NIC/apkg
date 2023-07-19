@@ -251,8 +251,19 @@ def load_templates(path,
         template.distro_rules = adistro.name2rule(template.name)
         distro_tps.append(template)
 
+    alias_tps = sort_alias_templates(alias_tps, distro_aliases)
     distro_tps = adistro.sort_by_name(distro_tps)
-    alias_tps.sort(key=lambda x: x.name)
     pkgstyle_tps.sort(key=lambda x: x.name)
     templates = alias_tps + distro_tps + pkgstyle_tps
     return templates
+
+
+def sort_alias_templates(alias_templates, distro_aliases):
+    result = []
+    for da in distro_aliases:
+        for at in alias_templates:
+            if at.name == da:
+                result.append(at)
+                break
+    assert len(alias_templates) == len(result)
+    return result

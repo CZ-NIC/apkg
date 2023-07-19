@@ -6,8 +6,12 @@ make_archive_script = "distro/scripts/make-archive.sh"
 compat = 3
 
 [[distro.aliases]]
+name = "deb-zzz"
+distro = ["debian < 10", "ubuntu <= 18.04"]
+
+[[distro.aliases]]
 name = "deb-old"
-distro = ["debian <= 9", "ubuntu < 20.04"]
+distro = ["debian < 12", "ubuntu < 22.04"]
 
 [[distro.aliases]]
 name = "el-8"

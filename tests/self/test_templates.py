@@ -26,12 +26,16 @@ def proj(repo_path):
 
 
 @pytest.mark.parametrize("distro,name,style", [
-    ('debian-9', 'deb-old', 'deb'),
-    ('debian-10', 'debian-10', 'deb'),
-    ('debian-11', 'deb', 'deb'),
+    ('debian-9', 'deb-zzz', 'deb'),
+    ('debian-10', 'deb-old', 'deb'),
+    ('debian-11', 'deb-old', 'deb'),
+    ('debian-12', 'debian-12', 'deb'),
+    ('debian-13', 'deb', 'deb'),
     ('debian', 'deb', 'deb'),
-    ('ubuntu 20.04', 'ubuntu-20.04', 'deb'),
-    ('Ubuntu 16.04', 'deb-old', 'deb'),
+    ('Ubuntu 16.04', 'deb-zzz', 'deb'),
+    ('ubuntu 20.04', 'deb-old', 'deb'),
+    ('ubuntu 22.04', 'ubuntu-22.04', 'deb'),
+    ('ubuntu 24.04', 'ubuntu', 'deb'),
     ('ubuntu', 'ubuntu', 'deb'),
     ('rocky-8', 'el-8', 'rpm'),
     ('rocky-9', 'rocky', 'rpm'),
@@ -39,7 +43,7 @@ def proj(repo_path):
     ('centos-8', 'el-8', 'rpm'),
     ('centos-7', 'rpm', 'rpm'),
     ('CentOS', 'rpm', 'rpm'),
-    ('Fedora 36', 'rpm', 'rpm'),
+    ('Fedora 38', 'rpm', 'rpm'),
     ('opensuse', 'rpm', 'rpm'),
 ])
 def test_template_select(proj, distro, name, style):
@@ -102,11 +106,13 @@ RE_DEB_CH = r"""apkg-example-templates \(([^-]+)-([^)]+)\) unstable; .*
 
 
 @pytest.mark.parametrize('distro,extra', [
-    ('Debian 11', '* new Debian-based'),
-    ('debian-10', '* other Debian-based'),
-    ('debian 9', '* old Debian-based (distro alias)'),
-    ('Ubuntu 21.04', '* new Debian-based'),
-    ('ubuntu-16.04', '* old Debian-based (distro alias)'),
+    ('debian-12', '* new Debian-based'),
+    ('Debian 11', '* old Debian-based (distro alias)'),
+    ('debian-10', '* old Debian-based (distro alias)'),
+    ('debian 9', '* ancient Debian-based (distro alias)'),
+    ('Ubuntu 22.04', '* new Debian-based'),
+    ('Ubuntu 21.04', '* old Debian-based (distro alias)'),
+    ('ubuntu-16.04', '* ancient Debian-based (distro alias)'),
     ('LinuxMint', '* only on Linux Mint'),
 ])
 def test_template_render_deb(proj, capsys, distro, extra):

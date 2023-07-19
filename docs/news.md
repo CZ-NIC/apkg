@@ -1,5 +1,34 @@
 # apkg news
 
+## apkg 0.4.1
+
+Released 2023-07-19
+
+### Improvements
+
+- use modern python packaging through `pyproject.toml`
+    - use `hatchling` for build
+    - use PEP440 compatible versioning
+    - support legacy `setuptools` for backward compat
+    - improve archive and sdist generation
+    - improve Debian packaging (pyproject build on Debian 12 and newer)
+    - rename distro package to just `apkg`
+    - support both `blessed` (maintained fork) and `blessings` for colors
+- `arch` pkgstyle improvements:
+    - support Manjaro
+    - only install `--needed` distro packages
+    - require base-devel for `apkg system-setup`
+- `deb` pkgstyle improvements:
+    - support Pop_OS! (Ubuntu derivative)
+    - only require build-essential (not devscripts) on `apkg system-setup`
+    - sort `SUPPORTED_DISTROS` alphabetically
+
+### Fixes
+
+- fix distro alias ordering during template selection
+- handle exceptions introduced by upstream `packaging.version` changes
+
+
 ## apkg 0.4.0
 
 Released 2022-07-18

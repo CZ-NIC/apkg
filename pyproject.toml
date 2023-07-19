@@ -46,5 +46,17 @@ apkg = "apkg.cli:main"
 [tool.hatch.version]
 path = "apkg/__init__.py"
 
-[tool.setuptools.packages.find]
-include = ["apkg"]
+[tool.hatch.build.targets.sdist]
+exclude = [
+  ".gitignore",
+  "/ci",
+  "/distro",
+  "/doc-requirements.txt",
+  "/docs",
+  "/examples",
+  "/mkdocs.yml",
+  "/pylintrc",
+  "/pytest.ini",
+  "/tests",
+  "/tox.ini",
+]

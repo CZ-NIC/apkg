@@ -43,4 +43,5 @@ RUN apt-get install -y -qqq \
     python3-toml
 # python deps not available\too old in distro
 RUN pip3 install \
+    cached_property \
     build

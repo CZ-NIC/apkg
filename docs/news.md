@@ -1,5 +1,14 @@
 # apkg news
 
+## apkg 0.4.2
+
+Released 2023-08-08
+
+### Fixes
+
+- re-introduce `cached_property` requirement to support Python <= 3.7
+
+
 ## apkg 0.4.1
 
 Released 2023-07-19

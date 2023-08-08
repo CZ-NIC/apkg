@@ -1,13 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM opensuse/leap:15.4
+FROM opensuse/leap:15.5
 
 WORKDIR /root
 CMD ["/bin/bash"]
-
-# add Knot Resolver build deps repo
-RUN zypper addrepo -G -f https://download.opensuse.org/repositories/home:CZ-NIC:knot-resolver-build/openSUSE_Leap_15.4/home:CZ-NIC:knot-resolver-build.repo
-
 
 # packaging deps
 RUN zypper install -y curl git rpm-build python3-pip

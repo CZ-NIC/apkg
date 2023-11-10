@@ -35,5 +35,4 @@ RUN pip3 install \
     toml
 # testing deps
 RUN pip3 install \
-    pytest \
-    pytest-sugar
+    pytest

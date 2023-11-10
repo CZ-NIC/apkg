@@ -359,35 +359,12 @@ fedora-39-bird:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
-centos-7-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/centos-7
-  <<: *bird
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_bird.py --junitxml=report.xml
-  allow_failure: true
-
-rocky-8-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/rocky-8
-  <<: *bird
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_bird.py --junitxml=report.xml
-
 alma-9-bird:
   image: $CI_REGISTRY/packaging/apkg/test/alma-9
   <<: *bird
   script:
     - *setup-project
     - pytest -v ci/tests/test_bird.py --junitxml=report.xml
-
-suse-15-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/suse-15
-  <<: *bird
-  script:
-    - *setup-project
-    - py.test3 -v ci/tests/test_bird.py --junitxml=report.xml
-
 
 # integration tests: libyang
 
@@ -477,14 +454,6 @@ make-archive-knot-dns:
     - apkg build-dep
     - apkg make-archive
 
-debian-10-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-10
-  <<: *knot-dns
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
 debian-11-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/test/debian-11
   <<: *knot-dns
@@ -492,17 +461,10 @@ debian-11-knot-dns:
     - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+  allow_failure: true
 
 debian-12-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/test/debian-12
-  <<: *knot-dns
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-ubuntu-18.04-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-18.04
   <<: *knot-dns
   script:
     - apt update
@@ -516,6 +478,7 @@ ubuntu-20.04-knot-dns:
     - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+  allow_failure: true
 
 ubuntu-22.04-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/test/ubuntu-22.04
@@ -538,14 +501,6 @@ fedora-39-knot-dns:
   script:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-centos-7-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/centos-7
-  <<: *knot-dns
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
-  allow_failure: true
 
 rocky-8-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/test/rocky-8

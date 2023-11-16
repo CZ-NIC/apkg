@@ -3,4 +3,4 @@
 
 . ./vars.sh
 set -ex
-docker build --no-cache -t "$FULL_NAME" "$IMAGE"
+docker build --no-cache --progress plain -t "$FULL_NAME" "$IMAGE"

@@ -98,30 +98,46 @@ def get_srcpkg_nvr(path):
 
 
 def copy_pkg_files(src_path, dst_path):
-    # not part of pkgstyle interface yet but probably should be
+    """
+    copy package files at src_path to dst_path
+
+    Find a single *.changes file at src_path
+    and copy it and all files it references to dst_path.
+
+    Return a list of all files copied.
+
+    This isn't a part of pkgstyle interface as it's fairly specific to Debian
+    """
     changes = list(glob.iglob('%s/*.changes' % (src_path)))
     if not changes:
         raise ex.UnexpectedCommandOutput(
-            msg="no *.changes found after building package")
+            msg="no *.changes files found when copying package")
     if len(changes) > 1:
         raise ex.UnexpectedCommandOutput(
-            msg="multiple *.changes found after building package")
+            msg="multiple *.changes files found when copying package")
 
-    changes = changes[0]
+    changes_path = Path(changes[0])
+    changes_dst_path = dst_path / changes_path.name
     result = []
-    shutil.copyfile(changes, dst_path / changes.name)
-    result.append(dst_path / changes.name)
+    shutil.copyfile(changes_path, changes_dst_path)
+    result.append(changes_dst_path)
 
     parser = email.parser.HeaderParser()
-    parsed = parser.parsestr(changes.read_text())
+    parsed = parser.parsestr(changes_path.read_text())
     for entry in parsed['Files'].split('\n'):
-        if entry == '':
-            # First line is empty
+        if not entry:
+            # first line is empty
             continue
-        _, md5, size, section, priority, name = entry.split(' ', 5)
-        srcp = src_path / name
-        shutil.copyfile(srcp, dst_path / name)
-        result.append(dst_path / name)
+        items = re.split(r'\s+', entry.strip(), 5)
+        if len(items) < 5:
+            log.warning("Invalid *.changes line: %s", entry)
+            continue
+        name = items[4]
+        src = src_path / name
+        dst = dst_path / name
+        shutil.copyfile(src, dst)
+        result.append(dst)
+
     return result
 
 
@@ -168,9 +184,9 @@ def build_srcpkg(
     out_path.mkdir(parents=True)
     copied = copy_pkg_files(build_path, out_path)
     dscs = [path for path in copied if path.suffix == '.dsc']
-    if not dscs
+    if not dscs:
         raise ex.UnexpectedCommandOutput(
-            msg="no *.dsc found after moving built source package")
+            msg="no *.dsc files found after source package build")
     return dscs
 
 
@@ -216,10 +232,13 @@ def build_packages(
                 '-uc',  # unsigned .changes file.
                 )
 
-    pkgs = []
     log.info("copying built packages to result dir: %s", out_path)
-    return [path for path in copy_pkg_files(build_path, out_path)
-            if path.suffix = '.deb']
+    copied = copy_pkg_files(build_path, out_path)
+    pkgs = [path for path in copied if path.suffix in ['.deb', '.ddeb']]
+    if not pkgs:
+        raise ex.UnexpectedCommandOutput(
+            msg="no *.deb packages found after build")
+    return pkgs
 
 
 def install_distro_packages(

@@ -1,4 +1,5 @@
 variables:
+  GIT_STRATEGY: clone
   LC_ALL: C.UTF-8
   KNOT_DNS_BRANCH:
     value: "master"

@@ -1,5 +1,7 @@
 variables:
+  GIT_STRATEGY: clone
   LC_ALL: C.UTF-8
+  TEST_APKG: 1
   KNOT_DNS_BRANCH:
     value: "master"
     description: "Knot DNS branch to test"
@@ -37,6 +39,12 @@ default:
 .setup-git: &setup-git
   - git config --global user.name CI
   - git config --global user.email ci@nic
+  - git config --global safe.directory '*'
+
+.setup-git-user: &setup-git-user
+  - sudo -u test git config --global user.name CI
+  - sudo -u test git config --global user.email ci@nic
+  - sudo -u test git config --global safe.directory '*'
 
 .setup-py-reqs: &setup-py-reqs
   - pip3 install -r requirements.txt
@@ -48,6 +56,13 @@ default:
   - *setup-git
   - *setup-py-develop
 
+.setup-project-user: &setup-project-user
+  - *setup-git-user
+  - chgrp -R test .
+  - chmod -R g+rwX .
+  - find -type d -exec chmod g+s {} +
+  - git config core.sharedRepository group
+  - sudo -u test -i pip install --user --break-system-packages $PWD
 
 .test: &test
   stage: test
@@ -183,6 +198,7 @@ pylint:
 unit:
   <<: *test
   script:
+    - *setup-git
     - *setup-py-develop
     - py.test-3 -v --junitxml=report.xml
   artifacts:
@@ -282,6 +298,13 @@ suse-15-apkg:
   script:
     - *setup-project
     - py.test3 -v ci/tests/test_apkg.py --junitxml=report.xml
+
+arch-apkg:
+  image: $CI_REGISTRY/packaging/apkg/test/arch
+  <<: *apkg
+  script:
+    - *setup-project-user
+    - sudo -u test -i bash -c "cd $PWD; py.test -v ci/tests/test_apkg.py --junitxml=report.xml"
 
 nixos-unstable-apkg:
   <<: *apkg

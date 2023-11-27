@@ -1,7 +1,9 @@
 variables:
   GIT_STRATEGY: clone
   LC_ALL: C.UTF-8
-  TEST_APKG: 1
+  TEST_APKG:
+    value: 1
+    description: "Run apkg self tests"
   KNOT_DNS_BRANCH:
     value: "master"
     description: "Knot DNS branch to test"

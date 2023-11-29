@@ -10,4 +10,8 @@ build_oci_images:
 #    - "ln -s \"$(which podman)\" /usr/bin/docker"
     - "docker login -u \"${CI_REGISTRY_USER}\" -p \"${CI_REGISTRY_PASSWORD}\" \"${CI_REGISTRY}\""
     - cd ci/images && ./update_all.sh
+  except:
+    variables:
+      - $MINIMAL
+      - $INTEGRATION
   when: manual

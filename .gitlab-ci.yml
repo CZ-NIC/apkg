@@ -1,9 +1,6 @@
 variables:
   GIT_STRATEGY: clone
   LC_ALL: C.UTF-8
-  TEST_APKG:
-    value: 1
-    description: "Run apkg self tests"
   KNOT_DNS_BRANCH:
     value: "master"
     description: "Knot DNS branch to test"
@@ -71,10 +68,9 @@ default:
 
 .apkg: &apkg
   stage: apkg
-  only:
+  except:
     variables:
-      - $INTEGRATION
-      - $TEST_APKG
+      - $MINIMAL
   needs:
     - unit
   artifacts:
@@ -558,14 +554,6 @@ nixos-unstable-knot-dns:
 
 # integration tests: Knot Resolver
 
-debian-10-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-10
-  <<: *knot-resolver
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
 debian-11-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/test/debian-11
   <<: *knot-resolver
@@ -666,6 +654,7 @@ pages:
     - master
   except:
     variables:
+      - $MINIMAL
       - $INTEGRATION
       - $TEST_APKG
       - $TEST_BIRD

@@ -554,14 +554,6 @@ nixos-unstable-knot-dns:
 
 # integration tests: Knot Resolver
 
-debian-10-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-10
-  <<: *knot-resolver
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
 debian-11-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/test/debian-11
   <<: *knot-resolver

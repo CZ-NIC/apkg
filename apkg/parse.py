@@ -7,7 +7,7 @@ from apkg import ex
 # 1) name
 # 2) name-version separator ('-' or '_')
 # 3) version (including release)
-RE_NVR = r'^(.+?)([-_])(v?\d+(?:\.\d+)+(?:.+?)?)$'
+RE_NVR = r'^(.+?)([-_])(v?\d+(?:\.\d+)*(?:.+?)?)$'
 
 
 def split_archive_ext(archive_fn):

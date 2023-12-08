@@ -262,6 +262,14 @@ ubuntu-22.04-apkg:
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
+ubuntu-24.04-apkg:
+  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
+  <<: *apkg
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
+
 fedora-38-apkg:
   image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *apkg
@@ -366,6 +374,14 @@ ubuntu-22.04-bird:
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
 
+ubuntu-24.04-bird:
+  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
+  <<: *bird
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
+
 fedora-38-bird:
   image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *bird
@@ -431,6 +447,14 @@ ubuntu-20.04-libyang:
 
 ubuntu-22.04-libyang:
   image: $CI_REGISTRY/packaging/apkg/test/ubuntu-22.04
+  <<: *libyang
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
+
+ubuntu-24.04-libyang:
+  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
   <<: *libyang
   script:
     - apt update
@@ -509,6 +533,14 @@ ubuntu-22.04-knot-dns:
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
 
+ubuntu-24.04-knot-dns:
+  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
+  <<: *knot-dns
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+
 fedora-38-knot-dns:
   image: $CI_REGISTRY/packaging/apkg/test/fedora-38
   <<: *knot-dns
@@ -580,6 +612,14 @@ ubuntu-20.04-knot-resolver:
 
 ubuntu-22.04-knot-resolver:
   image: $CI_REGISTRY/packaging/apkg/test/ubuntu-22.04
+  <<: *knot-resolver
+  script:
+    - apt update
+    - *setup-project
+    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+
+ubuntu-24.04-knot-resolver:
+  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
   <<: *knot-resolver
   script:
     - apt update

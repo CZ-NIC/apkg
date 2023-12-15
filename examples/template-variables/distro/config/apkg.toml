@@ -1,0 +1,19 @@
+[project]
+name = "apkg-ex-template-variables"
+make_archive_script = "distro/scripts/make-archive.sh"
+
+[[template.variables]]
+python_module = "apkg.templatevars.debseries"
+
+[[template.variables]]
+local_module = "distro/vars/vars_example.py"
+
+[[template.variables]]
+local_module = "distro/vars/func_example.py"
+
+[[template.variables]]
+local_module = "distro/vars/override_example.py"
+
+
+[apkg]
+compat = 4

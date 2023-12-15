@@ -182,6 +182,23 @@ To template all files instead of using defaults, simply set to an empty list:
 plain_copy_files = []
 ```
 
+### template.variables
+
+A list of [custom template variables sources](templatevars.md#custom-template-variables).
+
+Example:
+
+```toml
+[[template.variables]]
+python_module = "apkg.templatevars.debseries"
+
+[[template.variables]]
+local_module = "distro/vars/custom_vars.py"
+```
+
+See [custom template variables](templatevars.md#custom-template-variables) for more info.
+
+
 ## [cache]
 
 Config section for [cache](cache.md) control.

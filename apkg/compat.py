@@ -10,10 +10,11 @@ log = getLogger(__name__)
 
 
 # current apkg compatibility level
-COMPAT_LEVEL = 3
+COMPAT_LEVEL = 4
 
 
 COMPAT_LEVEL_NOTES = {
+    4: ('0.5.0', """Forward compatible update, no action required."""),
     3: ('0.4.0', """Forward compatible update, no action required."""),
     2: ('0.3.0', """Forward compatible update for most users.
 

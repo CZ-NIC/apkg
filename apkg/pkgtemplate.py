@@ -1,7 +1,9 @@
 """
 module for handling and rendering apkg package templates
 """
+from collections import UserDict
 import glob
+import importlib.util
 import os
 
 from pathlib import Path
@@ -9,9 +11,11 @@ import jinja2
 import jinja2.ext
 from markupsafe import Markup
 
+from apkg import ex
 from apkg import adistro
 from apkg.log import getLogger
 from apkg import pkgstyle as _pkgstyle
+from apkg.pkgstyle import call_pkgstyle_fun
 from apkg.util import common
 import apkg.util.shutil35 as shutil
 
@@ -23,7 +27,7 @@ DUMMY_VARS = {
     'name': 'PKGNAME',
     'version': '0.VERSION',
     'release': '0.RELEASE',
-    'nvr': 'NVR',
+    'nvr': 'NAME-VERSION-RELEASE',
     'distro': 'DISTRO',
 }
 
@@ -67,7 +71,8 @@ class IncludeRawExtension(jinja2.ext.Extension):
 # pylint: disable=too-many-instance-attributes
 class PackageTemplate:
     def __init__(self, path, style=None, selection=TS_DISTRO,
-                 ignore_files=None, plain_copy_files=None):
+                 ignore_files=None, plain_copy_files=None,
+                 variables_sources=None):
         self.path = Path(path)
         self.style = style
         self.selection = selection
@@ -81,6 +86,7 @@ class PackageTemplate:
             self.plain_copy_files = DEFAULT_PLAIN_COPY_FILES
         else:
             self.plain_copy_files = plain_copy_files
+        self.variables_sources = variables_sources
 
         self.setup_env()
 
@@ -116,21 +122,45 @@ class PackageTemplate:
 
     def template_vars(self, tvars=None):
         """
-        get/update template variables from pkgstyle
+        get/update template variables
         """
+        vars_ = DUMMY_VARS.copy()
+
+        # package name from template
+        name = call_pkgstyle_fun(
+            self.pkgstyle, 'get_template_name', self.path)
+        vars_['name'] = name
         # static pkgstyle vars
-        result = getattr(self.pkgstyle, 'TEMPLATE_VARS', {})
+        vars_pkgstyle = getattr(self.pkgstyle, 'TEMPLATE_VARS', {})
+        vars_.update(vars_pkgstyle)
         # dynamic pkgstyle vars resolved at render time
-        tvars_dyn = getattr(self.pkgstyle, 'TEMPLATE_VARS_DYNAMIC', {})
-        if tvars_dyn:
-            _vars = {}
-            for name, fun in tvars_dyn.items():
-                _vars[name] = fun()
-            result.update(_vars)
-        # custom supplied vars
+        vars_dyn = getattr(self.pkgstyle, 'TEMPLATE_VARS_DYNAMIC', {})
+        if vars_dyn:
+            for name, fun in vars_dyn.items():
+                vars_[name] = fun()
+        # supplied vars
         if tvars:
-            result.update(tvars)
-        return result
+            vars_.update(tvars)
+        # custom variables
+        if self.variables_sources:
+            vars_ = self.custom_vars(vars_)
+
+        return vars_
+
+    def custom_vars(self, tvars):
+        """
+        get/update template variables from custom sources
+        """
+        for vsrc in self.variables_sources:
+            vsrc.validate()
+            log.info("custom variables from %s: %s",
+                     vsrc.src_attr, vsrc.src_val)
+            custom_tvars = vsrc.get_variables(tvars)
+            log.verbose("%s custom variables: %s",
+                        len(custom_tvars), custom_tvars)
+            tvars.update(custom_tvars)
+
+        return tvars
 
     def render(self, out_path, tvars):
         """
@@ -191,7 +221,8 @@ class PackageTemplate:
 def load_templates(path,
                    distro_aliases=None,
                    ignore_files=None,
-                   plain_copy_files=None):
+                   plain_copy_files=None,
+                   variables_sources=None):
     """
     load package templates sorted by evaluation priority
 
@@ -201,6 +232,8 @@ def load_templates(path,
         ignore_files - list of file patterns to ignore (optional)
         plain_copy_files - list of file patterns to copy
                            without templating (optional)
+        variables_sources - list of sources to define
+                            template variables (optional)
 
     Returns:
         list of PackageTemplates in order they should
@@ -224,7 +257,8 @@ def load_templates(path,
         template = PackageTemplate(
             entry_path,
             ignore_files=ignore_files,
-            plain_copy_files=plain_copy_files)
+            plain_copy_files=plain_copy_files,
+            variables_sources=variables_sources)
 
         if not template.pkgstyle:
             log.warning("ignoring unknown package style in %s", entry_path)
@@ -267,3 +301,87 @@ def sort_alias_templates(alias_templates, distro_aliases):
                 break
     assert len(alias_templates) == len(result)
     return result
+
+
+class VariablesSource(UserDict):
+    VARS_SOURCES = ['local_module', 'python_module']
+
+    def __init__(self, **kwargs):
+        super().__init__(kwargs)
+
+    @property
+    def local_module(self):
+        return self.get('local_module', None)
+
+    @property
+    def python_module(self):
+        return self.get('python_module', None)
+
+    @property
+    def src_attr(self):
+        for src in self.VARS_SOURCES:
+            if src in self.data:
+                return src
+        return None
+
+    @property
+    def src_val(self):
+        return self.data.get(self.src_attr, None)
+
+    def validate(self):
+        src_attrs = [src for src in self.VARS_SOURCES if self.get(src)]
+        n_src = len(src_attrs)
+        if n_src < 1:
+            raise ex.InvalidVariablesSource(
+                src="no source specified: %s" % self)
+        if n_src > 1:
+            raise ex.InvalidVariablesSource(
+                src="multiple conflicting sources: %s" % self)
+        return True
+
+    def exists(self):
+        if self.src_attr == 'local_module':
+            return Path(self.local_module).exists()
+        elif self.src_attr == 'python_module':
+            try:
+                spec = importlib.util.find_spec(self.python_module)
+                return spec is not None
+            except ModuleNotFoundError:
+                return False
+        else:
+            return False
+
+    def get_variables(self, tvars):
+        if self.local_module:
+            if not os.path.exists(self.local_module):
+                raise ex.InvalidVariablesSource(
+                    src='local_module not found: %s' % (self.local_module))
+
+            spec = importlib.util.spec_from_file_location(
+                "custom_variables", self.local_module)
+
+            custom_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(custom_module)
+        elif self.python_module:
+            try:
+                custom_module = importlib.import_module(self.python_module)
+            except ModuleNotFoundError:
+                raise ex.InvalidVariablesSource(
+                    src='python_module not found: %s' % self.python_module)
+
+        custom_fun = getattr(custom_module, 'get_variables', None)
+        if not custom_fun:
+            raise ex.InvalidVariablesSource(
+                src='%s missing required get_variables function: %s'
+                % (self.src_val, custom_module))
+
+        custom_tvars = custom_fun(tvars)
+        return custom_tvars
+
+
+def parse_variables_sources(config):
+    sources = []
+    for vcfg in config:
+        vsrc = VariablesSource(**vcfg)
+        sources.append(vsrc)
+    return sources

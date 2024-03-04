@@ -75,19 +75,27 @@ def install_build_deps(  # pylint: disable=unused-argument
 def build_srcpkg(
         build_path,
         out_path,
-        archive_paths,
+        archive_info,
         template,
         tvars):
-    archive_path = archive_paths[0]
+    archive_path = archive_info['archive_path']
     tvars = tvars or {}
     tvars['src_hash'] = hash_file(archive_path).hexdigest()
-    out_archive = out_path / archive_path.name
     log.info("applying templates")
     template.render(build_path, tvars=tvars)
+
     log.info("copying everything to: %s", out_path)
     shutil.copytree(build_path, out_path)
-    shutil.copyfile(archive_path, out_archive)
-    return [out_path / 'top-level.nix', out_path / 'default.nix', out_archive]
+    archive_paths = [archive_info["archive"]]
+    archive_paths.extend(archive_info.get("components", {}).values())
+    out_archives = []
+    for src_path in archive_paths:
+        dst_path = out_path / src_path.name
+        shutil.copyfile(src_path, dst_path)
+        out_archives.append(dst_path)
+
+    return [out_path / 'top-level.nix', out_path / 'default.nix',
+            *out_archives]
     # TODO: maybe list everything in the directory?
     #       (e.g. local patches might be there)
 

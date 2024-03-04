@@ -48,19 +48,25 @@ def get_srcpkg_nvr(path):
 def build_srcpkg(
         build_path,
         out_path,
-        archive_paths,
+        archive_info,
         template,
         tvars):
-    archive_path = archive_paths[0]
+    archive_path = archive_info['archive']
     in_pkgbuild = build_path / 'PKGBUILD'
     out_pkgbuild = out_path / 'PKGBUILD'
     out_archive = out_path / archive_path.name
     log.info("building arch source package: %s", in_pkgbuild)
     template.render(build_path, tvars or {})
     out_path.mkdir(parents=True)
+
     log.info("copying PKGBUILD and archive to: %s", out_path)
     shutil.copyfile(in_pkgbuild, out_pkgbuild)
-    shutil.copyfile(archive_path, out_archive)
+    archive_paths = [archive_info["archive"]]
+    archive_paths.extend(archive_info.get("components", {}).values())
+    for src_path in archive_paths:
+        dst_path = out_path / src_path.name
+        shutil.copyfile(src_path, dst_path)
+
     return [out_pkgbuild, out_archive]
 
 

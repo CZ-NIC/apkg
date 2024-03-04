@@ -61,28 +61,40 @@ def make_archive(
 
     log.info("running make_archive_script: %s", script)
     out = run(script, quiet=True)
-    # last script stdout line is expected to be path to resulting archive
-    _, _, last_line = out.rpartition('\n')
-    in_archive_path = Path(last_line)
-    if not in_archive_path.exists():
-        msg = ("make_archive_script finished successfully but the archive\n"
-               "(indicated by last script stdout line) doesn't exist:\n\n"
-               "%s" % in_archive_path)
-        raise ex.UnexpectedCommandOutput(msg=msg)
-    log.info("archive created: %s", in_archive_path)
+    # first script stdout line is expected to be path to resulting archive
+    lines = out.split('\n')
+    in_archive_path = Path(lines[0])
 
     if result_dir:
         ar_base_path = Path(result_dir)
     else:
         ar_base_path = proj.path.dev_archive
-    archive_fn = in_archive_path.name
-    archive_path = ar_base_path / archive_fn
-    if archive_path != in_archive_path:
-        log.info("copying archive to: %s", archive_path)
-        ar_base_path.mkdir(parents=True, exist_ok=True)
-        shutil.copy(in_archive_path, archive_path)
-    log.success("made archive: %s", archive_path)
-    results = [archive_path]
+
+    results = []
+    for line in out.split('\n'):
+        if line.startswith('#'):
+            continue
+
+        in_archive_path = Path(line)
+        if not in_archive_path.exists():
+            msg = ("make_archive_script finished successfully but\n"
+                   "the archive listed doesn't exist:\n\n"
+                   "%s" % in_archive_path)
+            raise ex.UnexpectedCommandOutput(msg=msg)
+
+        log.info("archive created: %s", in_archive_path)
+
+        archive_fn = in_archive_path.name
+        archive_path = ar_base_path / archive_fn
+
+        if archive_path != in_archive_path:
+            log.info("copying archive to: %s", archive_path)
+            ar_base_path.mkdir(parents=True, exist_ok=True)
+            shutil.copy(in_archive_path, archive_path)
+
+        log.success("made archive: %s", archive_path)
+        results.append(archive_path)
+
     if use_cache:
         proj.cache.update(cache_key, results)
     return results

@@ -102,7 +102,7 @@ def get_srcpkg_nvr(path):
 def build_srcpkg(
         build_path,
         out_path,
-        archive_paths,
+        archive_info,
         template,
         tvars):
     """
@@ -123,6 +123,8 @@ def build_srcpkg(
     spec_src_path.rename(spec_path)
 
     log.info("copying archive files into SOURCES: %s", rpmbuild_src)
+    archive_paths = [archive_info["archive"]]
+    archive_paths.extend(archive_info.get("components", {}).values())
     for src_path in archive_paths:
         dst_path = rpmbuild_src / src_path.name
         shutil.copyfile(src_path, dst_path)

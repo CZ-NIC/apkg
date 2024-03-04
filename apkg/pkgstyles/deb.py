@@ -145,13 +145,13 @@ def copy_pkg_files(src_path, dst_path):
 def build_srcpkg(
         build_path,
         out_path,
-        archive_paths,
+        archive_info,
         template,
         tvars):
     """
     build debian source package
     """
-    archive_path = archive_paths[0]
+    archive_path = archive_info["archive"]
     nv, _ = parse.split_archive_ext(archive_path.name)
     log.info("building deb source package: %s", nv)
     log.info("unpacking archive: %s", archive_path)
@@ -160,15 +160,45 @@ def build_srcpkg(
     if not source_path or not source_path.exists():
         msg = "archive unpack didn't result in expected dir: %s" % source_path
         raise ex.UnexpectedCommandOutput(msg=msg)
-    # render template
-    debian_path = source_path / 'debian'
-    template.render(debian_path, tvars=tvars)
+
     # copy archive with debian .orig name
     _, _, _, ext = parse.split_archive_fn(archive_path.name)
     debian_ar = "%s_%s.orig%s" % (tvars['name'], tvars['version'], ext)
     debian_ar_path = build_path / debian_ar
     log.info("copying archive into source package: %s", debian_ar_path)
     shutil.copyfile(archive_path, debian_ar_path)
+
+    # extract components if any
+    components = archive_info.get("components", {})
+    for component, component_archive in components.items():
+        log.info("unpacking component archive: %s", component)
+
+        component_path = source_path / component
+        # dpkg-source removes <component>/ and extracts the archive there
+        if component_path.exists():
+            shutil.rmtree(component_path)
+
+        component_path.mkdir(exist_ok=True)
+        # don't use unpack_archive from util.archive, component archives are
+        # actually expected to be flat
+        shutil.unpack_archive(component_archive, component_path)
+
+        # copy archive with debian .orig-<component> name
+        _, ext = parse.split_archive_ext(component_archive.name)
+
+        debian_ar = "%s_%s.orig-%s%s" % (tvars['name'], tvars['version'],
+                                         component, ext)
+        debian_ar_path = build_path / debian_ar
+        log.info("copying component archive into source package: %s",
+                 debian_ar_path)
+        shutil.copyfile(component_archive, debian_ar_path)
+
+    # render template, dpkg-source removes the directory from upstream archive
+    # first
+    debian_path = source_path / 'debian'
+    if debian_path.exists():
+        shutil.rmtree(debian_path)
+    template.render(debian_path, tvars=tvars)
 
     log.info("building deb source-only package...")
     with cd(source_path):

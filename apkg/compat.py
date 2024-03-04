@@ -10,10 +10,16 @@ log = getLogger(__name__)
 
 
 # current apkg compatibility level
-COMPAT_LEVEL = 5
+COMPAT_LEVEL = 6
 
 
 COMPAT_LEVEL_NOTES = {
+    6: ('0.x.0', """Forward incompatible update.
+
+## New make-archive interface
+
+stdout output of make-archive scripts is now parsed by apkg in full,
+any unrelated messages should go to stderr"""),
     5: ('0.6.0', """Forward compatible update for most users.
 
 ## RPM macros in .spec templates are now evaluated using rpmspec if available

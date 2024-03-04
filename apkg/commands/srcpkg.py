@@ -11,7 +11,6 @@ from apkg.commands.make_archive import make_archive
 from apkg.log import getLogger
 from apkg.pkgstyle import call_pkgstyle_fun
 from apkg.project import Project
-from apkg.util.archive import get_archive_version
 import apkg.util.shutil35 as shutil
 
 
@@ -118,15 +117,17 @@ def srcpkg(
                 cache=cache,
                 project=proj)
 
-    common.ensure_input_files(infiles)
-    ar_path = infiles[0]
-    version = get_archive_version(ar_path)
+    ar_path = infiles["archive"]
+    version = infiles["version"]
+
+    paths = [ar_path] + list(infiles.get("components", {}).values())
+    common.ensure_input_files(paths)
 
     if use_cache:
         cache_key = 'srcpkg/%s/%s/%s-%s/' % (
             srcpkg_type, distro.idver, version, release)
         cache_key += '%s:%s' % (
-            path_checksum(*infiles), file_checksum(*infiles))
+            path_checksum(*paths), file_checksum(*paths))
         if not upstream:
             # dev srcpkg uses project source as input
             cache_key += ':%s' % proj.checksum
@@ -201,7 +202,7 @@ def srcpkg(
     results = template.pkgstyle.build_srcpkg(
         build_path,
         out_path,
-        archive_paths=infiles,
+        archive_info=infiles,
         template=template,
         tvars=tvars)
 

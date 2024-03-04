@@ -86,7 +86,7 @@ def test_apkg_get_archive_manual(repo_path, capsys):
         assert apkg('get-archive', '--version', VERSION) == 0
     out, _ = capsys.readouterr()
     # first stdout line should be downloaded archive
-    assert out.startswith("pkg/archives/upstream/apkg-v%s.tar.gz" % VERSION)
+    assert out.startswith("archive pkg/archives/upstream/apkg-v%s.tar.gz" % VERSION)
 
 
 def test_apkg_get_archive_auto(repo_path, capsys):
@@ -95,7 +95,7 @@ def test_apkg_get_archive_auto(repo_path, capsys):
         assert apkg('get-archive') == 0
     out, _ = capsys.readouterr()
     # first stdout line should be downloaded archive
-    assert out.startswith("pkg/archives/upstream/apkg-")
+    assert out.startswith("archive pkg/archives/upstream/apkg-")
 
 
 def test_apkg_srcpkg(repo_path, capsys):

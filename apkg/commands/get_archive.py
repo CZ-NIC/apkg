@@ -26,7 +26,7 @@ def cli_get_archive(*args, **kwargs):
     download upstream archive for current project
     """
     results = get_archive(*args, **kwargs)
-    common.print_results(results)
+    common.print_archive_spec(results)
     return results
 
 
@@ -61,7 +61,7 @@ def get_archive(
         cache_key = 'archive/upstream/%s' % archive_url
         cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
-            log.success("reuse cached archive: %s", cached[0])
+            log.success("reuse cached archive: %s", cached['archive'])
             return cached
 
     log.info('downloading archive: %s', archive_url)
@@ -94,7 +94,7 @@ def get_archive(
     ar_base_path.mkdir(parents=True, exist_ok=True)
     archive_path.open('wb').write(r.content)
     log.success('downloaded archive: %s', archive_path)
-    results = [archive_path]
+    results = {'archive': archive_path}
 
     signature_url = proj.upstream_signature_url(version)
     if signature_url:
@@ -109,7 +109,7 @@ def get_archive(
         log.info('saving signature to: %s', signature_path)
         signature_path.open('wb').write(r.content)
         log.success('downloaded signature: %s', signature_path)
-        results.append(signature_path)
+        results['signatures'] = {'': signature_path}
     else:
         log.verbose("project.upstream_signature_url not set"
                     " - skipping signature download")

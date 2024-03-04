@@ -7,11 +7,25 @@ from apkg.cli import cli
 from apkg.util import common
 from apkg.log import getLogger
 from apkg.project import Project
+from apkg.util.archive import get_archive_version
 from apkg.util.run import run
 import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)
+
+def copy_archive(source, destdir, name=None):
+    if name is None:
+        name = source.name
+
+    dest = destdir / name
+
+    if source != dest:
+        log.info("copying archive to: %s", dest)
+        destdir.mkdir(parents=True, exist_ok=True)
+        shutil.copy(source, dest)
+
+    return dest
 
 
 @cli.command(name='make-archive', aliases=['ar'])
@@ -25,7 +39,7 @@ def cli_make_archive(*args, **kwargs):
     create dev archive from current project state
     """
     results = make_archive(*args, **kwargs)
-    common.print_results(results)
+    common.print_archive_spec(results)
     return results
 
 
@@ -47,7 +61,7 @@ def make_archive(
         cache_key = 'archive/dev/%s' % proj.checksum
         cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
-            log.success("reuse cached archive: %s", cached[0])
+            log.success("reuse cached archive: %s", cached['archive'])
             return cached
 
     script = proj.config_get('project.make_archive_script')
@@ -61,28 +75,39 @@ def make_archive(
 
     log.info("running make_archive_script: %s", script)
     out = run(script, quiet=True)
-    # last script stdout line is expected to be path to resulting archive
-    _, _, last_line = out.rpartition('\n')
-    in_archive_path = Path(last_line)
-    if not in_archive_path.exists():
-        msg = ("make_archive_script finished successfully but the archive\n"
-               "(indicated by last script stdout line) doesn't exist:\n\n"
-               "%s" % in_archive_path)
-        raise ex.UnexpectedCommandOutput(msg=msg)
-    log.info("archive created: %s", in_archive_path)
+
+    lines = out.split('\n')
 
     if result_dir:
         ar_base_path = Path(result_dir)
     else:
         ar_base_path = proj.path.dev_archive
-    archive_fn = in_archive_path.name
-    archive_path = ar_base_path / archive_fn
-    if archive_path != in_archive_path:
-        log.info("copying archive to: %s", archive_path)
-        ar_base_path.mkdir(parents=True, exist_ok=True)
-        shutil.copy(in_archive_path, archive_path)
-    log.success("made archive: %s", archive_path)
-    results = [archive_path]
+
+    if proj.compat_level < 5:
+        # Use old undocumented behaviour when the last like of output was used
+        in_archive_path = Path(lines[-1])
+        archive_path = copy_archive(in_archive_path, ar_base_path)
+        results = {'archive': archive_path}
+        log.success("made archive: %s", archive_path)
+    else:
+        try:
+            results = common.parse_archive_spec(lines)
+        except ex.ParsingFailed as e:
+            raise ex.UnexpectedCommandOutput(
+                "Failed to parse make-archive output: %s" % e.msg
+                ).with_traceback(e.__traceback__)
+
+        if 'archive' not in results:
+            msg = "make-archive never provided an archive file"
+            raise ex.UnexpectedCommandOutput(msg=msg)
+
+        results = common.copy_paths(results, ar_base_path)
+
+    if "version" not in results:
+        results["version"] = get_archive_version(results["archive"])
+        log.info("autodetected version %r from archive %s",
+                 results["version"], results["archive"])
+
     if use_cache:
         proj.cache.update(cache_key, results)
     return results

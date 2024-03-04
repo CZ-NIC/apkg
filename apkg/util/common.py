@@ -68,6 +68,141 @@ def print_results(results):
         print(str(results))
 
 
+def print_archive_spec(inspec):
+    spec = inspec.copy()
+
+    archive = spec.pop('archive')
+    print('archive', archive)
+
+    version = spec.pop('version', None)
+    if version is not None:
+        print('version', version)
+
+    components = spec.pop('components', {})
+    for name, path in components.items():
+        print('component:%s' % name, path)
+
+    signatures = spec.pop('signatures', {})
+    for name, path in signatures.items():
+        if name:
+            print('signature:%s' % name, path)
+        else:
+            print('signature', path)
+
+    assert not spec, "spec contains items we won't be able to parse: %s" % spec
+
+
+def parse_archive_spec(lines, inputs=None):
+    """
+    utility to parse apkg input files and input file lists
+    into a source package build input specification
+    """
+    if not lines:
+        lines = []
+    lines = [line.strip() for line in lines if not line.startswith('#')]
+
+    if not inputs:
+        inputs = []
+    if len([f for f in inputs if f == '-']) > 1:
+        msg = "requested to read stdin multiple times"
+        raise ex.ParsingFailed(msg=msg)
+
+    def all_lines():
+        yield from lines
+        for fl in inputs:
+            if fl == '-':
+                f = sys.stdin
+            else:
+                f = open(fl, 'r', encoding='utf-8')
+
+            yield from (ln.strip() for ln in f.readlines()
+                        if not ln.startswith('#'))
+
+    result = {}
+    for line in all_lines():
+        if ' ' not in line:
+            msg = ("specification could not be parsed (type missing) "
+                   "on line:\n\n"
+                   "%s" % line)
+            raise ex.ParsingFailed(msg=msg)
+
+        typ, argument, *rest = line.split()
+        if rest:
+            msg = ("specification could not be parsed on line:\n\n"
+                    "%s" % line)
+            raise ex.ParsingFailed(msg=msg)
+
+        if typ == "version":
+            if "version" in result:
+                msg = ("more than one 'version' specified\n")
+                raise ex.ParsingFailed(msg=msg)
+
+            result["version"] = argument
+            log.info("detected version: %s", argument)
+            continue
+
+        in_archive_path = Path(argument)
+        if not in_archive_path.exists():
+            msg = ("the file listed doesn't exist:\n\n"
+                   "%s" % in_archive_path)
+            raise ex.ParsingFailed(msg=msg)
+
+        tag, *extra = typ.split(':')
+
+        if tag == "archive":
+            if extra:
+                msg = ("unexpected tag(s) passed to the 'archive' type: "
+                       "%s" % extra)
+                raise ex.ParsingFailed(msg=msg)
+            if "archive" in result:
+                msg = ("more than one 'archive' provided\n")
+                raise ex.ParsingFailed(msg=msg)
+
+            result["archive"] = in_archive_path
+            log.info("detected archive: %s", in_archive_path)
+        elif tag == "signature":
+            component = ''
+            if extra:
+                component = extra[0]
+
+            signatures = result.setdefault("signatures", {})
+
+            if component in signatures:
+                if component:
+                    msg = ("duplicate signature provided for component "
+                           "%s" % component)
+                else:
+                    msg = "duplicate archive signature provided"
+                raise ex.ParsingFailed(msg=msg)
+
+            signatures[component] = in_archive_path
+            if component:
+                log.success("detected signature for component %r",
+                               component)
+            else:
+                log.success("detected archive signature")
+        elif tag == "component":
+            if extra:
+                component_name = extra[0]
+            else:
+                component_name, _ = in_archive_path.name.split('.', 1)
+
+            components = result.setdefault("components", {})
+
+            if component_name in components:
+                msg = ("duplicate component provided: %s" % component_name)
+                raise ex.ParsingFailed(msg=msg)
+
+            components[component_name] = in_archive_path
+            log.info("detected component %r: %s", component_name, in_archive_path)
+        else:
+            msg = ("unrecognised type on line:\n\n"
+                   "%s" % line)
+            raise ex.ParsingFailed(msg=msg)
+
+    return result
+
+
 def parse_input_files(files, file_lists):
     """
     utility to parse apkg input files and input file lists

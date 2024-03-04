@@ -6,11 +6,11 @@ from apkg import adistro
 from apkg.cache import file_checksum, path_checksum
 from apkg import ex
 from apkg.util import common
+from apkg.util.archive import get_archive_version
 from apkg.commands.get_archive import get_archive
 from apkg.commands.make_archive import make_archive
 from apkg.log import getLogger
 from apkg.project import Project
-from apkg.util.archive import get_archive_version
 import apkg.util.shutil35 as shutil
 
 
@@ -38,8 +38,8 @@ log = getLogger(__name__)
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/disable cache")
 @click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+              help=("specify text file detailing package inputs, "
+                    "use '-' to read from stdin"))
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_srcpkg(*args, **kwargs):
@@ -79,6 +79,10 @@ def srcpkg(
             raise ex.InvalidInput(
                 fail="--archive and --version options are mutually exclusive")
 
+    if input_files and input_file_lists:
+        fail = "--file-list cannot be passed alongside a list of input files"
+        raise ex.InvalidInput(fail=fail)
+
     proj = project or Project()
     distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
@@ -98,34 +102,44 @@ def srcpkg(
     if not release:
         release = '1'
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    if input_files:
+        infiles = common.parse_input_files(input_files, input_file_lists)
+        spec = {'archive': infiles[0]}
+    else:
+        spec = common.parse_archive_spec(input_files, input_file_lists)
 
-    if not archive:
+    if archive:
+        if 'archive' not in spec:
+            raise ex.InvalidInput(fail="--archive passed but no archive given")
+        if 'version' not in spec:
+            spec['version'] = get_archive_version(spec['archive'])
+    else:
         # archive not specified - use make_archive or get_archive
-        if infiles:
-            instr = ", ".join([str(i) for i in infiles])
+        if spec:
             raise ex.InvalidInput(
-                fail="unexpected input file(s): %s" % instr)
+                fail="unexpected input specification: %s" % spec)
 
         if upstream:
-            infiles = get_archive(
+            spec = get_archive(
                 version=version,
                 cache=cache,
                 project=proj)
         else:
-            infiles = make_archive(
+            spec = make_archive(
                 cache=cache,
                 project=proj)
 
-    common.ensure_input_files(infiles)
-    ar_path = infiles[0]
-    version = get_archive_version(ar_path)
+    ar_path = spec["archive"]
+    version = spec["version"]
+
+    paths = [ar_path] + list(spec.get("components", {}).values())
+    common.ensure_input_files(paths)
 
     if use_cache:
         cache_key = 'srcpkg/%s/%s/%s-%s/' % (
             srcpkg_type, distro.idver, version, release)
         cache_key += '%s:%s' % (
-            path_checksum(*infiles), file_checksum(*infiles))
+            path_checksum(*paths), file_checksum(*paths))
         if not upstream:
             # dev srcpkg uses project source as input
             cache_key += ':%s' % proj.checksum
@@ -193,7 +207,7 @@ def srcpkg(
     results = template.pkgstyle.build_srcpkg(
         build_path,
         out_path,
-        archive_paths=infiles,
+        archive_info=spec,
         template=template,
         tvars=tvars)
 

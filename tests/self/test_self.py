@@ -21,8 +21,12 @@ def repo_path(tmpdir_factory):
     repo_path = test.init_testing_repo(APKG_BASE_DIR, str(tmpdir))
     with cd(repo_path):
         # commit all changes for the purposes of testing, if any
-        git('commit', '-a', '-m', 'TEST: uncommited changes from source',
-            check=False)
+        env = os.environ.copy()
+        env['GIT_COMMITTER_NAME'] = 'Dummy'
+        env['GIT_COMMITTER_EMAIL'] = 'dummy@example.com'
+        git('commit', '--author', 'Dummy <dummy@example.com>',
+            '-a', '-m', 'TEST: uncommited changes from source',
+            check=False, env=env)
     return repo_path
 
 

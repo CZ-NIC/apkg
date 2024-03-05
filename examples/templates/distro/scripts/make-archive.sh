@@ -12,7 +12,7 @@ ARPATH=$OUTPATH/$ARCHIVE
 mkdir -p "$OUTPATH"
 mkdir -p "$NAMEVER"
 cp README.md "$NAMEVER/"
-tar -czvf "$ARPATH" "$NAMEVER"
+tar -czf "$ARPATH" "$NAMEVER"
 rm -rf  "$NAMEVER"
 
 # apkg expects stdout to list archive files

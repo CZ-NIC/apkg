@@ -24,7 +24,9 @@ if [[ $VERSION = *"dev"* ]]; then
     # update version
     sed -i "s/\(__version__ *= *'\)[^']\+'/\1$VERSION'/" apkg/__init__.py
     git add apkg/__init__.py
-    if git commit -a -m "DROP: update __version__ = $VERSION"; then
+    export GIT_COMMITTER_NAME="Dummy" GIT_COMMITTER_EMAIL="dummy@example.com"
+    if git commit -q --author "Dummy <dummy@example.com>" \
+        -a -m "DROP: update __version__ = $VERSION"; then
         # undo commit in the end
         cleanup() {
             git reset --hard HEAD^ >/dev/null

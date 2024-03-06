@@ -7,9 +7,6 @@ variables:
   KNOT_RESOLVER_BRANCH:
     value: "master"
     description: "Knot Resolver branch to test"
-  LIBYANG_BRANCH:
-    value: "devel"
-    description: "libyang branch to test"
   BIRD_BRANCH:
     value: "apkg-jru"
     description: "BIRD branch to test"
@@ -19,7 +16,6 @@ stages:
   - test
   - apkg
   - bird
-  - libyang
   - knot-dns
   - knot-resolver
   - deploy
@@ -94,21 +90,6 @@ default:
       junit: report.xml
   before_script:
     - echo "Testing BIRD branch $BIRD_BRANCH"
-
-.libyang: &libyang
-  stage: libyang
-  only:
-    variables:
-      - $INTEGRATION
-      - $TEST_LIBYANG
-  needs:
-    - unit
-  artifacts:
-    when: always
-    reports:
-      junit: report.xml
-  before_script:
-    - echo "Testing libyang branch $LIBYANG_BRANCH"
 
 .knot-dns-base: &knot-dns-base
   stage: knot-dns
@@ -403,85 +384,6 @@ alma-9-bird:
     - *setup-project
     - pytest -v ci/tests/test_bird.py --junitxml=report.xml
 
-# integration tests: libyang
-
-debian-10-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-10
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-debian-11-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-11
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-debian-12-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-12
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-ubuntu-18.04-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-18.04
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-ubuntu-20.04-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-20.04
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-ubuntu-22.04-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-22.04
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-ubuntu-24.04-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
-  <<: *libyang
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-fedora-38-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
-  <<: *libyang
-  script:
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-fedora-39-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-39
-  <<: *libyang
-  script:
-    - *setup-project
-    - py.test-3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
-suse-15-libyang:
-  image: $CI_REGISTRY/packaging/apkg/test/suse-15
-  <<: *libyang
-  script:
-    - *setup-project
-    - py.test3 -v ci/tests/test_libyang.py --junitxml=report.xml
-
 
 # integration tests: Knot DNS
 
@@ -698,7 +600,6 @@ pages:
       - $INTEGRATION
       - $TEST_APKG
       - $TEST_BIRD
-      - $TEST_LIBYANG
       - $TEST_KNOT_DNS
       - $TEST_KNOT_RESOLVER
 

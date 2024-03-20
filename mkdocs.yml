@@ -22,7 +22,8 @@ nav:
 markdown_extensions:
   - admonition
   - pymdownx.superfences
-  - pymdownx.tabbed
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       permalink: True
 
@@ -33,3 +34,6 @@ plugins:
 theme:
   name: material
   logo: img/apkg.png
+  features:
+    - content.tabs.link
+    - content.code.copy

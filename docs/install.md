@@ -4,7 +4,7 @@
 
 For now you need to
 
-* [install requirements](#requirements) (just `pip` and `setuptools`)
+* [install requirements](#requirements)
 
 and then choose howto install:
 
@@ -14,215 +14,247 @@ and then choose howto install:
 
 ## requirements
 
-You need **Python >= 3.6** and `pip`.
+You need **Python >= 3.8**.
 
-**Python 3.5** is EOL but it's unofficially supported on best-effort basis in
-apkg until Debian 9 Stretch LTS EOL June 30, 2022.
+**Python** **3.7** and **3.6** are EOL but they're unofficially supported on
+best-effort basis in apkg for older distros that ship them (such as Debian 9,
+Ubuntu 18.04, CentOS 7).
+Consider using [pyenv](https://github.com/pyenv/pyenv)
+to get newer Python on systems with unsupported Python version.
 
-Install following **system packages** using your system's package manager:
+To install apkg, you **need** [pipx], `pip`, or other compatible Python package
+installer.
 
-* `python3-pip`
-* `python3-setuptools`
-
-=== "Debian, Ubuntu"
-    ```
-    apt-get install -y python3-pip python3-setuptools
-    ```
-
-=== "Fedora, CentOS 8+"
-    ```
-    dnf install -y python3-pip python3-setuptools
-    ```
-
-=== "CentOS 7"
-    ```
-    yum install -y python3-pip python3-setuptools
-    ```
-
-=== "openSUSE"
-    ```
-    zypper install -y python3-pip python3-setuptools
-    ```
-
-=== "Arch"
-    ```
-    pacman -Sy python-pip python-setuptools
-    ```
-
-Other python requirements should be **handled automatically**, they are
-listed and briefly explained in {{ 'requirements.txt' | file_link }}.
+Further apkg requirements are **handled automatically** by the installer.
+They're listed and briefly explained in {{ 'requirements.txt' | file_link }}.
 
 Python modules needed to build `apkg` docs are listed in
 {{ 'doc-requirements.txt' | file_link }}.
 
 
-## install from PyPI (recommended)
+### installer: pipx
 
-In order to support widest variety of distros and their releases while leveraging latest and greatest python modules, `apkg` is
-primarily distributed through
-[Python Package Index (PyPI)](https://pypi.org/project/apkg/)
-using `pip`, `pipx`, or other similar tool of your choice.
-
-Make sure you've installed `python3-pip` using your distro package manager as
-described in [requirements](#requirements).
+[pipx] is a **recommended** tool for installing `apkg` into virtualenv and providing
+`apkg` command without disrupting host system.
 
 
-### user install from PyPI
+**Install `pipx` package** using distro package manager:
 
-To ensure **any** version of apkg is installed for current user:
+=== "Debian, Ubuntu"
+    ```
+    apt install -y pipx
+    ```
 
-```
-pip3 install --user apkg
-```
+=== "Fedora, EL"
+    ```
+    dnf install -y pipx
+    ```
 
-Modern `pip` automatically appends `--user` so `pip3 install apkg` should be fine most of the time.
+=== "openSUSE"
+    ```
+    zypper install -y python-pipx
+    ```
 
-To ensure **latest** version of apkg is installed for current user use `-U`/`--upgrade`:
+=== "Arch, Manjaro"
+    ```
+    pacman -Sy python-pipx
+    ```
 
-```
-pip3 install --user -U apkg
-```
-
-If you prefer to install apkg into isolated virtualenv and only expose `apkg` script, consider using `pipx` instead:
+If your distro doesn't [provide][repology-pipx] `pipx`,
+consult [pipx installation docs](https://pipx.pypa.io/stable/installation/) and/or
+consider **installing `pipx` using `pip`**:
 
 ```
 pip3 install pipx
-pipx install apkg
 ```
 
-Depending on your `$PATH`, `apkg` script may be available. If it isn't you can
-always invoke apkg module:
+**Ensure `pipx` scripts path is in your PATH** environment variable:
 
 ```
-python3 -m apkg build -b
+pipx ensurepath
 ```
 
+Or add `~/.local/bin` to your `$PATH` manually.
 
-### automation / CI / DevOps install from PyPI
 
-For automated usage in CI and other DevOps systems it's recommended to use:
+### installer: pip
 
-```
-pip3 install apkg
-```
+[PEP 668] makes it harder to disrupt
+[Externally Managed Python Environments](https://packaging.python.org/en/latest/specifications/externally-managed-environments/)
+(such as those provided by linux distros) by requiring `--break-system-packages`
+flag on `pip install`.
 
-which should generally work in any use case including:
+Even `--user` installation now requires this flag on modern distros and users
+are advised to use isolated virtualenvs as not to break their Python environment.
 
-* install as normal system user
-* install as root (containers)
-* install in virtualenv
+[pipx] is a recommended tool for installing apkg into virtualenv and providing the
+`apkg` command without disrupting host system, see
+[installer: pipx](#installer-pipx).
 
-If you want **latest and greatest apkg**, use `--upgrade`/`-U`:
+As a rule of thumb, if a distro is new enough to complain about [PEP 668], it's new enough to run `pipx`. It's likely to be already packaged in [distro repos][repology-pipx].
 
-```
-pip3 install -U apkg
-```
+Valid use cases for using `pip` instead of `pipx`:
 
-If you prefer to use a **single tested version** of `apkg` and be completely independent on latest releases, you can pin apkg to a specific version, for example:
+* installing apkg into virtualenv
+* installing apkg python module for other consumers
+* installing apkg on old/ancient distros without `pipx` support
+* installing apkg while reusing system python packages
 
-```
-pip3 install apkg==0.0.4
-```
+**Install `pip` package** using distro package manager:
 
-Depending on your `$PATH`, `apkg` script may be available. If it isn't you can
-always invoke apkg module
+=== "Debian, Ubuntu"
+    ```
+    apt-get install -y python3-pip
+    ```
 
-```
-python3 -m apkg build -b
-```
+=== "Fedora, EL"
+    ```
+    dnf install -y python3-pip
+    ```
+
+=== "openSUSE"
+    ```
+    zypper install -y python3-pip
+    ```
+
+=== "Arch, Manjaro"
+    ```
+    pacman -Sy python-pip
+    ```
+
+
+## install from PyPI
+
+In order to support widest variety of distros and their releases while
+leveraging latest and greatest python modules, `apkg` is primarily distributed
+through [Python Package Index (PyPI)](https://pypi.org/project/apkg/) using
+`pipx`, `pip`, or other similar tool of your choice.
+
+
+**Install apkg:**
+
+=== "pipx"
+    ```
+    pipx install apkg
+    ```
+
+=== "pip"
+    ```
+    pip3 install apkg
+    ```
+
+**Install specific apkg version:**
+
+=== "pipx"
+    ```
+    pipx install apkg==0.4.2
+    ```
+
+=== "pip"
+    ```
+    pip3 install apkg==0.4.2
+    ```
+
+**Upgrade apkg to latest version:**
+
+=== "pipx"
+    ```
+    pipx upgrade apkg
+    ```
+
+=== "pip"
+    ```
+    pip3 install --upgrade apkg
+    ```
+
 
 ## install from source
 
-Make sure [requirements](#requirements) are installed and you're in the top `apkg` source dir:
+Make sure [requirements](#requirements) are met.
+
+
+**Install apkg from remote git repo:**
+
+=== "pipx"
+    ```
+    pipx install git+https://gitlab.nic.cz/packaging/apkg.git
+    ```
+
+=== "pip"
+    ```
+    pip3 install git+https://gitlab.nic.cz/packaging/apkg.git
+    ```
+
+!!! NOTE
+    This installs the development version of apkg from `master` branch with
+    unreleased features and fresh bugs.
+
+
+**Get apkg sources:**
 
 ```
 git clone https://gitlab.nic.cz/packaging/apkg
 cd apkg
 ```
 
-Then choose one of installation methods below:
-
-
-### user install from source
-
-Fastest and recommended way to install from source for CLI usage without
-affecting the rest of your system is to use
-[pipx](https://pipxproject.github.io/pipx/installation/):
+You can switch to a particular branch:
 
 ```
-pip3 install pipx
-pipx install .
+git checkout juicy-new-feature
 ```
 
-This installs `apkg` into `virtualenv` without affecting rest of your system
-while only exposing `apkg` CLI script.
-
-`pipx install` also features convenient `--editable` mode.
-
-If you're using `apkg` python module or you don't want to use `pipx`, you can
-use local user `pip install`:
+Or checkout a specific version tag:
 
 ```
-pip3 install --user .
+git checkout v0.4.2
 ```
 
-Or the old-fashioned equivalent through `setup.py` but that's using
-`easy_install` which is worse than `pip`:
+**Install apkg from sources:**
 
-```
-python3 setup.py install --user
-```
+=== "pipx"
+    ```
+    pipx install .
+    ```
 
+=== "pip"
+    ```
+    pip3 install .
+    ```
 
-### editable/develop install
+=== "setup.py"
+    ```
+    # OBSOLETE LEGACY COMPATIBILITY FOR ANCIENT SYSTEMS
+    # don't use this unless you absolutely must
+    python3 setup.py install
+    ```
 
-For development it's nice when source changes immediately apply and that
-can be done with editable/develop install.
+Alternatively, add `--editable` option to enable
+**editable installation** convenient for apkg development:
 
-Old-fashioned and well tested develop install using `setup.py` has the advantage of making `apkg` module available to other python modules:
+=== "pipx"
+    ```
+    pipx install --editable .
+    ```
 
-```
-python3 setup.py develop --user
-```
+=== "pip"
+    ```
+    pip3 install --editable .
+    ```
 
-This creates a link in `~/.local/lib/python3.X/site-packages/apkg.egg-link`
-and also installs `apkg` script into `~/.local/bin` so make sure you have
-`~/.local/bin` in your `$PATH`, possibly before system `bin` paths to override
-`apkg` scripts provided by system packages.
+=== "setup.py"
+    ```
+    # OBSOLETE LEGACY EXAMPLE
+    # if you were used to do this, use pipx install --editable
+    python3 setup.py develop --user
+    ```
 
-When you need CLI only, it's recommended to use `pipx` instead in `--editable` mode:
+`--editable` mode allows to immediately test changes to apkg source code.
 
-```
-pip3 install pipx
-pipx install -e .
-```
-
-Upstream python discussions recommend `pip3 install --editable .` but that has
-the fatal flaw of currently not working with local `--user` install. You can
-use it inside disposable container or a VM but I'd never taint my system
-python installation with a global install like that.
-
-
-### virtualenv install from source
-
-If you don't want `apkg` installation to affect your system but don't want
-to/can't use `pipx`, you can use `virtualenv` directly (`python3-venv`
-package usually):
-
-```
-git clone https://gitlab.nic.cz/packaging/apkg
-cd apkg
-virtualenv3 venv
-source venv/bin/activate
-python3 setup.py install
-apkg
-```
-
-You can enter the `venv` later/from other terminals by
-
-```
-source apkg/venv/bin/activate
-```
 
 
 With `apkg` installed, check out [packaging guide](guide.md) 📑
+
+
+[PEP 668]: https://peps.python.org/pep-0668/
+[pipx]: https://pipx.pypa.io/
+[repology-pipx]: https://repology.org/project/pipx/versions

@@ -34,6 +34,8 @@ Patches, issues, comments, and other contributions are welcome **ᕕ( ᐛ )ᕗ**
 
 ## usage
 
+**[quickstart](quickstart.md)**
+
 **[packaging guide](guide.md)**
 
 

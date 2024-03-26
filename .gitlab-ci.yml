@@ -75,7 +75,7 @@ default:
     variables:
       - $MINIMAL
   needs:
-    - unit
+    - install
   artifacts:
     when: always
     reports:
@@ -90,7 +90,7 @@ default:
       - $INTEGRATION
       - $TEST_BIRD
   needs:
-    - unit
+    - install
   artifacts:
     when: always
     reports:
@@ -105,7 +105,7 @@ default:
       - $INTEGRATION
       - $TEST_KNOT_DNS
   needs:
-    - unit
+    - install
   artifacts:
     when: always
     reports:
@@ -127,7 +127,7 @@ default:
       - $INTEGRATION
       - $TEST_KNOT_RESOLVER
   needs:
-    - unit
+    - install
   artifacts:
     when: always
     reports:
@@ -172,22 +172,57 @@ lint:
     variables:
       - $MINIMAL
 
-unit:
+install:
   <<: *test
   script:
     - *setup-project
-    - py.test-3 -v --junitxml=report.xml
+    - apkg --version
   artifacts:
     when: always
     reports:
       junit: report.xml
+
+unit:
+  <<: *test
+  script:
+    - *setup-project
+    - python3 -m pytest -v --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+  parallel:
+    matrix:
+      - PYTHON_IMAGE:
+        - 'python:3.8'
+        - 'python:3.9'
+        - 'python:3.10'
+        - 'python:3.11'
+        - 'python:3.12'
+
+unit:legacy:
+  <<: *test
+  script:
+    - *setup-project
+    - python3 -m pytest -v --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+  parallel:
+    matrix:
+      - PYTHON_IMAGE:
+        - 'python:3.6'
+        - 'python:3.7'
+  allow_failure: true
 
 self:
   <<: *test
   script:
     - *setup-py-reqs
     - *setup-project
-    - py.test-3 -v tests/self --junitxml=report.xml
+    - python3 -m pip install pytest
+    - python3 -m pytest -v tests/unit tests/self --junitxml=report.xml
   except:
     variables:
       - $MINIMAL

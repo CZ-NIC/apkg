@@ -44,12 +44,19 @@ default:
 .setup-py-reqs: &setup-py-reqs
   - pip3 install -r requirements.txt
 
-.setup-py-develop: &setup-py-develop
-  - python3 setup.py develop
+.install-project: &install-project
+  - pip3 install .
+
+.install-project-legacy: &install-project-legacy
+  - python3 setup.py install
 
 .setup-project: &setup-project
   - *setup-git
-  - *setup-py-develop
+  - *install-project
+
+.setup-project: &setup-project-legacy
+  - *setup-git
+  - *install-project-legacy
 
 .setup-project-user: &setup-project-user
   - *setup-git-user
@@ -109,9 +116,9 @@ default:
 .knot-dns: &knot-dns
   <<: *knot-dns-base
   needs:
-    - make-archive-knot-dns
+    - knot-dns:make-archive
   dependencies:
-    - make-archive-knot-dns
+    - knot-dns:make-archive
 
 .knot-resolver: &knot-resolver
   stage: knot-resolver
@@ -177,8 +184,7 @@ pylint:
 unit:
   <<: *test
   script:
-    - *setup-git
-    - *setup-py-develop
+    - *setup-project
     - py.test-3 -v --junitxml=report.xml
   artifacts:
     when: always
@@ -188,9 +194,8 @@ unit:
 self:
   <<: *test
   script:
-    - *setup-git
     - *setup-py-reqs
-    - *setup-py-develop
+    - *setup-project
     - py.test-3 -v tests/self --junitxml=report.xml
   except:
     variables:
@@ -203,97 +208,63 @@ self:
 
 # integration tests: apkg
 
-debian-10-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-10
+apkg:deb:
+  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
   <<: *apkg
   script:
     - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
+  parallel:
+    matrix:
+      - DISTRO:
+        - 'debian-10'
+        - 'debian-11'
+        - 'debian-12'
+        - 'ubuntu-20.04'
+        - 'ubuntu-22.04'
+        - 'ubuntu-24.04'
 
-debian-11-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-11
-  <<: *apkg
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
-debian-12-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-12
-  <<: *apkg
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
-ubuntu-20.04-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-20.04
-  <<: *apkg
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
-ubuntu-22.04-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-22.04
-  <<: *apkg
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
-ubuntu-24.04-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
-  <<: *apkg
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
-fedora-38-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
+apkg:rpm:
+  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
   <<: *apkg
   script:
     - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
+    - python3 -m pytest -v ci/tests/test_apkg.py --junitxml=report.xml
+  parallel:
+    matrix:
+      - DISTRO:
+        - 'fedora-38'
+        - 'fedora-39'
+        - 'rocky-8'
+        - 'alma-9'
 
-fedora-39-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-39
-  <<: *apkg
-  script:
-    - *setup-project
-    - py.test-3 -v ci/tests/test_apkg.py --junitxml=report.xml
-
-rocky-8-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/rocky-8
-  <<: *apkg
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_apkg.py --junitxml=report.xml
-
-alma-9-apkg:
-  image: $CI_REGISTRY/packaging/apkg/test/alma-9
-  <<: *apkg
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_apkg.py --junitxml=report.xml
-
-suse-15-apkg:
+apkg:suse-15:
   image: $CI_REGISTRY/packaging/apkg/test/suse-15
   <<: *apkg
   script:
-    - *setup-project
+    # ancient Python 3.6 - use legacy setup.py
+    - *setup-project-legacy
     - py.test3 -v ci/tests/test_apkg.py --junitxml=report.xml
 
-arch-apkg:
+apkg:centos-7:
+  image: $CI_REGISTRY/packaging/apkg/test/centos-7
+  <<: *apkg
+  script:
+    # ancient Python 3.6 - use legacy setup.py
+    - *setup-project-legacy
+    # self tests are broken due to missing deps, run unit tests instead
+    - pytest -v --junitxml=report.xml
+    - apkg status
+
+apkg:arch:
   image: $CI_REGISTRY/packaging/apkg/test/arch
   <<: *apkg
   script:
     - *setup-project-user
     - sudo -u test -i bash -c "cd $PWD; py.test -v ci/tests/test_apkg.py --junitxml=report.xml"
 
-nixos-unstable-apkg:
+apkg:nixos:
   <<: *apkg
   <<: *nixos
   script:
@@ -307,87 +278,40 @@ nixos-unstable-apkg:
 
 # integration tests: BIRD
 
-debian-10-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-10
+bird:deb:
+  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
   <<: *bird
   script:
     - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
+  parallel:
+    matrix:
+      - DISTRO:
+        - 'debian-10'
+        - 'debian-11'
+        - 'debian-12'
+        - 'ubuntu-20.04'
+        - 'ubuntu-22.04'
+        - 'ubuntu-24.04'
 
-debian-11-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-11
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
-debian-12-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-12
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
-ubuntu-18.04-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-18.04
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
-ubuntu-20.04-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-20.04
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
-ubuntu-22.04-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-22.04
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
-ubuntu-24.04-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
-fedora-38-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
+bird:rpm:
+  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
   <<: *bird
   script:
     - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
-fedora-39-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-39
-  <<: *bird
-  script:
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-
-alma-9-bird:
-  image: $CI_REGISTRY/packaging/apkg/test/alma-9
-  <<: *bird
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_bird.py --junitxml=report.xml
+    - python3 -m pytest -v ci/tests/test_bird.py --junitxml=report.xml
+  parallel:
+    matrix:
+      - DISTRO:
+        - 'fedora-38'
+        - 'fedora-39'
+        - 'alma-9'
 
 
 # integration tests: Knot DNS
 
-make-archive-knot-dns:
+knot-dns:make-archive:
   image: $CI_REGISTRY/packaging/apkg/test/debian-12
   <<: *knot-dns-base
   artifacts:
@@ -401,85 +325,45 @@ make-archive-knot-dns:
     - apkg build-dep
     - apkg make-archive
 
-debian-11-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-11
+knot-dns:deb:
+  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
   <<: *knot-dns
   script:
     - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-  allow_failure: true
+  parallel:
+    matrix:
+      - DISTRO:
+        - 'debian-11'
+        - 'debian-12'
+        - 'ubuntu-20.04'
+        - 'ubuntu-22.04'
+        - 'ubuntu-24.04'
 
-debian-12-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-12
-  <<: *knot-dns
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-ubuntu-20.04-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-20.04
-  <<: *knot-dns
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-  allow_failure: true
-
-ubuntu-22.04-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-22.04
-  <<: *knot-dns
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-ubuntu-24.04-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
-  <<: *knot-dns
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-fedora-38-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
+knot-dns:rpm:
+  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
   <<: *knot-dns
   script:
     - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+    - python3 -m pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
+  parallel:
+    matrix:
+      - DISTRO:
+        - 'fedora-38'
+        - 'fedora-39'
+        - 'rocky-8'
+        - 'alma-9'
 
-fedora-39-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-39
-  <<: *knot-dns
-  script:
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-rocky-8-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/rocky-8
-  <<: *knot-dns
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-alma-9-knot-dns:
-  image: $CI_REGISTRY/packaging/apkg/test/alma-9
-  <<: *knot-dns
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
-
-suse-15-knot-dns:
+knot-dns:suse-15:
   image: $CI_REGISTRY/packaging/apkg/test/suse-15
   <<: *knot-dns
   script:
-    - *setup-project
+    - *setup-project-legacy
     - py.test3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
   allow_failure: true
 
-nixos-unstable-knot-dns:
+knot-dns:nixos:
   <<: *knot-dns
   <<: *nixos
   script:
@@ -488,91 +372,53 @@ nixos-unstable-knot-dns:
 
 # integration tests: Knot Resolver
 
-debian-11-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-11
+knot-resolver:deb:
+  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
   <<: *knot-resolver
   script:
     - apt update
     - *setup-project
     - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+  parallel:
+    matrix:
+      - DISTRO:
+        - 'debian-11'
+        - 'debian-12'
+        - 'ubuntu-20.04'
+        - 'ubuntu-22.04'
+        - 'ubuntu-24.04'
 
-debian-12-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/debian-12
-  <<: *knot-resolver
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-ubuntu-20.04-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-20.04
-  <<: *knot-resolver
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-ubuntu-22.04-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-22.04
-  <<: *knot-resolver
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-ubuntu-24.04-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/ubuntu-24.04
-  <<: *knot-resolver
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-fedora-38-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-38
+knot-resolver:rpm:
+  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
   <<: *knot-resolver
   script:
     - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+    - python3 -m pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+  parallel:
+    matrix:
+      - DISTRO:
+        - 'fedora-38'
+        - 'fedora-39'
+        - 'rocky-8'
+        - 'alma-9'
 
-fedora-39-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/fedora-39
-  <<: *knot-resolver
-  script:
-    - *setup-project
-    - py.test-3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-centos-7-knot-resolver:
+knot-resolver:centos-7:
   image: $CI_REGISTRY/packaging/apkg/test/centos-7
   <<: *knot-resolver
   script:
-    - *setup-project
+    - *setup-project-legacy
     - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
   allow_failure: true
 
-rocky-8-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/rocky-8
-  <<: *knot-resolver
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-alma-9-knot-resolver:
-  image: $CI_REGISTRY/packaging/apkg/test/alma-9
-  <<: *knot-resolver
-  script:
-    - *setup-project
-    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-
-suse-15-knot-resolver:
+knot-resolver:suse-15:
   image: $CI_REGISTRY/packaging/apkg/test/suse-15
   <<: *knot-resolver
   script:
-    - *setup-project
+    - *setup-project-legacy
     - py.test3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
   allow_failure: true
 
-nixos-unstable-knot-resolver:
+knot-resolver:nixos:
   <<: *knot-resolver
   <<: *nixos
   script:

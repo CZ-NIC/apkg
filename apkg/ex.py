@@ -79,6 +79,11 @@ class InvalidCompatLevel(ApkgException):
     returncode = 20
 
 
+class InvalidVariablesSource(ApkgException):
+    msg_fmt = "Invalid variables source: {src}"
+    returncode = 26
+
+
 # 30-39: Missing and NotFound
 class MissingRequiredArgument(ApkgException):
     msg_fmt = "Missing required argument: {arg}"

@@ -46,15 +46,10 @@ Use `-L verbose` or `-L debug` to log how `apkg` handles individual files during
 
 ## template syntax
 
-`apkg` uses [jinja] the great python templating engine with following variables
-available:
+`apkg` uses [jinja] the great python templating engine.
 
-* `name`: project name
-* `version`: package version
-* `release`: package release
-* `distro`: target distro (see [distro in templates])
-* `now`: current date and time in changelog format (provided only by pkgstyles
-  with changelog dates such as `deb` and `rpm`)
+You can use [default template variables] such as `version` and `distro`,
+or define [custom template variables] to serve your needs. See [template variables].
 
 Example Debian `changelog`:
 
@@ -230,3 +225,6 @@ Examples:
 [include]: https://jinja.palletsprojects.com/en/3.0.x/templates/#include
 [distro in templates]: distro.md#distro-in-templates
 [target distro]: distro.md#target-distro
+[template variables]: templatevars.md
+[default template variables]: templates.md#default-template-variables
+[custom template variables]: templates.md#custom-template-variables

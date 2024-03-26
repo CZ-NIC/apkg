@@ -1,4 +1,4 @@
-apkg ({{ version }}-{{ release }}) unstable; urgency=medium
+apkg ({{ version }}-{{ release }}~{{ deb_series }}) {{ deb_series }}; urgency=medium
 
   * upstream version {{ version }}
 

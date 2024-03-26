@@ -1,5 +1,25 @@
 # apkg news
 
+## apkg 0.5.0
+
+!!! warning
+    Not Yet Released - next version
+
+Released 2024-03-??
+
+### Compat Level 4 News
+
+- new [custom template variables](templatevars.md) support
+    - new [template.variables](config.md#templatevariables) config section
+    - extend `apkg status` command with template variables sources status
+    - new `apkg info template-variables` command
+        - show all template variables by default
+        - show custom variables per source with `--custom`
+- `deb` pkgstyle: include `*.changes` files in `srcpkg`/`build` output
+    - many debian tools and workflows require `*.changes` files - comply
+- fix incorrect parsing of single compnent versions (`1`, `20240101`, etc.)
+
+
 ## apkg 0.4.2
 
 Released 2023-08-08

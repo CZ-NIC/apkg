@@ -2,6 +2,7 @@ import click
 
 from apkg import adistro
 from apkg import compat
+from apkg import ex
 from apkg.log import getLogger, T
 from apkg.project import Project
 
@@ -53,6 +54,7 @@ def status(distro=None):
                 " -> run {t.command}apkg compat{t.normal})")
     print(msg.format(level=level, state=compat_state, t=T))
 
+    print()
     msg = "package templates path:  {t.bold}{path}{t.normal}"
     if proj.path.templates.exists():
         msg += " ({t.green}exists{t.normal})"
@@ -73,6 +75,27 @@ def status(distro=None):
     else:
         msg = "    {t.red}no package templates found{t.normal}"
     print(msg.format(dir=proj.path.templates, t=T))
+
+    print("template variables sources:")
+    if proj.variables_sources:
+        msg_lines = []
+        for vsrc in proj.variables_sources:
+            try:
+                vsrc.validate()
+                line = ("%s: {t.bold}%s{t.normal}"
+                        % (vsrc.src_attr, vsrc.src_val))
+                if vsrc.exists():
+                    line += " ({t.green}exists{t.normal})"
+                else:
+                    line += " ({t.red}doesn't exist{t.normal})"
+                line = line.format(t=T)
+            except ex.InvalidVariablesSource as e:
+                line = "{t.red}%s{t.normal}".format(t=T) % e
+            msg_lines.append("    %s" % line)
+        msg = "\n".join(msg_lines)
+    else:
+        msg = "    no custom variables sources defined"
+    print(msg)
 
     print()
     if distro:

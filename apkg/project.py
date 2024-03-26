@@ -81,6 +81,7 @@ class Project:
     name = None
     config = {}
     distro_aliases = {}
+    variables_sources = []
 
     def __init__(
             self,
@@ -105,6 +106,7 @@ class Project:
         self.load_config()
         self.update_attrs()
         self.update_distro_aliases()
+        self.update_variables_sources()
         if self.auto_compat:
             self.ensure_compat()
 
@@ -168,6 +170,13 @@ class Project:
         """
         conf = self.config_get('distro.aliases', [])
         self.distro_aliases = adistro.parse_distro_aliases(conf)
+
+    def update_variables_sources(self):
+        """
+        load custom variables sources from project config
+        """
+        conf = self.config_get('template.variables', [])
+        self.variables_sources = pkgtemplate.parse_variables_sources(conf)
 
     @cached_property
     def vcs(self):
@@ -256,7 +265,8 @@ class Project:
                 self.path.templates,
                 distro_aliases=self.distro_aliases,
                 ignore_files=ignore_files,
-                plain_copy_files=plain_copy_files)
+                plain_copy_files=plain_copy_files,
+                variables_sources=self.variables_sources)
         else:
             return []
 

@@ -2,9 +2,11 @@ import json
 import toml
 
 import click
-import distro as distro_
+import distro as distro_mod
 
+from apkg import adistro
 from apkg.pkgstyle import PKGSTYLES
+from apkg import pkgtemplate
 from apkg.log import getLogger, T
 from apkg.project import Project
 
@@ -53,13 +55,14 @@ def config():
         print(toml.dumps(proj.config))
 
 
+# pylint: disable=redefined-outer-name
 @cli_info.command()
 @click.help_option('-h', '--help', help='show command help')
 def distro():
     """
     show current distro information
     """
-    info = distro_.info()
+    info = distro_mod.info()
     print(toml.dumps(info))
 
 
@@ -96,6 +99,36 @@ def pkgstyles():
         ds = ['{t.bold}%s{t.normal}' % d for d in mod.SUPPORTED_DISTROS]
         msg += ' | '.join(ds)
         print(msg.format(t=T))
+
+
+@cli_info.command()
+@click.option('-d', '--distro',
+              help="set target distro  [default: current]")
+@click.option('-c', '--custom', is_flag=True,
+              help="only show custom variables per source")
+@click.help_option('-h', '--help', help='show command help')
+def template_variables(distro=None, custom=False):
+    """
+    show variables available in packaging template
+    """
+    proj = Project()
+    distro = adistro.distro_arg(distro, proj)
+    log.info("target distro: %s", distro)
+    template = proj.get_template_for_distro(distro)
+    if not custom:
+        tvars = {'distro': distro}
+        tvars = template.template_vars(tvars)
+        print(toml.dumps(tvars))
+        return
+
+    # custom variables
+    tvars = pkgtemplate.DUMMY_VARS
+    tvars['distro'] = distro
+    for vsrc in proj.variables_sources:
+        print("# variables from %s: %s" % (vsrc.src_attr, vsrc.src_val))
+        custom_tvars = vsrc.get_variables(tvars)
+        print(toml.dumps(custom_tvars))
+        tvars.update(custom_tvars)
 
 
 @cli_info.command()

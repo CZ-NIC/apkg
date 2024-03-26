@@ -164,22 +164,13 @@ default:
 
 # basic tests
 
-flake8:
+lint:
   <<: *test
+  script:
+    - ruff check .
   except:
     variables:
       - $MINIMAL
-  script:
-    - flake8
-
-pylint:
-  <<: *test
-  script:
-    - pylint apkg
-  except:
-    variables:
-      - $MINIMAL
-  allow_failure: true
 
 unit:
   <<: *test

@@ -1,11 +1,12 @@
 """
-apkg package style for **Nix** (NixOS.org).
+apkg package style for **Nix** ([NixOS.org](https://nixos.org)).
 
 **source template:**
- - `default.nix` as-if in https://github.com/NixOS/nixpkgs
- - `top-level.nix` that simply wraps it to work outside that official tree,
+
+- `default.nix` as-if in [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs)
+- `top-level.nix` that simply wraps it to work outside that official tree,
    in particular it should substitute the source archive;
-   e.g. see ../../distro/pkg/nix/top-level.nix
+   e.g. see `apkg/distro/pkg/nix/top-level.nix`
 
 **source package:** the same, just with templates substituted
 

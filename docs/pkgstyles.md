@@ -21,6 +21,8 @@ distro](distro.md#target-distro) and/or files present in selected
 Each `pkgstyle` provides `SUPPORTED_DISTROS` list of supported distro IDs as
 returned by python [distro module](https://pypi.org/project/distro/).
 
+See also a list of all [distros supported by apkg](platforms.md#distro-support).
+
 
 {% for ps in pkgstyles.values() %}
 ## {{ ps.name }}

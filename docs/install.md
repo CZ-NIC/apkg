@@ -14,13 +14,18 @@ and then choose howto install:
 
 ## requirements
 
-You need **Python >= 3.8**.
+You need **Python**.
 
-**Python** **3.7** and **3.6** are EOL but they're unofficially supported on
-best-effort basis in apkg for older distros that ship them (such as Debian 9,
-Ubuntu 18.04, CentOS 7).
+Any Python version with [active support][Python] should work.
+
+Additionally, **Python** **3.7** and **3.6** are EOL but they're unofficially
+supported on best-effort basis in apkg for older distros that ship them (such as
+Debian 9, Ubuntu 18.04, CentOS 7, openSUSE 15).
 Consider using [pyenv](https://github.com/pyenv/pyenv)
 to get newer Python on systems with unsupported Python version.
+
+apkg [0.5.0](news.md#apkg-050) has been tested to work on all Python versions between
+**3.6** and **3.12**.
 
 To install apkg, you **need** [pipx], `pip`, or other compatible Python package
 installer.
@@ -255,6 +260,7 @@ Alternatively, add `--editable` option to enable
 With `apkg` installed, check out [packaging guide](guide.md) 📑
 
 
+[Python]: https://www.python.org/downloads/
 [PEP 668]: https://peps.python.org/pep-0668/
 [pipx]: https://pipx.pypa.io/
 [repology-pipx]: https://repology.org/project/pipx/versions

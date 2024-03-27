@@ -18,6 +18,8 @@ selection, matching, and formatting features.
 `apkg` is a cross-distro tool but most of its commands operate on a
 specific **target distro** - the distro it's building packages for.
 
+See [apkg distro support](platforms.md#distro-support).
+
 By default, current distro is auto-detected using python [distro] module and
 used as a target distro. Check out tail of `apkg status`:
 

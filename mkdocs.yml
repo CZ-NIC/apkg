@@ -6,6 +6,7 @@ nav:
   - index.md
   - intro.md
   - news.md
+  - platforms.md
   - install.md
   - guide.md
   - users.md
@@ -21,6 +22,7 @@ nav:
   - errors.md
 
 markdown_extensions:
+  - abbr
   - admonition
   - pymdownx.superfences
   - pymdownx.tabbed:
@@ -36,5 +38,6 @@ theme:
   name: material
   logo: img/apkg.png
   features:
-    - content.tabs.link
     - content.code.copy
+    - content.tabs.link
+    - content.tooltips

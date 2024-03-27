@@ -8,24 +8,19 @@ For now you need to
 
 and then choose howto install:
 
-* [install from PyPI](#install-from-pypi-recommended) - **recommended**
+* [install from PyPI](#install-from-pypi) - **recommended**
 * [install from source](#install-from-source)
 
 
 ## requirements
 
-You need **Python**.
+apkg needs **Python**.
 
-Any Python version with [active support][Python] should work.
+apkg [0.5.0](news.md#apkg-050) has been tested to work on all Python versions
+between **3.6** and **3.12**.
 
-Additionally, **Python** **3.7** and **3.6** are EOL but they're unofficially
-supported on best-effort basis in apkg for older distros that ship them (such as
-Debian 9, Ubuntu 18.04, CentOS 7, openSUSE 15).
-Consider using [pyenv](https://github.com/pyenv/pyenv)
-to get newer Python on systems with unsupported Python version.
-
-apkg [0.5.0](news.md#apkg-050) has been tested to work on all Python versions between
-**3.6** and **3.12**.
+See [apkg Python support](platforms.md#python-support) for detailed information
+about supported Python versions.
 
 To install apkg, you **need** [pipx], `pip`, or other compatible Python package
 installer.
@@ -33,13 +28,13 @@ installer.
 Further apkg requirements are **handled automatically** by the installer.
 They're listed and briefly explained in {{ 'requirements.txt' | file_link }}.
 
-Python modules needed to build `apkg` docs are listed in
+Python modules needed to build apkg docs are listed in
 {{ 'doc-requirements.txt' | file_link }}.
 
 
 ### installer: pipx
 
-[pipx] is a **recommended** tool for installing `apkg` into virtualenv and providing
+[pipx] is a **recommended** tool for installing apkg into virtualenv and providing
 `apkg` command without disrupting host system.
 
 
@@ -260,7 +255,6 @@ Alternatively, add `--editable` option to enable
 With `apkg` installed, check out [packaging guide](guide.md) 📑
 
 
-[Python]: https://www.python.org/downloads/
 [PEP 668]: https://peps.python.org/pep-0668/
 [pipx]: https://pipx.pypa.io/
 [repology-pipx]: https://repology.org/project/pipx/versions

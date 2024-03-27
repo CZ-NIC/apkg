@@ -9,7 +9,7 @@ minimum overhead while respecting individual distro's standards and policies.
 
 ## status
 
-`apkg` is in **beta**, maturing towards `v1.0` 🚀
+**apkg** is in **beta**, maturing towards `v1.0` 🚀
 
 **[apkg news](news.md)**
 
@@ -17,7 +17,8 @@ Several projects [use apkg](users.md) in CI as well as in manual development and
 testing.
 
 [apkg CI](https://gitlab.nic.cz/packaging/apkg/-/pipelines) runs tests
-on multiple projects across supported distros.
+on multiple projects across
+[supported distros](platforms.md#distro-support).
 
 * [source code](https://gitlab.nic.cz/packaging/apkg)
 * [issues](https://gitlab.nic.cz/packaging/apkg/-/issues) (bugs and requests)

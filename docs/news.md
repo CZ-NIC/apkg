@@ -19,6 +19,12 @@ Released 2024-03-??
     - many debian tools and workflows require `*.changes` files - comply
 - fix incorrect parsing of single compnent versions (`1`, `20240101`, etc.)
 
+### Improvements
+
+- updated and overhauled [installation docs](install.md)
+- new [platform support docs](platforms.md) with detailed information
+  about Python versions and distros supported by apkg
+
 
 ## apkg 0.4.2
 

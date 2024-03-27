@@ -6,7 +6,7 @@ In order to allow [config file format](config.md) and functionality changes
 without breaking compatibility, it's **strongly recommended** to include current
 apkg compat level in the config file.
 
-That way, `apkg` will be able work with old and new `distro/` files without
+That way, apkg will be able work with old and new `distro/` files without
 disruption in the future.
 
 
@@ -23,7 +23,7 @@ compat = {{ compat_level }}
 !!! Important
     During `apkg` beta, backward compatibility with older versions/compat levels is provided on **best effort** basis.
 
-    Starting from 1.0, backward compatibility is going to be **guaranteed**.
+    Starting from 1.0, backward compatibility will be **ensured**.
 
 
 Starting with `0.3.0`, `apkg status` displays project compat level:
@@ -51,31 +51,29 @@ for upgrade if any:
 ```
 $> apkg compat
 
-project compat level:       1
-current apkg compat level:  2
-latest apkg compat level:   2
+project compat level:       3
+current apkg compat level:  4
+latest apkg compat level:   4
 
-current apkg version:  0.3.0
-latest apkg version:   0.3.0
+current apkg version:  0.5.0
+latest apkg version:   0.5.0
 
-⚠ project compat level 1 is older than current 2
+⚠ project compat level 3 is older than current 4
 
 Please consider bumping
 
     [apkg]
-    compat = 2
+    compat = 4
 
 in project config: distro/config/apkg.toml
 
 Inspect following upgrade notes:
 
-# COMPAT LEVEL 2
+# COMPAT LEVEL 4
 
-Introduced in apkg-0.3.0
+Introduced in apkg-0.5.0
 
-Forward compatible update for most users.
-
-...
+Forward compatible update, no action required.
 ```
 
 ## compat level upgrade notes
@@ -88,6 +86,8 @@ upgrading from the specified compat level to current:
 
 ## compat level news
 
-Please inspect `apkg` [news](news.md) for respective `apkg` release:
+Please inspect apkg [news](news.md) for respective release:
 
+* compat level **4**: [0.5.0](news.md#apkg-050)
+* compat level **3**: [0.4.0](news.md#apkg-040)
 * compat level **2**: [0.3.0](news.md#apkg-030)

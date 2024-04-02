@@ -2,10 +2,7 @@
 
 ## apkg 0.5.0
 
-!!! warning
-    Not Yet Released - next version
-
-Released 2024-03-??
+Released 2024-04-03
 
 ### Compat Level 4 News
 

@@ -3,7 +3,7 @@ name = "templates"
 make_archive_script = "distro/scripts/make-archive.sh"
 
 [apkg]
-compat = 3
+compat = 4
 
 [[distro.aliases]]
 name = "deb-zzz"

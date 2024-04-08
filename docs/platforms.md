@@ -49,7 +49,7 @@ apkg is able to **create packages** for/on following **distros**:
 | openSUSE 15 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
 | Arch | ✅ | ✅ | [arch] | 3.12 |
 | Manjaro | ⚠️ untested | ❌ | [arch] | 3.12 |
-| NixOS | ✅ | ✅ | [nix] | 3.12 |
+| NixOS | ✅ | ✅ | [nix] | 3.11 |
 
 *[legacy]: Distro is old, possibly EOL, or shipping EOL Python version, but apkg still supports in on best effort basis.
 

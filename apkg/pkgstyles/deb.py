@@ -229,6 +229,7 @@ def build_packages(
         with cd(source_path):
             # build
             run('dpkg-buildpackage',
+                '-sa',  # include orig, always
                 '-us',  # unsigned source package.
                 '-uc',  # unsigned .changes file.
                 )

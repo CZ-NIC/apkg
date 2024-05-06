@@ -33,9 +33,9 @@ apkg is able to **create packages** for/on following **distros**:
 | Debian 11 | ✅ | ✅ | [deb] | 3.9  |
 | Debian 10 | ⚠️ legacy | ✅ | [deb] | 3.7 ⚠️ EOL |
 | Debian 9 | ⚠️ legacy | ❌ | [deb] | 3.6 ⚠️ EOL |
-| Ubutnu 24.04 | ✅ | ✅ | [deb] | 3.12 |
-| Ubutnu 22.04 | ✅ | ✅ | [deb] | 3.10 |
-| Ubutnu 20.04 | ✅ | ✅ | [deb] | 3.8 |
+| Ubuntu 24.04 | ✅ | ✅ | [deb] | 3.12 |
+| Ubuntu 22.04 | ✅ | ✅ | [deb] | 3.10 |
+| Ubuntu 20.04 | ✅ | ✅ | [deb] | 3.8 |
 | Ubuntu 18.04 | ⚠️ legacy | ❌ | [deb] | 3.6 ⚠️ EOL |
 | Linux Mint | ⚠️ untested | ❌ | [deb] |  |
 | Pop!_OS | ⚠️ untested | ❌ | [deb] |  |

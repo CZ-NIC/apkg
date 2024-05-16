@@ -50,13 +50,29 @@ current distro: arch / Arch Linux
 config option to be set.
 
 This command will only succeed when the script finishes successfully (with
-exit code 0) and the resulting archive it created and printed to stdout
-followed by one line for each additional file (like signature).
+exit code 0) and it outputs the resulting archive (and potentially other
+information) to stdout.
 
-Resulting archive is copied to `pkg/archives/dev/` or to `--result-dir`.
+The interface differs based on compat level:
 
-Resulting archive is cached if [cache.source](config.md#cachesource)
-is enabled. See [source cache](cache.md#source-cache) for requirements.
+- level <= 4:
+  Last line of the script's stdout is taken to be the generated archive, all
+  other lines are ignored. Upstream version is extracted from archive name.
+- level >= 5 behaviour is different (richer):
+  - lines with `#` as the first character are currently ignored (but it is
+    encouraged that stderr is used for any reporting)
+  - other lines are expected to be in the form of `<tag>[:<argument>] <value>`
+    where:
+    | Tag name | Occurrence | Supports argument? | Description |
+    | --- | --- | --- | --- |
+    | archive | exactly once | no | upstream sources |
+    | version | at most once | no | signals upstream version, if not present, version is extracted from archive |
+    | component | optional, multiple | yes | additional sources, argument signals the "component" name for `deb` scheme |
+
+Resulting files are copied to `pkg/archives/dev/` or to `--result-dir`.
+
+Results are cached if [cache.source](config.md#cachesource) is enabled. See
+[source cache](cache.md#source-cache) for requirements.
 
 
 ## get-archive

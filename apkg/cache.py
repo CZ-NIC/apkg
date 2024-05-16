@@ -5,6 +5,7 @@ apkg packaging file cache
 import json
 from pathlib import Path
 
+from apkg import __version__
 from apkg.log import getLogger
 from apkg.util.common import hash_file, hash_path
 
@@ -32,6 +33,7 @@ class ProjectCache:
         self.checksum = None
 
     def save(self):
+        self.cache['__version__'] = __version__
         json.dump(self.cache, self.project.path.cache.open('w'))
 
     def load(self):
@@ -40,7 +42,13 @@ class ProjectCache:
             log.verbose("cache not found: %s", cache_path)
             return
         log.verbose("loading cache: %s", cache_path)
-        self.cache = json.load(cache_path.open('r'))
+
+        cache = json.load(cache_path.open('r'))
+        version = cache.get('__version__', None)
+        if version != __version__:
+            log.verbose("apkg version in cache not ours: %s", version)
+            return
+        self.cache = cache
 
     def _ensure_load(self):
         """

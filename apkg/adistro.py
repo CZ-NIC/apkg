@@ -29,12 +29,14 @@ class Distro:
     """
     represent distro by id and (optional) version
     """
-    def __init__(self, distro_str, aliases=None):
+    def __init__(self, distro_str, aliases=None, like=""):
         self.orig = distro_str
         # idver format, i.e.: debian-10, ubuntu-21.04
         self.idver = distro2idver(self.orig)
         self.id, self.version = parse_idver(self.idver)
+        self.names = [self.id]
         self.aliases = aliases or {}
+        self._like = like
 
     def match(self, *rules):
         """
@@ -53,6 +55,17 @@ class Distro:
             s += sep
         s += str(self.version)
         return s
+
+    @cached_property
+    def like(self):
+        """
+        return distro which matches all its like= variants
+
+        e.g. for CentOS 9 the result will also match rhel == 9
+        """
+        result = Distro(self.orig, aliases=self.aliases, like=self._like)
+        result.names += self._like.split()
+        return result
 
     @cached_property
     def human(self):
@@ -76,7 +89,10 @@ class Distro:
         return self.human
 
     def __repr__(self):
-        return "<Distro('%s')>" % self.idver
+        extra = ""
+        if self._like:
+            extra = ", like=%r" % self._like
+        return "<Distro('%s'%s)>" % (self.idver, extra)
 
 
 class DistroRuleBase(ABC):
@@ -104,7 +120,7 @@ class DistroRule(DistroRuleBase):
             self.version_spec = None
 
     def match(self, distro_):
-        if distro_.id != self.id:
+        if self.id not in distro_.names:
             return False
         if not self.version_spec:
             return True
@@ -312,9 +328,10 @@ def current_idver(sep='-'):
     """
     idver = distro.id()
     ver = distro.version()
+    like = distro.like()
     if ver:
         idver += "%s%s" % (sep, ver)
-    return idver
+    return idver, like
 
 
 def current_fullname():
@@ -329,4 +346,5 @@ def current_fullname():
 
 
 def current_distro():
-    return Distro(current_idver(sep=' '))
+    idver, like = current_idver(sep=' ')
+    return Distro(idver, like=like)

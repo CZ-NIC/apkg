@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM fedora:37
+FROM fedora:40
 
 WORKDIR /root
 CMD ["/bin/bash"]

@@ -260,8 +260,8 @@ apkg:rpm:
   parallel:
     matrix:
       - DISTRO:
-        - 'fedora-38'
         - 'fedora-39'
+        - 'fedora-40'
         - 'rocky-8'
         - 'alma-9'
 
@@ -330,8 +330,8 @@ bird:rpm:
   parallel:
     matrix:
       - DISTRO:
-        - 'fedora-38'
         - 'fedora-39'
+        - 'fedora-40'
         - 'alma-9'
 
 
@@ -376,8 +376,8 @@ knot-dns:rpm:
   parallel:
     matrix:
       - DISTRO:
-        - 'fedora-38'
         - 'fedora-39'
+        - 'fedora-40'
         - 'rocky-8'
         - 'alma-9'
 
@@ -423,8 +423,8 @@ knot-resolver:rpm:
   parallel:
     matrix:
       - DISTRO:
-        - 'fedora-38'
         - 'fedora-39'
+        - 'fedora-40'
         - 'rocky-8'
         - 'alma-9'
 

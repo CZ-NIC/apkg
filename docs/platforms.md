@@ -40,8 +40,8 @@ apkg is able to **create packages** for/on following **distros**:
 | Linux Mint | ⚠️ untested | ❌ | [deb] |  |
 | Pop!_OS | ⚠️ untested | ❌ | [deb] |  |
 | Fedora Rawhide | ✅ | ❌ | [rpm] | 3.12 |
+| Fedora 40 | ✅ | ✅ | [rpm] | 3.12 |
 | Fedora 39 | ✅ | ✅ | [rpm] | 3.12 |
-| Fedora 38 | ✅ | ✅ | [rpm] | 3.11 |
 | Enterprise Linux 9 | ✅ | ✅ | [rpm] | 3.9 |
 | Enterprise Linux 8 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
 | Enterprise Linux 7 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |

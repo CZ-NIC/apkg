@@ -47,6 +47,9 @@ default:
 .install-project: &install-project
   - pip3 install .
 
+.install-project-py311: &install-project-py311
+  - pip3.11 install .
+
 .install-project-legacy: &install-project-legacy
   - python3 setup.py install
 
@@ -54,7 +57,11 @@ default:
   - *setup-git
   - *install-project
 
-.setup-project: &setup-project-legacy
+.setup-project-py311: &setup-project-py311
+  - *setup-git
+  - *install-project-py311
+
+.setup-project-legacy: &setup-project-legacy
   - *setup-git
   - *install-project-legacy
 
@@ -265,13 +272,25 @@ apkg:rpm:
         - 'rocky-8'
         - 'alma-9'
 
-apkg:suse-15:
-  image: $CI_REGISTRY/packaging/apkg/test/suse-15
+apkg:opensuse-15.6:py3.6:
+  image: $CI_REGISTRY/packaging/apkg/test/opensuse-15.6
   <<: *apkg
   script:
     # ancient Python 3.6 - use legacy setup.py
     - *setup-project-legacy
     - py.test3 -v ci/tests/test_apkg.py --junitxml=report.xml
+  before_script:
+    - pip3 install dunamai
+
+apkg:opensuse-15.6:py3.11:
+  image: $CI_REGISTRY/packaging/apkg/test/opensuse-15.6
+  <<: *apkg
+  script:
+    # use optional Python 3.11 packages
+    - *setup-project-py311
+    - py.test-3.11 -v ci/tests/test_apkg.py --junitxml=report.xml
+  before_script:
+    - pip3.11 install dunamai
 
 apkg:centos-7:
   image: $CI_REGISTRY/packaging/apkg/test/centos-7
@@ -381,12 +400,12 @@ knot-dns:rpm:
         - 'rocky-8'
         - 'alma-9'
 
-knot-dns:suse-15:
-  image: $CI_REGISTRY/packaging/apkg/test/suse-15
+knot-dns:opensuse-15.6:
+  image: $CI_REGISTRY/packaging/apkg/test/opensuse-15.6
   <<: *knot-dns
   script:
-    - *setup-project-legacy
-    - py.test3 -v ci/tests/test_knot_dns.py --junitxml=report.xml
+    - *setup-project-py311
+    - py.test-3.11 -v ci/tests/test_knot_dns.py --junitxml=report.xml
   allow_failure: true
 
 knot-dns:nixos:
@@ -436,12 +455,12 @@ knot-resolver:centos-7:
     - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
   allow_failure: true
 
-knot-resolver:suse-15:
-  image: $CI_REGISTRY/packaging/apkg/test/suse-15
+knot-resolver:opensuse-15.6:
+  image: $CI_REGISTRY/packaging/apkg/test/opensuse-15.6
   <<: *knot-resolver
   script:
-    - *setup-project-legacy
-    - py.test3 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+    - *setup-project-py311
+    - py.test-3.11 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
   allow_failure: true
 
 knot-resolver:nixos:

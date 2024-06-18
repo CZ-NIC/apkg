@@ -46,7 +46,7 @@ apkg is able to **create packages** for/on following **distros**:
 | Enterprise Linux 8 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
 | Enterprise Linux 7 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
 | openSUSE Tumbleweed | ✅ | ❌ | [rpm] | 3.12 |
-| openSUSE 15 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
+| openSUSE Leap 15 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL, 3.11 available |
 | Arch | ✅ | ✅ | [arch] | 3.12 |
 | Manjaro | ⚠️ untested | ❌ | [arch] | 3.12 |
 | NixOS | ✅ | ✅ | [nix] | 3.11 |

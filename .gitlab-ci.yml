@@ -464,14 +464,6 @@ knot-resolver:rpm:
         - 'rocky-8'
         - 'alma-9'
 
-knot-resolver:centos-7:
-  image: $CI_REGISTRY/packaging/apkg/test/centos-7
-  <<: *knot-resolver
-  script:
-    - *setup-project-legacy
-    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
-  allow_failure: true
-
 knot-resolver:opensuse-tumbleweed:
   image: $CI_REGISTRY/packaging/apkg/test/opensuse-tumbleweed
   <<: *knot-resolver

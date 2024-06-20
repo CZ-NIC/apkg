@@ -272,6 +272,15 @@ apkg:rpm:
         - 'rocky-8'
         - 'alma-9'
 
+apkg:opensuse-tumbleweed:
+  image: $CI_REGISTRY/packaging/apkg/test/opensuse-tumbleweed
+  <<: *apkg
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_apkg.py --junitxml=report.xml
+  before_script:
+    - pip3 install --break-system-packages dunamai
+
 apkg:opensuse-15.6:py3.6:
   image: $CI_REGISTRY/packaging/apkg/test/opensuse-15.6
   <<: *apkg
@@ -400,6 +409,14 @@ knot-dns:rpm:
         - 'rocky-8'
         - 'alma-9'
 
+knot-dns:opensuse-tumbleweed:
+  image: $CI_REGISTRY/packaging/apkg/test/opensuse-tumbleweed
+  <<: *knot-dns
+  script:
+    - *setup-project
+    - pytest -v ci/tests/test_knot_dns.py --junitxml=report.xml
+  allow_failure: true
+
 knot-dns:opensuse-15.6:
   image: $CI_REGISTRY/packaging/apkg/test/opensuse-15.6
   <<: *knot-dns
@@ -452,6 +469,14 @@ knot-resolver:centos-7:
   <<: *knot-resolver
   script:
     - *setup-project-legacy
+    - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
+  allow_failure: true
+
+knot-resolver:opensuse-tumbleweed:
+  image: $CI_REGISTRY/packaging/apkg/test/opensuse-tumbleweed
+  <<: *knot-resolver
+  script:
+    - *setup-project
     - pytest -v ci/tests/test_knot_resolver.py --junitxml=report.xml
   allow_failure: true
 

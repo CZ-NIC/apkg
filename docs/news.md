@@ -1,5 +1,14 @@
 # apkg news
 
+## apkg 0.5.1
+
+Released 2024-06-24
+
+### Fixes
+
+- update `requires-python` to `>=3.6` to enable installation on old systems
+- small docs fixes
+
 ## apkg 0.5.0
 
 Released 2024-04-03

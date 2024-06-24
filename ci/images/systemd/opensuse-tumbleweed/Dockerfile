@@ -1,8 +1,8 @@
-FROM opensuse/leap:15.4
+FROM opensuse/tumbleweed
 
 ARG ARCH=amd64
 
-RUN zypper update -y
+RUN zypper dup -y
 RUN zypper install -y \
 	systemd \
 	systemd-sysvinit \

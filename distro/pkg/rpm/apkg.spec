@@ -15,6 +15,7 @@ BuildRequires:    python3-setuptools
 
 Requires:         git-core
 Requires:         rpm-build
+Requires:         python3-cached-property
 Requires:         python3-click
 Requires:         python3-distro
 %if "x%{?suse_version}" == "x"

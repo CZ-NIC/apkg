@@ -16,6 +16,25 @@ def build_dep():
     yield True
 
 
+def test_apkg_ex_minimal_no_git():
+    """
+    test examples/minimal-no-git
+    """
+    old_cwd = os.getcwd()
+    os.chdir('examples/minimal-no-git')
+    try:
+        cmd = ('apkg install --build-dep')
+        code, out = subprocess.getstatusoutput(cmd)
+        assert re.search(r'installed \d+ packages', out)
+        assert code == 0, "ERROR (%s): %s" % (code, out)
+
+        cmd = ('apkg test --test-dep')
+        code, out = subprocess.getstatusoutput(cmd)
+        assert code == 0, "ERROR (%s): %s" % (code, out)
+    finally:
+        os.chdir(old_cwd)
+
+
 def test_apkg_full_pipe(build_dep):
     """
     test entire apkg pipeline using pipes
@@ -38,19 +57,3 @@ def test_apkg_full_pipe(build_dep):
     assert 'made source package:' in out
     assert re.search(r'built \d+ packages', out)
     assert re.search(r'installed \d+ packages', out)
-
-
-def test_apkg_ex_minimal_no_git():
-    """
-    test examples/minimal-no-git
-    """
-    os.chdir('examples/minimal-no-git')
-
-    cmd = ('apkg install --build-dep')
-    code, out = subprocess.getstatusoutput(cmd)
-    assert re.search(r'installed \d+ packages', out)
-    assert code == 0, "ERROR (%s): %s" % (code, out)
-
-    cmd = ('apkg test --test-dep')
-    code, out = subprocess.getstatusoutput(cmd)
-    assert code == 0, "ERROR (%s): %s" % (code, out)

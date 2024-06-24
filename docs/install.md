@@ -53,6 +53,9 @@ Python modules needed to build apkg docs are listed in
 === "openSUSE"
     ```
     zypper install -y python-pipx
+
+    # on openSUSE Leap 15, it's better to use newer Python:
+    zypper install -y python311-pipx
     ```
 
 === "Arch, Manjaro"

@@ -65,8 +65,5 @@ apkg.
 [arch]: pkgstyles.md#arch
 [nix]: pkgstyles.md#nix
 
-[0.5.0]: news.md#050
-
-
 
 *[Enterprise Linux]: RHEL and its clones: CentOS, Alma, Rocky, Oracle

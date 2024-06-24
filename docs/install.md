@@ -16,7 +16,7 @@ and then choose howto install:
 
 apkg needs **Python**.
 
-apkg [0.5.0](news.md#apkg-050) has been tested to work on all Python versions
+apkg [0.5.1](news.md#apkg-051) has been tested to work on all Python versions
 between **3.6** and **3.12**.
 
 See [apkg Python support](platforms.md#python-support) for detailed information

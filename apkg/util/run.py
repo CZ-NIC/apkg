@@ -33,6 +33,7 @@ CAN_TEE = PY_VERSION >= version.parse('3.6')
 def run(cmd,
         *args,
         check=True,
+        direct=False,
         tee='auto',
         quiet=False,
         log_fun=log.command,
@@ -58,6 +59,7 @@ def run(cmd,
         cmd: command to run - a str or a List[str]
         *args: optional List[str] of command arguments
         check: raise ex.CommandFailed on command failure
+        direct: direct output mode - don't capture stdout and stderr
         tee: both capture and output stdout/stderr (using asyncio)
         quiet: disable tee and command logging
         log_fun: function to log command with (None to disable)
@@ -86,7 +88,16 @@ def run(cmd,
         log_fun = log.verbose_command
         tee = False
     elif tee == 'auto':
-        tee = bool(get_log_level() <= COMMAND)
+        if direct:
+            tee = False
+        else:
+            tee = bool(get_log_level() <= COMMAND)
+
+    if tee and direct:
+        log.warning(
+            "Running command with both direct=True and tee=True doesn't"
+            " make sense. Disabling tee in favor of direct output.")
+        tee = False
 
     if tee and not CAN_TEE:
         log.warning("can't tee on python < 3.6"
@@ -106,8 +117,7 @@ def run(cmd,
         try:
             result = subprocess.run(
                 cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                capture_output=not direct,
                 check=False,
                 universal_newlines=True,
                 **kwargs)
@@ -251,7 +261,7 @@ class CommandOutput(str):
     """
     # pylint: disable=unused-argument
     def __new__(cls, result, shell):
-        out = result.stdout.rstrip()
+        out = (result.stdout or '').rstrip()
         return str.__new__(cls, out)
 
     def __init__(self, result, shell=False):
@@ -263,7 +273,7 @@ class CommandOutput(str):
             self.args_str = join(self.args)
         self.returncode = result.returncode
         self.stdout = self
-        self.stderr = result.stderr.rstrip()
+        self.stderr = (result.stderr or '').rstrip()
         str.__init__(self)
 
     @property

@@ -114,10 +114,18 @@ def run(cmd,
         except FileNotFoundError:
             raise ex.CommandNotFound(cmd=cmd_str)
     else:
+        if direct:
+            # reuse host process stdout/stderr directly
+            stdout, stderr = None, None
+        else:
+            # this is quivalent of capture_output=True,
+            # but we support old pythons
+            stdout, stderr = subprocess.PIPE, subprocess.PIPE
         try:
             result = subprocess.run(
                 cmd,
-                capture_output=not direct,
+                stdout=stdout,
+                stderr=stderr,
                 check=False,
                 universal_newlines=True,
                 **kwargs)

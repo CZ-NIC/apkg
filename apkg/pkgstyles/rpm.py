@@ -53,6 +53,7 @@ SUPPORTED_DISTROS = sorted(EL_FAMILY_DISTROS + [
 DISTRO_REQUIRES = {
     'core': ['rpm-build'],
     'isolated': ['mock'],
+    'lint': ['rpmlint'],
 }
 
 
@@ -259,6 +260,27 @@ def get_build_deps_from_srcpkg(
     cmd = "rpm2cpio '%s' | cpio -i --to-stdout '*.spec'" % srcpkg_path
     spec_text = subprocess.getoutput(cmd)
     return get_build_deps_from_spec_(spec_text)
+
+
+def lint(
+        pkg_paths,
+        info=False,
+        strict=False,
+        distro=None,
+        **kwargs):
+    """
+    lint files using rpmlint
+    """
+    log.info('linting %s files with rpmlint', len(pkg_paths))
+    suse = distro and distro.id == 'opensuse'
+    cmd = ['rpmlint']
+    if info:
+        cmd += ['--info']
+    if strict and not suse:
+        cmd += ['--strict']
+    cmd += pkg_paths
+    o = run(cmd, check=False, direct=True)
+    return o.returncode
 
 
 # functions bellow with _ postfix are specific to this pkgstyle

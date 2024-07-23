@@ -56,9 +56,7 @@ Or for another distro:
 
 {{ 'apkg info template-variables -c -d ubuntu-22.04' | run }}
 
-!!! info
-    Added in `apkg` [0.5.0](news.md#apkg-050),
-    [compat](compat.md) level [4](news.md#compat-level-4-news)
+{{ added_in_version('0.5.0', compat=4) }}
 
 
 ### template variables module
@@ -158,6 +156,4 @@ some-package ({{ version }}-{{ release }}~{{ deb_series }}) {{ deb_series }}; ur
 ```
 {% endraw %}
 
-!!! info
-    Added in `apkg` [0.5.0](news.md#apkg-050),
-    [compat](compat.md) level [4](news.md#compat-level-4-news)
+{{ added_in_version('0.5.0', compat=4) }}

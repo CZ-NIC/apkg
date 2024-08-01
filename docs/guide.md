@@ -120,8 +120,45 @@ In order to setup a system for packaging with apkg, run:
 apkg system-setup
 ```
 
-This will install required system packages depending on current distro
-such as `rpm-build` on Fedora or `devscripts` on Debian.
+This will install required core packages for direct package build depending on
+current distro such as `rpm-build` on Fedora or `devscripts` on Debian.
+
+You can select which system packages to install using `system-setup` options:
+
+```
+  -c, --core         install core packages for direct package builds [default]
+  -I, --isolated     install packages for isolated package builds
+  -L, --lint         install packages for linting (apkg lint)
+  -a, --all          install all of above (-cIL)
+```
+
+To enable isolated package builds (`apkg build --isolated`), use `--isolated`:
+
+```
+apkg system-setup --isolated
+```
+
+To install packaging linter needed for [apkg lint](commands.md#lint),
+use `--lint`:
+
+```
+apkg system-setup --lint
+```
+
+Combine the options to select the packages you need.
+
+For example, if you're setting up CI image to run standard apkg commands
+as well as `apkg lint`, use `--core` and `--lint`:
+
+```
+apkg system-setup --core --lint
+```
+
+Or you can use `--all` to install all packages apkg needs for any of its commands:
+
+```
+apkg system-setup --all
+```
 
 
 ## project setup

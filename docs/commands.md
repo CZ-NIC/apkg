@@ -105,6 +105,13 @@ Resulting packages are cached if [cache.local](config.md#cachelocal) is enabled.
 {{ 'install' | cmd_help }}
 
 
+## lint
+
+{{ 'lint' | cmd_help }}
+
+{{ added_in_version('0.6.0') }}
+
+
 ## clean
 
 {{ 'clean' | cmd_help }}

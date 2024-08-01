@@ -48,6 +48,7 @@ SUPPORTED_DISTROS = [
 DISTRO_REQUIRES = {
     'core': ['build-essential'],
     'isolated': ['pbuilder'],
+    'lint': ['lintian'],
 }
 
 
@@ -344,6 +345,28 @@ def get_build_deps_from_srcpkg(
         control_path = unpack_path / 'control'
         control_text = control_path.open().read()
     return get_build_deps_from_control_(control_text)
+
+
+def lint(
+        pkg_paths,
+        pedantic=False,
+        info=False,
+        strict=False,
+        **kwargs):
+    """
+    lint files using lintian
+    """
+    log.info('linting %s files with lintian', len(pkg_paths))
+    cmd = ['lintian']
+    if pedantic:
+        cmd += ['--display-info', '--pedantic']
+    if info:
+        cmd += ['--info']
+    if strict:
+        cmd += ['--fail-on', 'pedantic']
+    cmd += pkg_paths
+    o = run(cmd, check=False, direct=True)
+    return o.returncode
 
 
 # functions bellow with _ postfix are specific to this pkgstyle

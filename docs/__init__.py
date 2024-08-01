@@ -2,6 +2,7 @@
 generate docs from apkg code/docstrings using mkdocs-macros-plugin
 """
 import inspect
+import re
 import subprocess
 
 from apkg.compat import COMPAT_LEVEL
@@ -67,6 +68,16 @@ def define_env(env):
         c = 'apkg %s --help' % cmd
         return run(c)
 
+    @env.macro
+    def added_in_version(version, compat=None):
+        vlink = 'news.md#apkg-%s' % link_id(version)
+        md = '!!! info\n    Added in `apkg` [%s](%s)' % (version, vlink)
+        if compat:
+            compat = str(compat)
+            clink = 'news.md#compat-level-%s-news' % link_id(compat)
+            md += ', compat level [%s](%s) ([?](compat.md))' % (compat, clink)
+        return md
+
 
 def get_exceptions():
     """
@@ -75,3 +86,10 @@ def get_exceptions():
     exs = [e for _, e in inspect.getmembers(ex, inspect.isclass)]
     exs.sort(key=lambda x: x.returncode)
     return exs
+
+
+def link_id(s):
+    """
+    return HTML id string for linking
+    """
+    return re.sub(r'[\W]+', '', s)

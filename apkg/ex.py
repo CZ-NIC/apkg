@@ -115,6 +115,10 @@ class ParsingFailed(ApkgException):
     msg_fmt = "Unable to parse: {fail}"
     returncode = 42
 
+class LintingFailed(ApkgException):
+    msg_fmt = "Linting failed: {fail}"
+    returncode = 48
+
 
 # 50-59: remote failures
 class FileDownloadFailed(ApkgException):

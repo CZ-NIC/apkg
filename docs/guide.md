@@ -167,8 +167,9 @@ All `apkg` input files reside in top-level `distro/` directory by convention.
 
 In order to use `apkg` in your project you need to provide it with:
 
-* configuration in `distro/config/apkg.toml`
-* package templates in individual directories of `distro/pkg/`
+* [configuration](config.md) in `distro/config/apkg.toml`
+    * including [make_archive_script](config.md#projectmake_archive_script)
+* [package templates](templates.md) in individual directories of `distro/pkg/`
 
 Let's start by entering top level project dir and creating `distro/` there:
 
@@ -176,6 +177,19 @@ Let's start by entering top level project dir and creating `distro/` there:
 cd project
 mkdir distro
 ```
+
+
+### make_archive_script
+
+In order to automate anything, we need to be able to create archives directly
+from project sources.
+
+Archive creation is an important step which tends to differ from project to
+project so it's recommended to isolate it into a dedicated script.
+
+Please see [make_archive_script docs](config.md#projectmake_archive_script) and
+create such script.
+
 
 ### project config - apkg.toml
 
@@ -196,16 +210,18 @@ This guide assumes you have following options specified in your `apkg.toml`:
 * [project.name](config.md#projectname)
 * [project.make_archive_script](config.md#projectmake_archive_script)
 * [upstream.archive_url](config.md#upstreamarchive_url) if project has upstream archives
+* [apkg.compat](config.md##apkgcompat)
 
 Confirm that `apkg status` in project directory mentions existing config file:
 
 ``` text
-$> apkg status | grep 'project config'
+$> apkg status
 
 project config:          distro/config/apkg.toml (exists)
 ```
 
-Test `project.make_archive_script` option using `apkg make-archive`:
+Test [project.make_archive_script](config.md#projectmake_archive_script) option
+using `apkg make-archive`:
 
 ``` text
 $> apkg make-archive

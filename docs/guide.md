@@ -20,12 +20,12 @@ This guide assumes you have:
  |                              |    |                                    |
  |  out: pkg/archives/dev/*.xz  |    |  out: pkg/archives/upstream/*.xz   |
  |                              |    |                                    |
- +---------------+--------------+    +----------------+-------------------+
-                 |                                    |
-                 |                                    |
-                 |                                    |
-                 v                                    v
-      +----------+------------------------------------+-------------+
+ +--------------+---------------+    +-----------------+------------------+
+                |                                      |
+                |                                      |
+                |                                      |
+                v                                      v
+      +---------+--------------------------------------+------------+
       |                                                             |
       |     $ apkg srcpkg                                           |
       |                                                             |
@@ -46,10 +46,39 @@ This guide assumes you have:
       |                                                             |
       |   in: pkg/srcpkgs/$DISTRO/$SRCPKG  (source package)         |
       |                                                             |
-      |  out: pkg/pkgs/$DISTRO/$PKG        (package)                |
+      |  out: pkg/pkgs/$DISTRO/$PKG        (packages)               |
       |       pkg/build/pkgs/$DISTRO/$PKG  (build dir)              |
       |                                                             |
-      +-------------------------------------------------------------+
+      +---------+--------------------------------------+------------+
+                |                                      |
+                |                                      |
+                |                                      |
+                v                                      v
+ +--------------+---------------+    +-----------------+------------------+
+ |                              |    |                                    |
+ |     $ apkg install           |    |     $ apkg lint                    |
+ |                              |    |                                    |
+ |   in: pkg/pkgs/$DISTRO/$PKG  |    |   in: pkg/srcpkgs/$DISTRO/$SRCPKG  |
+ |       (packages)             |    |       pkg/pkgs/$DISTRO/$PKG        |
+ |                              |    |                                    |
+ |  out: packages installed     |    |  out: native distro linter output  |
+ |       on host system         |    |                                    |
+ |                              |    +------------------------------------+
+ +--------------+---------------+
+                |
+                |
+                |
+                v
+      +---------+---------------------------------+
+      |                                           |
+      |     $ apkg test                           |
+      |                                           |
+      |   in: distro/tests  (packaging tests)     |
+      |       packages installed on host system   |
+      |                                           |
+      |  out: run packaging tests on host system  |
+      |                                           |
+      +-------------------------------------------+
 ```
 
 

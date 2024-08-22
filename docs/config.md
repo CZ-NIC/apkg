@@ -55,7 +55,21 @@ Include such script in your project and then point to it using `make_archive_scr
 make_archive_script = "scripts/make-archive.sh"
 ```
 
-script example: {{ 'scripts/make-archive.sh' | file_link  }}
+Most projects which use `apkg` have the script in `scripts/` directory for
+historic reasons, but feel free to put it into `distro/scripts/` or anywhere
+else you want.
+
+!!! Tip
+    It's strongly recommended to **reuse** the same script in the upstream archive
+    creation during official release so that this **code gets properly tested** on
+    regular basis - it's used on most `apkg` operations.
+
+`make_archive_script` **examples** in the wild:
+
+- `apkg`: {{ 'scripts/make-archive.sh' | file_link  }}
+- Knot Resolver: [scripts/make-archive.sh](https://gitlab.nic.cz/knot/knot-resolver/-/blob/master/scripts/make-archive.sh)
+- Knot DNS: [scripts/make-dev-archive.sh](https://gitlab.nic.cz/knot/knot-dns/-/blob/master/scripts/make-dev-archive.sh)
+
 
 ## [upstream]
 

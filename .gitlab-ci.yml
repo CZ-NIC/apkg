@@ -1,6 +1,12 @@
 variables:
   GIT_STRATEGY: clone
   LC_ALL: C.UTF-8
+  INTEGRATION:
+    value: 0
+    description: "Run all Integration tests"
+  MINIMAL:
+    value: 0
+    description: "Only run basic tests"
   KNOT_DNS_BRANCH:
     value: "master"
     description: "Knot DNS branch to test"

@@ -8,7 +8,7 @@ CMD ["/bin/bash"]
 # upgrade to latest
 RUN zypper dup -y
 # packaging deps
-RUN zypper install -y curl git rpm-build python311-pip
+RUN zypper install -y curl git rpm-build python3-pip python311-pip
 # basic deps (default ancient python 3.6)
 RUN zypper install -y python3-beautifulsoup4 python3-setuptools python3-Jinja2 python3-click python3-distro python3-blessings python3-requests python3-toml python3-cached-property
 # basic deps (optional python 3.11)

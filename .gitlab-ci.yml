@@ -2,10 +2,10 @@ variables:
   GIT_STRATEGY: clone
   LC_ALL: C.UTF-8
   INTEGRATION:
-    value: 0
+    value: false
     description: "Run all Integration tests"
   MINIMAL:
-    value: 0
+    value: false
     description: "Only run basic tests"
   KNOT_DNS_BRANCH:
     value: "master"
@@ -84,9 +84,8 @@ default:
 
 .apkg: &apkg
   stage: apkg
-  except:
-    variables:
-      - $MINIMAL
+  rules:
+    - if: $MINIMAL != "true"
   needs:
     - install
   artifacts:
@@ -98,10 +97,8 @@ default:
 
 .bird: &bird
   stage: bird
-  only:
-    variables:
-      - $INTEGRATION
-      - $TEST_BIRD
+  rules:
+    - if: $INTEGRATION == "true" || $TEST_BIRD == "true"
   needs:
     - install
   artifacts:
@@ -113,10 +110,8 @@ default:
 
 .knot-dns-base: &knot-dns-base
   stage: knot-dns
-  only:
-    variables:
-      - $INTEGRATION
-      - $TEST_KNOT_DNS
+  rules:
+    - if: $INTEGRATION == "true" || $TEST_KNOT_DNS == "true"
   needs:
     - install
   artifacts:
@@ -135,10 +130,8 @@ default:
 
 .knot-resolver: &knot-resolver
   stage: knot-resolver
-  only:
-    variables:
-      - $INTEGRATION
-      - $TEST_KNOT_RESOLVER
+  rules:
+    - if: $INTEGRATION == "true" || $TEST_KNOT_RESOLVER == "true"
   needs:
     - install
   artifacts:
@@ -181,9 +174,8 @@ lint:
   <<: *test
   script:
     - ruff check .
-  except:
-    variables:
-      - $MINIMAL
+  rules:
+    - if: $MINIMAL != "true"
 
 install:
   <<: *test
@@ -236,9 +228,8 @@ self:
     - *setup-project
     - python3 -m pip install pytest
     - python3 -m pytest -v tests/unit tests/self --junitxml=report.xml
-  except:
-    variables:
-      - $MINIMAL
+  rules:
+    - if: $MINIMAL != "true"
   artifacts:
     when: always
     reports:
@@ -510,16 +501,8 @@ pages:
   artifacts:
     paths:
     - public
-  only:
-    - master
-  except:
-    variables:
-      - $MINIMAL
-      - $INTEGRATION
-      - $TEST_APKG
-      - $TEST_BIRD
-      - $TEST_KNOT_DNS
-      - $TEST_KNOT_RESOLVER
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master" && $MINIMAL != "true" && $INTEGRATION != "true"
 
 # include jobs to build the containers
 include:

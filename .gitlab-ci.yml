@@ -2,7 +2,7 @@ variables:
   GIT_STRATEGY: clone
   LC_ALL: C.UTF-8
   INTEGRATION:
-    value: false
+    value: true
     description: "Run all Integration tests"
   MINIMAL:
     value: false

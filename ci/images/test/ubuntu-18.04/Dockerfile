@@ -10,12 +10,9 @@ CMD ["/bin/bash"]
 RUN apt-get update -qqq
 RUN apt-get upgrade -y -qqq
 
-# install add-apt-repository
-RUN apt-get install -y -qqq software-properties-common
-# add Knot DNS repo (needed by Knot Resolver as build dep)
-RUN add-apt-repository ppa:cz.nic-labs/knot-dns-latest
-# refresh repos
-RUN apt-get update -qqq
+# enable Knot DNS repo (Knot Resolver dep)
+RUN apt-get -y -qqq install wget
+RUN wget -O - https://pkg.labs.nic.cz/doc/scripts/enable-repo-cznic-labs.sh | bash -s - knot-dns
 
 # packaging deps
 RUN apt-get install -y -qqq \

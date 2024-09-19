@@ -48,7 +48,7 @@ def make_archive(
         cache_key = 'archive/dev/%s' % proj.checksum
         cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
-            log.success("reuse cached archive: %s", cached[0])
+            log.success("reuse cached archive: %s", cached['archive'])
             return cached
 
     script = proj.config_get('project.make_archive_script')

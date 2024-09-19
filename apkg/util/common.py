@@ -5,6 +5,7 @@ from pathlib import Path
 import re
 import sys
 import tempfile
+from typing import Iterable, Mapping, Optional, Union
 
 from apkg import ex
 from apkg.log import getLogger
@@ -14,26 +15,38 @@ import apkg.util.shutil35 as shutil
 log = getLogger(__name__)
 
 
-def copy_paths(paths, dst):
+CacheableEntry = Union[str, int, bool, Path,
+                       Iterable['CacheableEntry'],
+                       Mapping[str, 'CacheableEntry']]
+
+
+def copy_paths(cache_entry: CacheableEntry, dst: Path) -> CacheableEntry:
     """
     utility to copy a list of paths to dst
     """
     if not dst.exists():
         dst.mkdir(parents=True, exist_ok=True)
     dst_full = dst.resolve()
-    new_paths = []
-    for p in paths:
-        if p.parent.resolve() == dst_full:
-            new_paths.append(p)
-        else:
-            p_dst = dst / p.name
-            log.verbose("copying file: %s -> %s", p, p_dst)
-            shutil.copy(p, p_dst)
-            new_paths.append(p_dst)
-    return new_paths
+
+    if isinstance(cache_entry, Path):
+        if cache_entry.parent.resolve() != dst_full:
+            p_dst = dst / cache_entry.name
+            log.verbose("copying file: %s -> %s", cache_entry, p_dst)
+            shutil.copy(cache_entry, p_dst)
+            return p_dst
+        return cache_entry
+    elif isinstance(cache_entry, list):
+        return [copy_paths(p) for p in cache_entry]
+    elif isinstance(cache_entry, dict):
+        result = {}
+        for k, v in cache_entry.items():
+            result[k] = copy_paths(v)
+        return result
+    return cache_entry
 
 
-def get_cached_paths(proj, cache_key, result_dir=None):
+def get_cached_paths(proj, cache_key: str,
+                     result_dir: Optional[str] = None) -> CacheableEntry:
     """
     get cached files and move them to result_dir if specified
     """

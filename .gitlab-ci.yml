@@ -27,6 +27,13 @@ stages:
   - deploy
 
 
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - when: always
+
+
 image: $CI_REGISTRY/packaging/apkg/test/debian-12-full
 
 
@@ -317,8 +324,7 @@ apkg:arch:
     - sudo -u test -i bash -c "cd $PWD; py.test -v ci/tests/test_apkg.py --junitxml=report.xml"
 
 apkg:nixos:
-  <<: *apkg
-  <<: *nixos
+  <<: [*apkg, *nixos]
   script:
     - nix-env -f '<nixpkgs>' -iQA gnused
     # This test has issues when some step is cached.
@@ -426,8 +432,7 @@ knot-dns:opensuse-15.6:
   allow_failure: true
 
 knot-dns:nixos:
-  <<: *knot-dns
-  <<: *nixos
+  <<: [*knot-dns, *nixos]
   script:
     - nix-shell "$(nix-shell -p apkg --run 'apkg srcpkg' | head -n 1)" --argstr extraDepsFor knot-dns --argstr extraDeps libmnl --run 'py.test -v ci/tests/test_knot_dns.py --junitxml=report.xml'
 
@@ -482,8 +487,7 @@ knot-resolver:opensuse-15.6:
   allow_failure: true
 
 knot-resolver:nixos:
-  <<: *knot-resolver
-  <<: *nixos
+  <<: [*knot-resolver, *nixos]
   script:
     # Knot Resolver's make-archive needs basically all build-time dependencies (meson dist),
     # so we add them on top of the normal apkg's development shell - and run the tests.

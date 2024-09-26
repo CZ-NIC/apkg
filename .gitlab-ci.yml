@@ -27,6 +27,13 @@ stages:
   - deploy
 
 
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - when: always
+
+
 image: $CI_REGISTRY/packaging/apkg/test/debian-12-full
 
 

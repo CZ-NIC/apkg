@@ -196,8 +196,11 @@ install:
 
 unit:
   <<: *test
+  image: $PYTHON_IMAGE
   script:
+    - *setup-py-reqs
     - *setup-project
+    - pip3 install pytest
     - python3 -m pytest -v --junitxml=report.xml
   artifacts:
     when: always
@@ -214,8 +217,11 @@ unit:
 
 unit:legacy:
   <<: *test
+  image: $PYTHON_IMAGE
   script:
+    - *setup-py-reqs
     - *setup-project
+    - pip3 install pytest
     - python3 -m pytest -v --junitxml=report.xml
   artifacts:
     when: always

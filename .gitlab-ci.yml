@@ -331,7 +331,7 @@ apkg:arch:
     - sudo -u test -i bash -c "cd $PWD; py.test -v ci/tests/test_apkg.py --junitxml=report.xml"
 
 apkg:nixos:
-  <<: [*apkg, *nixos]
+  <<: [*nixos, *apkg]
   script:
     - nix-env -f '<nixpkgs>' -iQA gnused
     # This test has issues when some step is cached.

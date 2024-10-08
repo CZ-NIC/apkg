@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
 Build-Depends:
  debhelper (>= 12),
-{%- if distro.match('debian <= 11', 'ubuntu <= 22.04') %}
+{%- if distro.match('debian <= 12', 'ubuntu <= 22.04') %}
  dh-python,
  python3-setuptools,
 {%- else %}

@@ -196,8 +196,11 @@ install:
 
 unit:
   <<: *test
+  image: $PYTHON_IMAGE
   script:
+    - *setup-py-reqs
     - *setup-project
+    - pip3 install pytest
     - python3 -m pytest -v --junitxml=report.xml
   artifacts:
     when: always
@@ -211,11 +214,15 @@ unit:
         - 'python:3.10'
         - 'python:3.11'
         - 'python:3.12'
+        - 'python:3.13'
 
 unit:legacy:
   <<: *test
+  image: $PYTHON_IMAGE
   script:
+    - *setup-py-reqs
     - *setup-project
+    - pip3 install pytest
     - python3 -m pytest -v --junitxml=report.xml
   artifacts:
     when: always
@@ -324,7 +331,7 @@ apkg:arch:
     - sudo -u test -i bash -c "cd $PWD; py.test -v ci/tests/test_apkg.py --junitxml=report.xml"
 
 apkg:nixos:
-  <<: [*apkg, *nixos]
+  <<: [*nixos, *apkg]
   script:
     - nix-env -f '<nixpkgs>' -iQA gnused
     # This test has issues when some step is cached.

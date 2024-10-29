@@ -1,4 +1,4 @@
-FROM fedora:38
+FROM fedora:41
 
 ARG ARCH=amd64
 

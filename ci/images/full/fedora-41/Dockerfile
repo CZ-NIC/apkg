@@ -1,4 +1,4 @@
-FROM registry.nic.cz/packaging/apkg/systemd/fedora-39
+FROM registry.nic.cz/packaging/apkg/systemd/fedora-41
 
 WORKDIR /root
 CMD ["/bin/bash"]

@@ -22,6 +22,8 @@ RUN dnf install -y \
     python3-packaging \
     python3-requests \
     python3-toml
+# gdb not pulled in on Fedora 41 leading to build failures
+RUN dnf install -y gdb
 # install stable apkg from PyPI
 RUN python3 -m pip install apkg
 RUN apkg --version

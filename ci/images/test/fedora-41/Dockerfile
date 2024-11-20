@@ -28,3 +28,5 @@ RUN dnf install -y \
 RUN dnf install -y \
     python3-pytest \
     python3-pytest-sugar
+# gdb not pulled in on Fedora 41 leading to build failures
+RUN dnf install -y gdb

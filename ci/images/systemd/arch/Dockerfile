@@ -3,7 +3,7 @@ FROM archlinux
 ARG ARCH=amd64
 
 RUN pacman -Syu --noconfirm
-RUN pacman -Sy --noconfirm \
+RUN pacman -Syu --noconfirm \
 	systemd \
 	git \
 	git-lfs \

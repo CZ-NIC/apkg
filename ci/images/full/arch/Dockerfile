@@ -9,14 +9,14 @@ ENV PATH="~/.local/bin:$PATH"
 RUN pacman -Syu --noconfirm
 
 # packaging deps
-RUN pacman -Sy --noconfirm \
+RUN pacman -Syu --noconfirm \
     base-devel \
     git \
     python-setuptools \
     python-pip \
     python-pipx
 # basic deps
-RUN pacman -Sy --noconfirm \
+RUN pacman -Syu --noconfirm \
     python-beautifulsoup4 \
     python-blessed \
     python-click \
@@ -26,7 +26,7 @@ RUN pacman -Sy --noconfirm \
     python-requests \
     python-toml
 # Arch being special deps
-RUN pacman -Sy --noconfirm \
+RUN pacman -Syu --noconfirm \
     sudo
 
 # enable man pages

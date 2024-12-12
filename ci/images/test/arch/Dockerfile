@@ -11,7 +11,7 @@ ENV PATH="/root/.local/bin:$PATH"
 RUN pacman -Syu --noconfirm
 
 # packaging deps
-RUN pacman -Sy --noconfirm \
+RUN pacman -Syu --noconfirm \
     base-devel \
     git \
     man-db \
@@ -19,7 +19,7 @@ RUN pacman -Sy --noconfirm \
     python-pip \
     python-pipx
 # basic deps
-RUN pacman -Sy --noconfirm \
+RUN pacman -Syu --noconfirm \
     python-beautifulsoup4 \
     python-blessed \
     python-click \
@@ -29,7 +29,7 @@ RUN pacman -Sy --noconfirm \
     python-requests \
     python-toml
 # testing deps
-RUN pacman -Sy --noconfirm \
+RUN pacman -Syu --noconfirm \
     python-pytest \
     python-pytest-sugar \
     sudo

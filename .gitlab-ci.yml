@@ -14,7 +14,7 @@ variables:
     value: "master"
     description: "Knot Resolver branch to test"
   BIRD_BRANCH:
-    value: "apkg-jru"
+    value: "pkg-v2"
     description: "BIRD branch to test"
 
 

@@ -71,7 +71,7 @@ class Distro:
 
     @cached_property
     def parsed_version(self):
-        return version.parse(self.version)
+        return self.version and version.parse(self.version)
 
     def __str__(self):
         return self.human
@@ -110,7 +110,9 @@ class DistroRule(DistroRuleBase):
         if not self.version_spec:
             return True
         if not distro_.version:
-            return False
+            # Consider an empty/missing version higher than anything else
+            return all(specifier.operator in ('!=', '>', '>=')
+                       for specifier in self.version_spec)
         return distro_.parsed_version in self.version_spec
 
     def __str__(self):
@@ -313,7 +315,7 @@ def current_idver(sep='-'):
     """
     idver = distro.id()
     ver = distro.version()
-    if ver:
+    if ver and ver != 'n/a':
         idver += "%s%s" % (sep, ver)
     return idver
 

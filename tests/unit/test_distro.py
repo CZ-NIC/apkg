@@ -18,7 +18,9 @@ def test_distro_parse(distro, id, ver):
     ('arch', 'arch', True),
     ('debian', 'debian-10', True),
     ('debian > 9', 'debian-10', True),
-    ('debian >= 10', 'debian', False),
+    ('debian >= 10', 'debian', True),
+    ('debian != 10', 'debian', True),
+    ('debian <= 10', 'debian', False),
     ('ubuntu <= 18.04', 'ubuntu-20.04', False),
     ('ubuntu == 21.04', 'ubuntu-21.04', True),
 ])

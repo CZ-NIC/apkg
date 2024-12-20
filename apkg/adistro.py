@@ -34,6 +34,7 @@ class Distro:
         # idver format, i.e.: debian-10, ubuntu-21.04
         self.idver = distro2idver(self.orig)
         self.id, self.version = parse_idver(self.idver)
+        self.names = [self.id]
         self.aliases = aliases or {}
 
     def match(self, *rules):
@@ -104,7 +105,7 @@ class DistroRule(DistroRuleBase):
             self.version_spec = None
 
     def match(self, distro_):
-        if distro_.id != self.id:
+        if self.id not in distro_.names:
             return False
         if not self.version_spec:
             return True

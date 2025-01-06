@@ -24,6 +24,9 @@ log = getLogger(__name__)
 
 RE_VERSION_RULE = r'(\w+)\s*((?:==|!=|~=|<=?|>=?)\s*\d+.*)'
 
+MAX_VERSION_STR = '999'
+MAX_VERSION = version.parse(MAX_VERSION_STR)
+
 
 class Distro:
     """
@@ -70,7 +73,11 @@ class Distro:
 
     @cached_property
     def parsed_version(self):
-        return version.parse(self.version)
+        try:
+            ver = version.parse(self.version)
+        except version.InvalidVersion:
+            ver = MAX_VERSION
+        return ver
 
     def __str__(self):
         return self.human
@@ -292,7 +299,9 @@ def distro2idver(distro_name):
     """
     convert generic distro string into idver format
     """
-    return re.sub(r'\s+', '-', distro_name.strip().lower())
+    s = re.sub(r'\s+', '-', distro_name.strip().lower())
+    s = re.sub(r'[/\\]+', '_', s)
+    return s
 
 
 def parse_idver(idver_str):

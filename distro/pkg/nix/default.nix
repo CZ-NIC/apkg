@@ -26,10 +26,8 @@ python3Packages.buildPythonApplication rec {
     jinja2           # templating
     packaging        # version parsing
     requests         # HTTP for humans™
+    setuptools       # required for build
     toml             # config files
-
-    # further deps?
-    hatchling
   ];
 
   makeWrapperArgs = [ # deps for `srcpkg` operation for other distros; could be optional

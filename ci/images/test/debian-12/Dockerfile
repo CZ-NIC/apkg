@@ -25,7 +25,6 @@ RUN apt-get install -y -qqq \
     git \
     pybuild-plugin-pyproject \
     python3-all \
-    python3-hatchling \
     python3-pip \
     python3-setuptools \
     pipx

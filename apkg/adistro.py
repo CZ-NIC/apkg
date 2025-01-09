@@ -315,8 +315,13 @@ def current_idver(sep='-'):
     """
     idver = distro.id()
     ver = distro.version()
-    if ver and ver != 'n/a':
-        idver += "%s%s" % (sep, ver)
+    if ver:
+        try:
+            # check version string returned by "distro" is valid before appending
+            version.parse(ver)
+            idver += "%s%s" % (sep, ver)
+        except version.InvalidVersion:
+            pass
     return idver
 
 

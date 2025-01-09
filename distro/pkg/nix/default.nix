@@ -36,7 +36,7 @@ python3Packages.buildPythonApplication rec {
     "--prefix" "PATH" ":" (lib.makeBinPath [ gitMinimal rpm dpkg fakeroot ])
   ];
 
-  nativeCheckInputs = with python3Packages; [ pytest dunamai ];
+  nativeCheckInputs = with python3Packages; [ pytest ];
   checkPhase = "py.test"; # inspiration: .gitlab-ci.yml; TODO: do more tests, probably
 
   meta = with lib; {

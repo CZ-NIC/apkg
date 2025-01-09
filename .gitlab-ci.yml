@@ -99,8 +99,6 @@ default:
     when: always
     reports:
       junit: report.xml
-  before_script:
-    - python3 -m pip install dunamai
 
 .bird: &bird
   stage: bird
@@ -163,13 +161,9 @@ default:
     - echo 'ID=nixos' > /etc/os-release
     # Some archive scripts need /bin/bash
     - nix-build '<nixpkgs>' -QA bash && ln -s "$(realpath ./result/bin/bash)" /bin/bash
-    # dunamai is needed for apkg's make-archive script, i.e. for `apkg install` here
-    # and also for tests in nixos-unstable-apkg below.
-    - nix-env -f '<nixpkgs>' -iQA python3.pkgs.dunamai
     # build deps when using modern packaging through pyproject.toml
     # which are also needed when running apkg self tests
-    - nix-env -f '<nixpkgs>' -iQA python3.pkgs.poetry-core
-    - nix-env -f '<nixpkgs>' -iQA python3.pkgs.poetry-dynamic-versioning
+    - nix-env -f '<nixpkgs>' -iQA python3.pkgs.setuptools
     # Use bootstrap apkg to install itself from the current commit
     - nix-shell '<nixpkgs>' -p apkg --run 'apkg install'
   allow_failure: true
@@ -290,8 +284,6 @@ apkg:opensuse-tumbleweed:
   script:
     - *setup-project
     - pytest -v ci/tests/test_apkg.py --junitxml=report.xml
-  before_script:
-    - pip3 install --break-system-packages dunamai
 
 apkg:opensuse-15.6:py3.6:
   image: $CI_REGISTRY/packaging/apkg/test/opensuse-15.6
@@ -300,8 +292,6 @@ apkg:opensuse-15.6:py3.6:
     # ancient Python 3.6 - use legacy setup.py
     - *setup-project-legacy
     - py.test3 -v ci/tests/test_apkg.py --junitxml=report.xml
-  before_script:
-    - pip3 install dunamai
 
 apkg:opensuse-15.6:py3.11:
   image: $CI_REGISTRY/packaging/apkg/test/opensuse-15.6
@@ -310,8 +300,6 @@ apkg:opensuse-15.6:py3.11:
     # use optional Python 3.11 packages
     - *setup-project-py311
     - py.test-3.11 -v ci/tests/test_apkg.py --junitxml=report.xml
-  before_script:
-    - pip3.11 install dunamai
 
 apkg:centos-7:
   image: $CI_REGISTRY/packaging/apkg/test/centos-7

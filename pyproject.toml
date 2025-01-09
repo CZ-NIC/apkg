@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "apkg"
@@ -46,21 +46,3 @@ Source = "https://gitlab.nic.cz/packaging/apkg"
 
 [project.scripts]
 apkg = "apkg.cli:main"
-
-[tool.hatch.version]
-path = "apkg/__init__.py"
-
-[tool.hatch.build.targets.sdist]
-exclude = [
-  ".gitignore",
-  "/ci",
-  "/distro",
-  "/doc-requirements.txt",
-  "/docs",
-  "/examples",
-  "/mkdocs.yml",
-  "/pylintrc",
-  "/pytest.ini",
-  "/tests",
-  "/tox.ini",
-]

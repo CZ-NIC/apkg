@@ -6,6 +6,9 @@ make_archive_script = "distro/scripts/make-archive.sh"
 python_module = "apkg.templatevars.debseries"
 
 [[template.variables]]
+python_module = "apkg.templatevars.distro_like"
+
+[[template.variables]]
 local_module = "distro/vars/vars_example.py"
 
 [[template.variables]]

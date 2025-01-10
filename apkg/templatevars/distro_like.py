@@ -35,10 +35,10 @@ from apkg import adistro
 def get_variables(env):
     distro_var = env['distro']
     # poor man's .copy()
-    distro_like = adistro.Distro(distro_var.orig, distro.aliases)
+    distro_like = adistro.Distro(distro_var.orig, distro_var.aliases)
 
-    if distro.id.lower() == distro_var.id.lower():
-        like = set(distro_var.names) + set(distro.like().split())
+    if distro.id().lower() == distro_var.id.lower():
+        like = set(distro_var.names + distro.like().split())
         distro_like.names = list(like)
         return {'distro_like': distro_like}
 

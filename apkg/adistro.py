@@ -34,6 +34,7 @@ class Distro:
         # idver format, i.e.: debian-10, ubuntu-21.04
         self.idver = distro2idver(self.orig)
         self.id, self.version = parse_idver(self.idver)
+        self.names = [self.id]
         self.aliases = aliases or {}
 
     def match(self, *rules):
@@ -70,7 +71,7 @@ class Distro:
 
     @cached_property
     def parsed_version(self):
-        return version.parse(self.version)
+        return self.version and version.parse(self.version)
 
     def __str__(self):
         return self.human
@@ -104,12 +105,14 @@ class DistroRule(DistroRuleBase):
             self.version_spec = None
 
     def match(self, distro_):
-        if distro_.id != self.id:
+        if self.id not in distro_.names:
             return False
         if not self.version_spec:
             return True
         if not distro_.version:
-            return False
+            # Consider an empty/missing version higher than anything else
+            return all(specifier.operator in ('!=', '>', '>=')
+                       for specifier in self.version_spec)
         return distro_.parsed_version in self.version_spec
 
     def __str__(self):
@@ -313,7 +316,12 @@ def current_idver(sep='-'):
     idver = distro.id()
     ver = distro.version()
     if ver:
-        idver += "%s%s" % (sep, ver)
+        try:
+            # check version string returned by "distro" is valid before appending
+            version.parse(ver)
+            idver += "%s%s" % (sep, ver)
+        except version.InvalidVersion:
+            pass
     return idver
 
 

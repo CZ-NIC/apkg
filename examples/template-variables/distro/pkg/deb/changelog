@@ -3,5 +3,9 @@ apkg-ex-template-variables ({{ version }}-{{ release }}~{{ deb_series }}) {{ deb
   * upstream version {{ version }} for {{ distro }} {{ deb_codename }}
   * custom variables: {{ custom_int }}, {{ custom_float }}, {{ custom_bool }}, {{ custom_str }}
   * custom functions: 1 + 2 == {{ custom_fun_add(1, 2) }}, {{ custom_fun_echo('ECHO') }}
+{%- if distro_like  %}
+  * distro_like: {{ distro_like }}
+{%- endif %}
+
 
  -- Jakub Ružička <jakub.ruzicka@nic.cz>  {{ now }}

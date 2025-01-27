@@ -32,7 +32,7 @@ using [template.variables](config.md#templatevariables) config option, for examp
 
 ```toml
 [[template.variables]]
-python_module = "apkg.templatevars.debseries"
+python_module = "apkg.templatevars.deb_series"
 
 [[template.variables]]
 local_module = "distro/vars/custom_vars.py"
@@ -44,7 +44,7 @@ See `apkg status` output to check defined variables sources and their status:
 $> apkg status
 
 template variables sources:
-    python_module: apkg.templatevars.debseries (exists)
+    python_module: apkg.templatevars.deb_series (exists)
     local_module: distro/vars/custom_vars.py (exists)
 ```
 
@@ -72,7 +72,7 @@ def get_variables(old_vars : dict) -> dict:
 Existing template variables are passed to `get_variables` function as a `dict`
 argument and the function is expected to return a `dict` of custom variables.
 
-See {{ 'apkg/templatevars/debseries.py' | file_link }} for an example
+See {{ 'apkg/templatevars/deb_series.py' | file_link }} for an example
 implementation.
 
 
@@ -108,7 +108,7 @@ Global Python modules can be used with `python_module`
 
 ```toml
 [[template.variables]]
-python_module = "apkg.templatevars.debseries"
+python_module = "apkg.templatevars.deb_series"
 ```
 
 
@@ -117,7 +117,7 @@ python_module = "apkg.templatevars.debseries"
 `apkg.templatevars` contains following template variables modules:
 
 
-### apkg.templatevars.debseries
+### apkg.templatevars.deb_series
 
 Extract distro series (`deb_series`) and codename (`deb_codename`) from
 
@@ -141,7 +141,7 @@ entry to config:
 
 ```toml
 [[template.variables]]
-python_module = "apkg.templatevars.debseries"
+python_module = "apkg.templatevars.deb_series"
 ```
 
 Example usage in `debian/chanelog`:
@@ -156,7 +156,8 @@ some-package ({{ version }}-{{ release }}~{{ deb_series }}) {{ deb_series }}; ur
 ```
 {% endraw %}
 
-{{ added_in_version('0.5.0', compat=4) }}
+{{ added_in_version('0.6.0', compat=5, extra='to `apkg.templatevars.deb_series`', action='Renamed') }}
+{{ added_in_version('0.5.0', compat=4, extra='as `apkg.templatevars.debseries`') }}
 
 
 ### apkg.templatevars.distro_like

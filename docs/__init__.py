@@ -69,13 +69,15 @@ def define_env(env):
         return run(c)
 
     @env.macro
-    def added_in_version(version, compat=None):
+    def added_in_version(version, compat=None, extra=None, action='Added'):
         vlink = 'news.md#apkg-%s' % link_id(version)
-        md = '!!! info\n    Added in `apkg` [%s](%s)' % (version, vlink)
+        md = '!!! info\n    %s in `apkg` [%s](%s)' % (action, version, vlink)
         if compat:
             compat = str(compat)
             clink = 'news.md#compat-level-%s-news' % link_id(compat)
             md += ', compat level [%s](%s) ([?](compat.md))' % (compat, clink)
+        if extra:
+            md += ' ' + extra
         return md
 
 

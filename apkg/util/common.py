@@ -69,6 +69,14 @@ def print_results(results):
         print(str(results))
 
 
+def print_results_dict(results):
+    """
+    print results dict received from apkg command (used in make-archive)
+    """
+    for key, val in results.items():
+        print("%s: %s" % (key, val))
+
+
 def parse_input_files(files, file_lists):
     """
     utility to parse apkg input files and input file lists

@@ -26,7 +26,7 @@ def cli_make_archive(*args, **kwargs):
     create dev archive from current project state
     """
     results = make_archive(*args, **kwargs)
-    common.print_results(results)
+    common.print_results_dict(results)
     return results
 
 

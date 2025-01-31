@@ -19,15 +19,18 @@ RUN apt-get install -y -qqq \
     apt-utils \
     build-essential \
     curl \
+    cpio \
     debhelper \
     dh-python \
+    distro-info-data \
     dpkg-dev \
     git \
     pybuild-plugin-pyproject \
     python3-all \
     python3-pip \
     python3-setuptools \
-    pipx
+    pipx \
+    rpm
 # testing deps
 RUN apt-get install -y -qqq \
     python3-pytest \

@@ -1,6 +1,7 @@
 from pathlib import Path
 import pytest
 import shlex
+from shutil import which
 import subprocess
 import re
 
@@ -12,6 +13,8 @@ from apkg.util import test
 
 APKG_BASE_DIR = Path(__file__).parents[2]
 EXAMPLE_DIR = APKG_BASE_DIR / 'examples/multiple-sources'
+RPMBUILD = which('rpmbuild')
+CPIO = which('cpio')
 
 
 @pytest.fixture(scope="module")
@@ -58,6 +61,8 @@ def test_mutiple_sources_srcpkg_deb(proj, capsys):
 RE_RPM_CH = r"\* \w{3} \w{3} \d{2} \d{4} [^-]+- ([^-]+)-(\w+)"
 
 
+@pytest.mark.skipif(not RPMBUILD, reason="rpmbuild not available. Install rpm package to test.")
+@pytest.mark.skipif(not CPIO, reason="cpio not available. Install cpio package to test.")
 def test_multiple_sources_srcpkg_rpm(proj, capsys):
     """
     test handling of components and compat level 5 features in rpm packaging

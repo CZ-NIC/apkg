@@ -25,9 +25,11 @@ def repo_path(tmpdir_factory):
 def proj(repo_path):
     return Project(repo_path.resolve())
 
+
 RE_DEB_CH = r"Changes:\n apkg-ex-multiple-sources \(([^-]+)-([^)]+)\) unstable; .*"
 
-def test_srcpkg_deb(proj, capsys):
+
+def test_mutiple_sources_srcpkg_deb(proj, capsys):
     """
     test handling of components and compat level 5 features in deb packaging
     """
@@ -52,9 +54,11 @@ def test_srcpkg_deb(proj, capsys):
     assert d_upstream == '0.1'
     assert d_local == '1'
 
+
 RE_RPM_CH = r"\* \w{3} \w{3} \d{2} \d{4} [^-]+- ([^-]+)-(\w+)"
 
-def test_srcpkg_rpm(proj, capsys):
+
+def test_multiple_sources_srcpkg_rpm(proj, capsys):
     """
     test handling of components and compat level 5 features in rpm packaging
     """

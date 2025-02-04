@@ -14,7 +14,7 @@ log = getLogger(__name__)
 
 
 @click.command(name="lint")
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-p', '--pedantic', is_flag=True,
               help="enable extra / all warnings and infos")
 @click.option('-i', '--info', is_flag=True,
@@ -63,7 +63,7 @@ def cli_lint(*args, **kwargs):
 
 
 def lint(
-        input_files=None,
+        inputs=None,
         input_file_lists=None,
         pedantic=False,
         info=False,
@@ -87,21 +87,21 @@ def lint(
     if lint_dep:
         system_setup(lint=True)
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, input_file_lists)
 
-    if not infiles:
+    if not inputs:
         # default: use srcpkg and build to get packages to lint
-        infiles = make_srcpkg(
+        inputs = make_srcpkg(
             distro=distro,
             cache=cache)
-        infiles += build(
+        inputs += build(
             distro=distro,
             cache=cache)
 
     try:
         result = pkgstyle.call_pkgstyle_fun(
             ps, 'lint',
-            infiles,
+            inputs,
             pedantic=pedantic,
             info=info,
             strict=strict,

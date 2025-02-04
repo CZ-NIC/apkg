@@ -13,7 +13,7 @@ log = getLogger(__name__)
 
 
 @cli.command(name="test-dep", aliases=['testdep'])
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-l', '--list', 'install', default=True, flag_value=False,
               help="list test deps only, don't install")
 @click.option('-u', '--upstream', is_flag=True,
@@ -42,7 +42,7 @@ def cli_test_dep(*args, **kwargs):
 def test_dep(
         upstream=False,
         archive=False,
-        input_files=None,
+        inputs=None,
         input_file_lists=None,
         install=True,
         distro=None,
@@ -62,9 +62,9 @@ def test_dep(
     distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, input_file_lists)
     archive, _ = parse_archive_args(
-        proj, archive, upstream, infiles)
+        proj, archive, upstream, inputs)
 
     tests = proj.get_tests_for_distro(distro)
     deps = tests.deps

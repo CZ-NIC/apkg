@@ -28,9 +28,8 @@ log = getLogger(__name__)
                    " (apkg system-setup --lint)")
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/disable cache")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_lint(*args, **kwargs):
@@ -39,7 +38,7 @@ def cli_lint(*args, **kwargs):
 
     Default: build packages from source and lint them
 
-    You can supply files to lint as arguments or use --file-list.
+    You can supply files to lint as arguments or use --in-file.
 
     Use --pedantic to run extra / all checks.
 
@@ -64,7 +63,7 @@ def cli_lint(*args, **kwargs):
 
 def lint(
         inputs=None,
-        input_file_lists=None,
+        in_files=None,
         pedantic=False,
         info=False,
         strict=False,
@@ -87,7 +86,7 @@ def lint(
     if lint_dep:
         system_setup(lint=True)
 
-    inputs = common.parse_inputs(inputs, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
 
     if not inputs:
         # default: use srcpkg and build to get packages to lint

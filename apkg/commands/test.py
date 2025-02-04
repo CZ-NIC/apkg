@@ -14,7 +14,7 @@ log = getLogger(__name__)
 
 
 @cli.command(name="test", aliases=['tests'])
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-i', '--info', is_flag=True,
               help="show tests information and exit")
 @click.option('-l', '--list-tests', is_flag=True,
@@ -51,7 +51,7 @@ def test(
         show_control=False,
         upstream=False,
         archive=None,
-        input_files=None,
+        inputs=None,
         input_file_lists=None,
         distro=None,
         test_dep=False,
@@ -61,15 +61,15 @@ def test(
     """
     proj = Project()
     distro = adistro.distro_arg(distro, proj)
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, input_file_lists)
     archive, archive_files = parse_archive_args(
-        proj, archive, upstream, infiles)
+        proj, archive, upstream, inputs)
 
     if test_dep:
         cmd_test_dep(
             upstream=upstream,
             archive=None,
-            input_files=archive_files,
+            inputs=archive_files,
             distro=distro)
 
     if info:

@@ -39,9 +39,8 @@ log = getLogger(__name__)
                     "  [default: pkg/srcpkg/DISTRO/NVR]"))
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/disable cache")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 @click.option('-I', '--isolated', is_flag=True,
               help="use isolated builder (pbuilder, mock, ...)")
 @click.option('-i', '--install-dep', 'build_dep', is_flag=True,
@@ -62,7 +61,7 @@ def build(
         archive=False,
         upstream=False,
         inputs=None,
-        input_file_lists=None,
+        in_files=None,
         version=None,
         release=None,
         distro=None,
@@ -82,7 +81,7 @@ def build(
     use_cache = proj.cache.enabled(
         'local', cmd='build', use_cache=cache)
 
-    inputs = common.parse_inputs(inputs, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
 
     if build_dep:
         if isolated:

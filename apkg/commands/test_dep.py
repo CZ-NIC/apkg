@@ -22,9 +22,8 @@ log = getLogger(__name__)
               help="use test deps from archive")
 @click.option('-d', '--distro',
               help="override target distro  [default: current]")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 @click.option('--ask/--no-ask', 'interactive',
               default=False, show_default=True,
               help="enable/disable interactive mode")
@@ -43,7 +42,7 @@ def test_dep(
         upstream=False,
         archive=False,
         inputs=None,
-        input_file_lists=None,
+        in_files=None,
         install=True,
         distro=None,
         interactive=False,
@@ -62,7 +61,7 @@ def test_dep(
     distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
 
-    inputs = common.parse_inputs(inputs, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
     archive, _ = parse_archive_args(
         proj, archive, upstream, inputs)
 

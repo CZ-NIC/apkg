@@ -77,7 +77,7 @@ def print_results_dict(results):
         print("%s: %s" % (key, val))
 
 
-def parse_input_files(files, file_lists):
+def parse_inputs(files, file_lists):
     """
     utility to parse apkg input files and input file lists
     into a single list of input files
@@ -104,11 +104,11 @@ def parse_input_files(files, file_lists):
     return all_files
 
 
-def ensure_input_files(infiles):
-    if not infiles:
+def ensure_inputs(inputs):
+    if not inputs:
         raise ex.InvalidInput(
             fail="no input file(s) specified")
-    for f in infiles:
+    for f in inputs:
         if not f or not f.exists():
             raise ex.InvalidInput(
                 fail="input file not found: %s" % f)

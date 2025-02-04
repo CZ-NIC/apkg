@@ -18,7 +18,7 @@ log = getLogger(__name__)
 
 
 @click.command(name="srcpkg")
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-a', '--archive', is_flag=True,
               help="source package from speficied archive file(s)")
 @click.option('-u', '--upstream', is_flag=True,
@@ -53,7 +53,7 @@ def cli_srcpkg(*args, **kwargs):
 
 def srcpkg(
         archive=False,
-        input_files=None,
+        inputs=None,
         input_file_lists=None,
         upstream=False,
         version=None,
@@ -98,30 +98,30 @@ def srcpkg(
     if not release:
         release = '1'
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, input_file_lists)
 
     if not archive:
         # archive not specified - use make_archive or get_archive
-        if infiles:
-            instr = ", ".join([str(i) for i in infiles])
+        if inputs:
+            instr = ", ".join([str(i) for i in inputs])
             raise ex.InvalidInput(
                 fail="unexpected input file(s): %s" % instr)
 
         if upstream:
-            infiles = get_archive(
+            inputs = get_archive(
                 version=version,
                 cache=cache,
                 project=proj)
         else:
-            infiles = make_archive(
+            inputs = make_archive(
                 cache=cache,
                 project=proj)
 
-    ar_path = infiles["archive"]
-    version = infiles["version"]
+    ar_path = inputs["archive"]
+    version = inputs["version"]
 
-    paths = [ar_path] + list(infiles.get("components", {}).values())
-    common.ensure_input_files(paths)
+    paths = [ar_path] + list(inputs.get("components", {}).values())
+    common.ensure_inputs(paths)
 
     if use_cache:
         cache_key = 'srcpkg/%s/%s/%s-%s/' % (
@@ -202,7 +202,7 @@ def srcpkg(
     results = template.pkgstyle.build_srcpkg(
         build_path,
         out_path,
-        archive_info=infiles,
+        archive_info=inputs,
         template=template,
         tvars=tvars)
 

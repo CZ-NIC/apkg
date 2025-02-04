@@ -12,7 +12,7 @@ log = getLogger(__name__)
 
 
 @click.command(name="install")
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-C', '--custom-pkgs', is_flag=True,
               help="install custom packages (no build)")
 @click.option('-D', '--distro-pkgs', is_flag=True,
@@ -65,7 +65,7 @@ def install(
         srcpkg=False,
         archive=False,
         upstream=False,
-        input_files=None,
+        inputs=None,
         input_file_lists=None,
         version=None,
         release=None,
@@ -86,7 +86,7 @@ def install(
         raise ex.DistroNotSupported(distro=distro)
     log.info("target pkgstyle: %s", ps.name)
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, input_file_lists)
 
     pkgs = []
     result = None
@@ -97,14 +97,14 @@ def install(
                 fail=("--custom-pkgs and --distro-pkgs options"
                       " are mutually exclusive"))
 
-        pkgs = infiles
+        pkgs = inputs
         result = pkgstyle.call_pkgstyle_fun(
             ps, 'install_custom_packages',
             pkgs,
             distro=distro,
             interactive=interactive)
     elif distro_pkgs:
-        pkgs = infiles
+        pkgs = inputs
         result = pkgstyle.call_pkgstyle_fun(
             ps, 'install_distro_packages',
             pkgs,
@@ -116,7 +116,7 @@ def install(
             srcpkg=srcpkg,
             archive=archive,
             upstream=upstream,
-            input_files=infiles,
+            inputs=inputs,
             version=version,
             release=release,
             distro=distro,

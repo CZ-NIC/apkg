@@ -37,9 +37,8 @@ log = getLogger(__name__)
 @click.option('--ask/--no-ask', 'interactive',
               default=False, show_default=True,
               help="enable/disable interactive mode")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 # TODO: once py3.5 is dropped, add hidden=True
 @click.option('-y', '--yes', 'interactive', flag_value=False,
               help="[DEPRECATED] compat alias for --no-ask")
@@ -66,7 +65,7 @@ def install(
         archive=False,
         upstream=False,
         inputs=None,
-        input_file_lists=None,
+        in_files=None,
         version=None,
         release=None,
         distro=None,
@@ -86,7 +85,7 @@ def install(
         raise ex.DistroNotSupported(distro=distro)
     log.info("target pkgstyle: %s", ps.name)
 
-    inputs = common.parse_inputs(inputs, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
 
     pkgs = []
     result = None

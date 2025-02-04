@@ -37,9 +37,8 @@ log = getLogger(__name__)
               help="only render source package template")
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/disable cache")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file(s), '-' to read from stdin")
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_srcpkg(*args, **kwargs):
@@ -54,7 +53,7 @@ def cli_srcpkg(*args, **kwargs):
 def srcpkg(
         archive=False,
         inputs=None,
-        input_file_lists=None,
+        in_files=None,
         upstream=False,
         version=None,
         release=None,
@@ -98,7 +97,7 @@ def srcpkg(
     if not release:
         release = '1'
 
-    inputs = common.parse_inputs(inputs, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
 
     if not archive:
         # archive not specified - use make_archive or get_archive

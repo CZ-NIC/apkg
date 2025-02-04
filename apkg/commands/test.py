@@ -31,9 +31,8 @@ log = getLogger(__name__)
               help="install testing dependencies on host (apkg test-dep)")
 @click.option('-k', '--test-filter',
               help="only select tests matching supplied REGEX")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_test(*args, **kwargs):
@@ -52,7 +51,7 @@ def test(
         upstream=False,
         archive=None,
         inputs=None,
-        input_file_lists=None,
+        in_files=None,
         distro=None,
         test_dep=False,
         test_filter=None):
@@ -61,7 +60,7 @@ def test(
     """
     proj = Project()
     distro = adistro.distro_arg(distro, proj)
-    inputs = common.parse_inputs(inputs, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
     archive, archive_files = parse_archive_args(
         proj, archive, upstream, inputs)
 

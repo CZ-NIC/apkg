@@ -10,6 +10,7 @@ from apkg.commands.get_archive import get_archive
 from apkg.commands.make_archive import make_archive
 from apkg.log import getLogger
 from apkg.project import Project
+from apkg.util.archive import get_archive_version
 import apkg.util.shutil35 as shutil
 
 
@@ -38,6 +39,9 @@ log = getLogger(__name__)
               help="enable/disable cache")
 @click.option('-F', '--in-file', 'in_files', multiple=True,
               help="specify input file(s), '-' to read from stdin")
+@click.option('-f', '--in-format', default='auto', show_default=True,
+              type=click.Choice(['auto', 'yaml', 'list']),
+              help="set input format")
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_srcpkg(*args, **kwargs):
@@ -53,6 +57,7 @@ def srcpkg(
         archive=False,
         inputs=None,
         in_files=None,
+        in_format=None,
         upstream=False,
         version=None,
         release=None,
@@ -96,7 +101,19 @@ def srcpkg(
     if not release:
         release = '1'
 
-    inputs = common.parse_inputs(inputs, in_files)
+    if not in_format or in_format == 'auto':
+        # default to list format when inputs arg is used, otherwise use yaml format
+        in_format = 'list' if inputs else 'yaml'
+
+    inputs = common.parse_inputs(inputs, in_files, in_format=in_format)
+
+    if in_format == 'list':
+        # convert inputs from list to yaml format
+        common.ensure_inputs(inputs)
+        # TODO: allow only one archive/line?
+        inputs = {'archive': inputs[0]}
+
+    sanitize_inputs(inputs)
 
     if not archive:
         # archive not specified - use make_archive or get_archive
@@ -115,10 +132,17 @@ def srcpkg(
                 cache=cache,
                 project=proj)
 
-    ar_path = inputs["archive"]
-    version = inputs["version"]
+    ar_path = Path(inputs.get('archive'))
+    version = inputs.get('version')
+    components = inputs.get('components', {})
 
-    paths = [ar_path] + list(inputs.get("components", {}).values())
+    if not ar_path:
+        raise ex.InvalidInput(
+            msg="Missing required input: archive")
+    if not version:
+        version = get_archive_version(ar_path)
+
+    paths = [ar_path] + list(components.values())
     common.ensure_inputs(paths)
 
     if use_cache:
@@ -215,6 +239,18 @@ def srcpkg(
         proj.cache.update(cache_key, results)
 
     return results
+
+
+def sanitize_inputs(inputs):
+    # convert paths to pathlib.Path
+    archive = inputs.get('archive')
+    if archive and not isinstance(archive, Path):
+        inputs['archive'] = Path(archive)
+    components = inputs.get('components')
+    if components:
+        for key, val in list(components.items()):
+            if not isinstance(val, Path):
+                components[key] = Path(val)
 
 
 APKG_CLI_COMMANDS = [cli_srcpkg]

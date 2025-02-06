@@ -106,7 +106,7 @@ class MissingRequiredModule(ApkgException):
 
 
 class ArchiveNotFound(ApkgException):
-    msg_fmt = "{type} archive not found: {ar}"
+    msg_fmt = "Archive not found: {ar}"
     returncode = 36
 
 

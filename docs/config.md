@@ -204,7 +204,7 @@ Example:
 
 ```toml
 [[template.variables]]
-python_module = "apkg.templatevars.debseries"
+python_module = "apkg.templatevars.deb_series"
 
 [[template.variables]]
 local_module = "distro/vars/custom_vars.py"

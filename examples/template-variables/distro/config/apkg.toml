@@ -3,7 +3,7 @@ name = "apkg-ex-template-variables"
 make_archive_script = "distro/scripts/make-archive.sh"
 
 [[template.variables]]
-python_module = "apkg.templatevars.debseries"
+python_module = "apkg.templatevars.deb_series"
 
 [[template.variables]]
 python_module = "apkg.templatevars.distro_like"

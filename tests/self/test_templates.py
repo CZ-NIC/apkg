@@ -41,7 +41,6 @@ def proj(repo_path):
     ('rocky-9', 'rocky', 'rpm'),
     ('rocky', 'rocky', 'rpm'),
     ('centos-8', 'el-8', 'rpm'),
-    ('centos-7', 'rpm', 'rpm'),
     ('CentOS', 'rpm', 'rpm'),
     ('Fedora 38', 'rpm', 'rpm'),
     ('opensuse', 'rpm', 'rpm'),

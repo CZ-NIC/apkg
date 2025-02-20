@@ -302,16 +302,6 @@ apkg:opensuse-15.6:py3.11:
     - *setup-project-py311
     - py.test-3.11 -v ci/tests/test_apkg.py --junitxml=report.xml
 
-apkg:centos-7:
-  image: $CI_REGISTRY/packaging/apkg/test/centos-7
-  <<: *apkg
-  script:
-    # ancient Python 3.6 - use legacy setup.py
-    - *setup-project-legacy
-    # self tests are broken due to missing deps, run unit tests instead
-    - pytest -v --junitxml=report.xml
-    - apkg status
-
 apkg:arch:
   image: $CI_REGISTRY/packaging/apkg/test/arch
   <<: *apkg

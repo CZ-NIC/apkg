@@ -11,7 +11,7 @@ apkg is tested to **run** on following **Python** versions:
 | 3.11   | ✅        |
 | 3.10   | ✅        |
 | 3.9    | ✅        |
-| 3.8    | ✅        |
+| 3.8    | ⚠️ EOL    |
 | 3.7    | ⚠️ EOL    |
 | 3.6    | ⚠️ EOL    |
 
@@ -29,24 +29,26 @@ apkg is able to **create packages** for/on following **distros**:
 
 | distro | support | CI | pkgstyle | Python |
 | ------ | ------- | -- | -------- | ------ |
-| Debian Sid | ✅ | ❌ | [deb] | 3.12 |
+| Debian Sid | ✅ | ❌ | [deb] | 3.13 |
+| Debian 13 | ✅ | ✅ | [deb] | 3.13 |
 | Debian 12 | ✅ | ✅ | [deb] | 3.11 |
 | Debian 11 | ✅ | ✅ | [deb] | 3.9  |
 | Debian 10 | ⚠️ legacy | ✅ | [deb] | 3.7 ⚠️ EOL |
 | Debian 9 | ⚠️ legacy | ❌ | [deb] | 3.6 ⚠️ EOL |
+| Ubuntu 24.10 | ✅ | ✅ | [deb] | 3.12 |
 | Ubuntu 24.04 | ✅ | ✅ | [deb] | 3.12 |
 | Ubuntu 22.04 | ✅ | ✅ | [deb] | 3.10 |
-| Ubuntu 20.04 | ✅ | ✅ | [deb] | 3.8 |
+| Ubuntu 20.04 | ⚠️ legacy | ✅ | [deb] | 3.8 ⚠️ EOL |
 | Ubuntu 18.04 | ⚠️ legacy | ❌ | [deb] | 3.6 ⚠️ EOL |
 | Linux Mint | ⚠️ untested | ❌ | [deb] |  |
 | Pop!_OS | ⚠️ untested | ❌ | [deb] |  |
 | Fedora Rawhide | ✅ | ❌ | [rpm] | 3.12 |
+| Fedora 41 | ✅ | ✅ | [rpm] | 3.13 |
 | Fedora 40 | ✅ | ✅ | [rpm] | 3.12 |
-| Fedora 39 | ✅ | ✅ | [rpm] | 3.12 |
 | Enterprise Linux 9 | ✅ | ✅ | [rpm] | 3.9 |
 | Enterprise Linux 8 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
-| Enterprise Linux 7 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
-| openSUSE Tumbleweed | ✅ | ❌ | [rpm] | 3.12 |
+| Enterprise Linux 7 | ⚠️ legacy | ❌ | [rpm] | 3.6 ⚠️ EOL |
+| openSUSE Tumbleweed | ✅ | ✅ | [rpm] | 3.11 |
 | openSUSE Leap 15 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL, 3.11 available |
 | Arch | ✅ | ✅ | [arch] | 3.12 |
 | Manjaro | ⚠️ untested | ❌ | [arch] | 3.12 |

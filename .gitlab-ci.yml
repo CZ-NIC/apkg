@@ -203,7 +203,6 @@ unit:
   parallel:
     matrix:
       - PYTHON_IMAGE:
-        - 'python:3.8'
         - 'python:3.9'
         - 'python:3.10'
         - 'python:3.11'
@@ -227,6 +226,7 @@ unit:legacy:
       - PYTHON_IMAGE:
         - 'python:3.6'
         - 'python:3.7'
+        - 'python:3.8'
   allow_failure: true
 
 self:

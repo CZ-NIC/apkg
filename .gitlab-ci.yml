@@ -453,7 +453,6 @@ knot-resolver:rpm:
       - DISTRO:
         - 'fedora-40'
         - 'fedora-41'
-        - 'rocky-8'
         - 'alma-9'
 
 knot-resolver:opensuse-tumbleweed:

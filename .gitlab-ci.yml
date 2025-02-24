@@ -278,6 +278,7 @@ apkg:rpm:
         - 'fedora-41'
         - 'rocky-8'
         - 'alma-9'
+        - 'alma-10'
 
 apkg:opensuse-tumbleweed:
   image: $CI_REGISTRY/packaging/apkg/test/opensuse-tumbleweed
@@ -352,6 +353,7 @@ bird:rpm:
         - 'fedora-40'
         - 'fedora-41'
         - 'alma-9'
+        - 'alma-10'
 
 
 # integration tests: Knot DNS
@@ -400,6 +402,7 @@ knot-dns:rpm:
         - 'fedora-41'
         - 'rocky-8'
         - 'alma-9'
+        - 'alma-10'
 
 knot-dns:opensuse-tumbleweed:
   image: $CI_REGISTRY/packaging/apkg/test/opensuse-tumbleweed
@@ -454,6 +457,7 @@ knot-resolver:rpm:
         - 'fedora-40'
         - 'fedora-41'
         - 'alma-9'
+        - 'alma-10'
 
 knot-resolver:opensuse-tumbleweed:
   image: $CI_REGISTRY/packaging/apkg/test/opensuse-tumbleweed

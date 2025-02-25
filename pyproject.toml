@@ -34,7 +34,6 @@ dependencies = [
     "jinja2",
     "packaging",
     "requests",
-    "toml",
 ]
 dynamic = ["version"]
 

@@ -4,7 +4,6 @@ from pathlib import Path
 import re
 
 import jinja2
-import toml
 try:
     from functools import cached_property
 except ImportError:
@@ -19,6 +18,7 @@ from apkg import pkgtemplate
 from apkg import pkgtest
 from apkg.util.archive import unpack_archive
 from apkg.util.git import git
+from apkg.util import toml
 from apkg.util import upstreamversion
 
 
@@ -132,7 +132,7 @@ class Project:
         """
         if self.path.config.exists():
             log.verbose("loading project config: %s", self.path.config)
-            self.config = toml.load(self.path.config.open())
+            self.config = toml.loadp(self.path.config)
             return True
         else:
             log.verbose("project config not found: %s", self.path.config)

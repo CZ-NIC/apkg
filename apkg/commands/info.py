@@ -1,5 +1,4 @@
 import json
-import toml
 
 import click
 import distro as distro_mod
@@ -9,6 +8,8 @@ from apkg.pkgstyle import PKGSTYLES
 from apkg import pkgtemplate
 from apkg.log import getLogger, T
 from apkg.project import Project
+from apkg.util import common
+from apkg.util import toml
 
 
 log = getLogger(__name__)
@@ -118,7 +119,7 @@ def template_variables(distro=None, custom=False):
     if not custom:
         tvars = {'distro': distro}
         tvars = template.template_vars(tvars)
-        print(toml.dumps(tvars))
+        print(toml.dumps(common.serialize(tvars)))
         return
 
     # custom variables
@@ -127,7 +128,7 @@ def template_variables(distro=None, custom=False):
     for vsrc in proj.variables_sources:
         print("# variables from %s: %s" % (vsrc.src_attr, vsrc.src_val))
         custom_tvars = vsrc.get_variables(tvars)
-        print(toml.dumps(custom_tvars))
+        print(toml.dumps(common.serialize(custom_tvars)))
         tvars.update(custom_tvars)
 
 

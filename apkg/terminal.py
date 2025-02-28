@@ -23,11 +23,14 @@ class PlainTerminal:
 
 
 COLOR_TERMINAL = False
+COLOR_LIB = None
 try:
     try:
         import blessed
+        COLOR_LIB = 'blessed'
     except Exception:
         import blessings as blessed
+        COLOR_LIB = 'blessings'
     # this can throw _curses.error: setupterm: could not find terminal
     # better find out now
     blessed.Terminal()

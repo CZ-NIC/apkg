@@ -100,6 +100,11 @@ class MissingPackagingTemplate(ApkgException):
     returncode = 32
 
 
+class MissingRequiredModule(ApkgException):
+    msg_fmt = "Missing required module: {mod}"
+    returncode = 34
+
+
 class ArchiveNotFound(ApkgException):
     msg_fmt = "{type} archive not found: {ar}"
     returncode = 36

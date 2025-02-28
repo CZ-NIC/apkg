@@ -154,6 +154,16 @@ def fnmatch_any(filename, patterns):
     return False
 
 
+def serialize(obj):
+    if isinstance(obj, (list, tuple)):
+        return [serialize(v) for v in obj]
+    if isinstance(obj, dict):
+        return {k: serialize(v) for k, v in obj.items()}
+    if isinstance(obj, (str, bool, int, float)):
+        return obj
+    return str(obj)
+
+
 class SortReversor:
     """
     use this with multi-key sort() to reverse individual keys

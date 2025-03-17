@@ -24,7 +24,12 @@ Requires:         python3-jinja2
 Requires:         python3-Jinja2
 %endif
 Requires:         python3-requests
+%if 0%{?fedora} >= 40 || 0%{?rhel} >= 10
+Requires:         python3-tomli-w
+%else
 Requires:         python3-toml
+%endif
+Recommends:       python3-blessed
 
 Provides:         python3-%{name} = %{version}-%{release}
 
@@ -36,7 +41,7 @@ distributions/packaging systems with minimum overhead.
 %prep
 %autosetup -n %{name}-v%{version} -S git
 # blessed is in install_requires for PyPI, but it's optional for colors
-sed -i '/blessed/d' setup.cfg
+sed -i '/blessed/d' pyproject.toml setup.cfg
 
 %build
 %py3_build

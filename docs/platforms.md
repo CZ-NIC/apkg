@@ -45,6 +45,7 @@ apkg is able to **create packages** for/on following **distros**:
 | Fedora Rawhide | ✅ | ❌ | [rpm] | 3.12 |
 | Fedora 41 | ✅ | ✅ | [rpm] | 3.13 |
 | Fedora 40 | ✅ | ✅ | [rpm] | 3.12 |
+| Enterprise Linux 10 | ✅ | ✅ | [rpm] | 3.12 |
 | Enterprise Linux 9 | ✅ | ✅ | [rpm] | 3.9 |
 | Enterprise Linux 8 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
 | Enterprise Linux 7 | ⚠️ legacy | ❌ | [rpm] | 3.6 ⚠️ EOL |

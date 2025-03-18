@@ -70,6 +70,11 @@ LOG_LEVEL_FORMATS_META = {
 # set LOG_LEVEL using set_log_level()
 LOG_LEVEL = INFO
 
+# stacklevel arg introduced in Python 3.8 is required to display proper
+# function name due to helpers being used
+# TODO: drop this when Python 3.7 support ends
+HAS_STACKLEVEL = bool(sys.version_info >= (3, 8))
+
 
 def get_log_level():
     """
@@ -84,27 +89,39 @@ class ApkgLogger(logging.Logger):
     """
     def success(self, msg, *args, **kwargs):
         if self.isEnabledFor(SUCCESS):
+            if HAS_STACKLEVEL:
+                kwargs['stacklevel'] = 2
             self._log(SUCCESS, msg, args, **kwargs)
-
-    def sudo(self, msg, *args, **kwargs):
-        if self.isEnabledFor(SUDO):
-            self._log(SUDO, msg, args, **kwargs)
 
     def bold(self, msg, *args, **kwargs):
         if self.isEnabledFor(BOLD):
+            if HAS_STACKLEVEL:
+                kwargs['stacklevel'] = 2
             self._log(BOLD, msg, args, **kwargs)
 
     def verbose(self, msg, *args, **kwargs):
         if self.isEnabledFor(VERBOSE):
+            if HAS_STACKLEVEL:
+                kwargs['stacklevel'] = 2
             self._log(VERBOSE, msg, args, **kwargs)
 
     def command(self, msg, *args, **kwargs):
         if self.isEnabledFor(COMMAND):
+            if HAS_STACKLEVEL:
+                kwargs['stacklevel'] = 3
             self._log(COMMAND, msg, args, **kwargs)
 
     def verbose_command(self, msg, *args, **kwargs):
         if self.isEnabledFor(VERBOSE_COMMAND):
+            if HAS_STACKLEVEL:
+                kwargs['stacklevel'] = 3
             self._log(VERBOSE_COMMAND, msg, args, **kwargs)
+
+    def sudo(self, msg, *args, **kwargs):
+        if self.isEnabledFor(SUDO):
+            if HAS_STACKLEVEL:
+                kwargs['stacklevel'] = 4
+            self._log(SUDO, msg, args, **kwargs)
 
 
 class LogTerminal(terminal.Terminal):

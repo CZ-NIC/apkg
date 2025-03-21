@@ -49,25 +49,13 @@ current distro: arch / Arch Linux
 [project.make_archive_script](config.md#projectmake_archive_script)
 config option to be set.
 
-This command will only succeed when the script finishes successfully (with
-exit code 0) and it outputs the resulting archive (and potentially other
-information) to stdout.
+This command will only succeed when `make_archive_script` script finishes
+successfully (with exit code 0) and it outputs the resulting archive (and
+potentially other information) to stdout.
 
-The interface differs based on compat level:
-
-- level <= 4:
-  Last line of the script's stdout is taken to be the generated archive, all
-  other lines are ignored. Upstream version is extracted from archive name.
-- level >= 5 behaviour is different (richer):
-  - lines with `#` as the first character are currently ignored (but it is
-    encouraged that stderr is used for any reporting)
-  - other lines are expected to be in the form of `<tag>[:<argument>] <value>`
-    where:
-    | Tag name | Occurrence | Supports argument? | Description |
-    | --- | --- | --- | --- |
-    | archive | exactly once | no | upstream sources |
-    | version | at most once | no | signals upstream version, if not present, version is extracted from archive |
-    | component | optional, multiple | yes | additional sources, argument signals the "component" name for `deb` scheme |
+See
+[project.make_archive_script](config.md#projectmake_archive_script)
+for expected script output.
 
 Resulting files are copied to `pkg/archives/dev/` or to `--result-dir`.
 

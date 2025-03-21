@@ -14,12 +14,16 @@ COMPAT_LEVEL = 5
 
 
 COMPAT_LEVEL_NOTES = {
-    5: ('0.x.0', """Forward incompatible update.
+    5: ('0.6.0', """Forward incompatible update, changes required:
 
-## New make-archive interface
+## new make_archive_script YAML interface
 
-stdout output of make-archive scripts is now parsed by apkg in full,
-any unrelated messages should go to stderr"""),
+make_archive_script stdout is now expected to be in YAML format, any messages
+should go to stderr.
+
+Edit your make_archive_script to output like this:
+
+archive: pkg/archives/dev/banana-1.2.3.tar.gz"""),
     4: ('0.5.0', """Forward compatible update, no action required."""),
     3: ('0.4.0', """Forward compatible update, no action required."""),
     2: ('0.3.0', """Forward compatible update for most users.

@@ -28,41 +28,66 @@ This is available to templates through {% raw %}`{{ project.name }}`{% endraw %}
 
 ### project.make_archive_script
 
-In order to create packages from your project source, `apkg` requires a script
-which creates archive from current project state.
+In order to create packages from your project source,
+[apkg make-archive](commands.md#make-archive) requires a script which creates
+archive from current project state.
 
-The script MUST return the path to created archive on the first line of its
-`stdout`.
-
-The created archive MUST contain version string, for example:
-
-```
-banana-v1.2.3.tar.gz
-```
-
-The script MAY output additional files (such as signatures) and print their
-paths on individual `stdout` lines after the main archive.
-
-!!! Tip
-    The script SHOULD create archives with **unique version strings** for individual
-    VCS commits if using VCS. This isn't strictly required by `apkg`, but it will
-    save you a lot of conflicts and needless work later on.
-
-Include such script in your project and then point to it using `make_archive_script`:
+Include such script in your project and specify it using `project.make_archive_script`:
 
 ```toml
 [project]
 make_archive_script = "scripts/make-archive.sh"
 ```
 
+When the script finishes successfully, it MUST exit with return code 0 and
+print valid YAML to its stdout.
+
+The script MUST output `archive` path:
+
+```
+archive: pkg/archives/dev/banana-v1.2.3.tar.gz
+```
+
+The script MAY output `version`:
+
+```
+version: '1.2.3'
+```
+
+When omitted, `version` is guessed from `archive` file name.
+
+The script MAY output additional files as `components`:
+
+```
+components:
+  extra: pkg/archives/dev/extra-v0.5.tar.gz
+  files: pkg/archives/dev/files.tar.gz
+```
+
+The script SHOULD create archives with **unique version strings** for individual
+VCS commits if using VCS. This isn't strictly required by `apkg`, but it will
+save you a lot of conflicts and needless work later on.
+
+It's strongly recommended to **reuse** the same script in the upstream archive
+creation during official release so that this **code gets properly tested** on
+regular basis - it's used on most `apkg` operations.
+
+`apkg make-archive` copies the resulting `archive` (and `components` if any) to
+`pkg/archives/dev` output directory. You can save some disk space and I/O by
+creating the `archive` (and `components` if any) directly in `pkg/archives/dev` in your `make_archive_script`.
+
 Most projects which use `apkg` have the script in `scripts/` directory for
 historic reasons, but feel free to put it into `distro/scripts/` or anywhere
 else you want.
 
-!!! Tip
-    It's strongly recommended to **reuse** the same script in the upstream archive
-    creation during official release so that this **code gets properly tested** on
-    regular basis - it's used on most `apkg` operations.
+{{ added_in_version('0.6.0', compat=5, action="Changed") }}
+
+For compat level 4 and older, `make_archive_script` is expected to return
+archive file name as last line of its stdout:
+
+```
+pkg/archives/dev/banana-v1.2.3.tar.gz
+```
 
 `make_archive_script` **examples** in the wild:
 

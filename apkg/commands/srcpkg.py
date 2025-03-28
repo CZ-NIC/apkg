@@ -9,6 +9,7 @@ from apkg.util import common
 from apkg.commands.get_archive import get_archive
 from apkg.commands.make_archive import make_archive
 from apkg.log import getLogger
+from apkg.pkgstyle import call_pkgstyle_fun
 from apkg.project import Project
 from apkg.util.archive import get_archive_version
 import apkg.util.shutil35 as shutil
@@ -151,8 +152,15 @@ def srcpkg(
     log.info("package archive: %s", ar_path)
 
     # get needed paths
-    pkg_name = ps.get_template_name(template.path)
+    try:
+        pkg_name = call_pkgstyle_fun(
+            template.pkgstyle, 'get_template_name',
+            template.path, distro=distro)
+    except ex.ApkgException as e:
+        pkg_name = proj.name
+        log.info("%s, using project.name instead: %s", str(e), pkg_name)
     nvr = "%s-%s-%s" % (pkg_name, version, release)
+    nvr = common.sanitize_fn(nvr)
     build_path = proj.path.srcpkg_build / distro.idver / nvr
     if result_dir:
         out_path = Path(result_dir)

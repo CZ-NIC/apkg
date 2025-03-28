@@ -81,7 +81,7 @@ def is_valid_template(path):
     return all((path / f).exists() for f in deb_files)
 
 
-def get_template_name(path):
+def get_template_name(path, **_):
     control = path / 'control'
 
     for line in control.open():
@@ -325,7 +325,7 @@ def get_build_deps_from_template(
     # render control file
     this_style = sys.modules[__name__]
     t = pkgtemplate.PackageTemplate(template_path, style=this_style)
-    tvars = pkgtemplate.DUMMY_VARS.copy()
+    tvars = {}
     if distro:
         tvars['distro'] = distro
     control_text = t.render_file_content('control', tvars=tvars)

@@ -39,7 +39,7 @@ def is_valid_template(path):
             and (path / "top-level.nix").exists())
 
 
-def get_template_name(path):
+def get_template_name(path, **_):
     # I'd like to simply use nix directly, e.g.:
     #   return run("nix", "eval", "--file", path / "top-level.nix",
     #           "pname", "--raw")

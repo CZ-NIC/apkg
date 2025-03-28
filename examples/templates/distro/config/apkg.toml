@@ -1,5 +1,5 @@
 [project]
-name = "templates"
+name = "apkg-example-templates"
 make_archive_script = "distro/scripts/make-archive.sh"
 
 [apkg]

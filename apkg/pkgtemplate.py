@@ -15,7 +15,6 @@ from apkg import ex
 from apkg import adistro
 from apkg.log import getLogger
 from apkg import pkgstyle as _pkgstyle
-from apkg.pkgstyle import call_pkgstyle_fun
 from apkg.util import common
 import apkg.util.shutil35 as shutil
 
@@ -28,7 +27,7 @@ DUMMY_VARS = {
     'version': '0.VERSION',
     'release': '0.RELEASE',
     'nvr': 'NAME-VERSION-RELEASE',
-    'distro': 'DISTRO',
+    'distro': adistro.Distro('UNKNOWN')
 }
 
 # package template selection types ordered by priority
@@ -126,10 +125,6 @@ class PackageTemplate:
         """
         vars_ = DUMMY_VARS.copy()
 
-        # package name from template
-        name = call_pkgstyle_fun(
-            self.pkgstyle, 'get_template_name', self.path)
-        vars_['name'] = name
         # static pkgstyle vars
         vars_pkgstyle = getattr(self.pkgstyle, 'TEMPLATE_VARS', {})
         vars_.update(vars_pkgstyle)
@@ -205,7 +200,7 @@ class PackageTemplate:
                 # preserve original permission
                 dst.chmod(src.stat().st_mode)
 
-    def render_file_content(self, name, tvars):
+    def render_file_content(self, name, tvars=None):
         """
         render template file in memory and return its content
         """
@@ -304,6 +299,9 @@ def sort_alias_templates(alias_templates, distro_aliases):
 
 
 class VariablesSource(UserDict):
+    """
+    template variables from external variables source
+    """
     VARS_SOURCES = ['local_module', 'python_module']
 
     def __init__(self, **kwargs):

@@ -2,6 +2,7 @@ from contextlib import contextmanager
 import fnmatch
 import hashlib
 from pathlib import Path
+import re
 import sys
 import tempfile
 
@@ -176,3 +177,10 @@ class SortReversor:
 
     def __lt__(self, other):
         return other.obj < self.obj
+
+
+def sanitize_fn(name):
+    """
+    sanitize a string to be safe for use as a filename
+    """
+    return re.sub(r'[\\/\\:*?"\'<>| ]', '_', name)

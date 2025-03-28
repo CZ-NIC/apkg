@@ -79,16 +79,20 @@ def is_valid_template(path):
     return bool(get_spec_(path))
 
 
-def get_template_name(path):
-    spec = get_spec_(path)
-
-    for line in spec.open(encoding='utf-8'):
+def get_template_name(path, **kwargs):
+    distro = kwargs.get('distro')
+    spec_text = render_spec_from_template_(path, distro=distro)
+    for line in spec_text.splitlines():
         m = re.match(RE_PKG_NAME, line)
         if m:
-            return m.group(1)
+            name = m.group(1)
+            if has_rpm_macros_(name):
+                raise ex.ParsingFailed(
+                    msg="unable to parse RPM macro in Name: %s" % name)
+            return name
 
     raise ex.ParsingFailed(
-        msg="unable to determine Name from: %s" % spec)
+        msg="unable to determine Name from rpm template: %s" % path)
 
 
 def get_srcpkg_nvr(path):
@@ -240,14 +244,7 @@ def get_build_deps_from_template(
     parse BuildRequires from packaging template
     """
     distro = kwargs.get('distro')
-    spec_path = get_spec_(template_path).relative_to(template_path)
-    # render .spec file
-    this_style = sys.modules[__name__]
-    t = pkgtemplate.PackageTemplate(template_path, style=this_style)
-    tvars = pkgtemplate.DUMMY_VARS.copy()
-    if distro:
-        tvars['distro'] = distro
-    spec_text = t.render_file_content(spec_path, tvars=tvars)
+    spec_text = render_spec_from_template_(template_path, distro=distro)
     return get_build_deps_from_spec_(spec_text)
 
 
@@ -306,14 +303,49 @@ def get_spec_(path):
     return None
 
 
+def render_spec_from_template_(template_path, distro=None, parse_macros=True):
+    """
+    render spec file from template
+    """
+    spec_path = get_spec_(template_path).relative_to(template_path)
+    this_style = sys.modules[__name__]
+    t = pkgtemplate.PackageTemplate(template_path, style=this_style)
+    tvars = {}
+    if distro:
+        tvars['distro'] = distro
+    spec_txt = t.render_file_content(spec_path, tvars=tvars)
+    if parse_macros:
+        spec_txt = parse_spec_(spec_txt)
+    return spec_txt
+
+
+def parse_spec_(spec_text):
+    """
+    parse spec to expand macros if rpmbuild is available
+    """
+    # done through temp file because rpmspec doesn't work
+    # on /dev/stdin on openSUSE for some reason :-/
+    with common.text_tempfile(spec_text, prefix='apkg_rpm.spec_') as spec_path:
+        try:
+            spec_parsed = run('rpmspec', '-P', spec_path, quiet=True)
+        except ex.CommandNotFound:
+            log.warning("rpmspec not available - unable to parse RPM macros in .spec")
+            log.info("consider running `apkg system-setup` to get rpmspec"
+                     " or installing rpm-build package manually")
+            return spec_text
+
+    return spec_parsed
+
+
 def get_build_deps_from_spec_(spec_text):
     """
     parse BuildRequires from .spec file content
     """
-    # parse spec to expand macros
-    # done through temp file because rpmspec doesn't work
-    # on /dev/stdin on openSUSE for some reason :-/
-    with common.text_tempfile(spec_text, prefix='apkg_rpm.spec_') as spec_path:
-        spec_parsed = run('rpmspec', '-P', spec_path, quiet=True)
+    return re.findall(RE_BUILD_REQUIRES, spec_text)
 
-    return re.findall(RE_BUILD_REQUIRES, spec_parsed)
+
+def has_rpm_macros_(s):
+    """
+    does string contain RPM macros? (patterns like %{name} or %name)
+    """
+    return bool(re.search(r'%\{?\w+\}?', s))

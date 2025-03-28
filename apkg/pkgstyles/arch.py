@@ -38,7 +38,7 @@ def is_valid_template(path):
     return pkgbuild.exists()
 
 
-def get_template_name(path):
+def get_template_name(path, **_):
     return parse_pkgbuild_(path / 'PKGBUILD', 'echo "$pkgname"')
 
 

@@ -1,4 +1,6 @@
-Name:             apkg-example-templates
+%define EX_NAME apkg-example-templates
+
+Name:             %{EX_NAME}
 Version:          {{ version }}
 Release:          {{ release }}%{?dist}
 Summary:          minimal example of apkg templating system

@@ -225,14 +225,33 @@ def install_distro_packages(
     allow_unsigned = kwargs.get('allow_unsigned', False)
     interactive = kwargs.get('interactive', False)
     distro = kwargs.get('distro')
+    reinstall = kwargs.get('reinstall', False)
+    force = kwargs.get('force', False)
     pm = get_package_manager_(distro)
 
-    cmd = [pm, 'install']
+    cmd = [pm]
     if pm == 'zypper':
-        # use zypper capabilities
-        cmd += ['-C']
+        # zypper (openSUSE)
+        cmd += ['install']
+        if reinstall or force:
+            # exclusive with -C
+            cmd += ['--force']
+        else:
+            # use zypper capabilities
+            cmd += ['-C']
+        if force:
+            cmd += ['--replacefiles']
         if allow_unsigned:
             cmd += ['--allow-unsigned-rpm']
+    else:
+        # dnf (Fedora / EL)
+        if reinstall:
+            cmd += ['reinstall']
+        else:
+            cmd += ['install']
+        if force:
+            cmd += ['--allowerasing']
+
     if not interactive:
         cmd += ['-y']
     cmd += packages

@@ -32,6 +32,10 @@ log = getLogger(__name__)
               help="install build deps on host (apkg build-dep)")
 @click.option('-d', '--distro',
               help="override target distro  [default: current]")
+@click.option('--reinstall', is_flag=True,
+              help="[!] reinstall existing packages")
+@click.option('--force', is_flag=True,
+              help="[!] allow dangerous operations (downgrade, erase, replace)")
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/disable cache")
 @click.option('--ask/--no-ask', 'interactive',
@@ -70,6 +74,8 @@ def install(
         release=None,
         distro=None,
         build_dep=False,
+        reinstall=False,
+        force=False,
         cache=True,
         interactive=False):
     """
@@ -101,6 +107,8 @@ def install(
             ps, 'install_custom_packages',
             pkgs,
             distro=distro,
+            reinstall=reinstall,
+            force=force,
             interactive=interactive)
     elif distro_pkgs:
         pkgs = inputs
@@ -108,6 +116,8 @@ def install(
             ps, 'install_distro_packages',
             pkgs,
             distro=distro,
+            reinstall=reinstall,
+            force=force,
             interactive=interactive)
     else:
         # default: use build to get packages
@@ -126,6 +136,8 @@ def install(
             ps, 'install_custom_packages',
             pkgs,
             distro=distro,
+            reinstall=reinstall,
+            force=force,
             interactive=interactive)
 
     log.success("installed %s packages", len(pkgs))

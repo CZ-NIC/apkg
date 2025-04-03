@@ -277,12 +277,20 @@ def install_distro_packages(
         packages,
         **kwargs):
     interactive = kwargs.get('interactive', False)
+    reinstall = kwargs.get('reinstall', False)
+    force = kwargs.get('force', False)
 
-    cmd = ['apt-get', 'install']
+    cmd = ['apt-get']
+    if reinstall:
+        cmd += ['reinstall']
+    else:
+        cmd += ['install']
     env = os.environ.copy()
     if not interactive:
         env['DEBIAN_FRONTEND'] = 'noninteractive'
         cmd += ['-y']
+    if force:
+        cmd += ['--allow-downgrades']
 
     cmd += packages
     sudo(cmd, env=env)
@@ -303,12 +311,20 @@ def install_custom_packages(
         return p
 
     interactive = kwargs.get('interactive', False)
+    reinstall = kwargs.get('reinstall', False)
+    force = kwargs.get('force', False)
 
-    cmd = ['apt-get', 'install']
+    cmd = ['apt-get']
+    if reinstall:
+        cmd += ['reinstall']
+    else:
+        cmd += ['install']
     env = os.environ.copy()
     if not interactive:
         env['DEBIAN_FRONTEND'] = 'noninteractive'
         cmd += ['-y']
+    if force:
+        cmd += ['--allow-downgrades']
 
     cmd += list(map(local_path, packages))
     sudo(cmd, env=env)

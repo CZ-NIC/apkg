@@ -23,13 +23,11 @@ import glob
 import os
 from pathlib import Path
 import re
-import sys
 import tempfile
 
 from apkg import ex
 from apkg.log import getLogger
 from apkg import parse
-from apkg import pkgtemplate
 from apkg.util.run import cd, run, sudo
 from apkg.util.archive import unpack_archive
 import apkg.util.shutil35 as shutil
@@ -81,16 +79,18 @@ def is_valid_template(path):
     return all((path / f).exists() for f in deb_files)
 
 
-def get_template_name(path, **_):
-    control = path / 'control'
-
-    for line in control.open():
+def get_template_name(template, distro=None):
+    """
+    get Source package name from control
+    """
+    control_text = render_control_from_template_(template, distro=distro)
+    for line in control_text.splitlines():
         m = re.match(RE_PKG_NAME, line)
         if m:
             return m.group(1)
 
     raise ex.ParsingFailed(
-        msg="unable to determine Source from: %s" % control)
+        msg="unable to determine Source from template: %s" % template.path)
 
 
 def get_srcpkg_nvr(path):
@@ -316,20 +316,24 @@ def install_build_deps(
 
 
 def get_build_deps_from_template(
-        template_path,
-        **kwargs):
+        template,
+        distro=None):
     """
     parse Build-Depends from packaging template
     """
-    distro = kwargs.get('distro')
-    # render control file
-    this_style = sys.modules[__name__]
-    t = pkgtemplate.PackageTemplate(template_path, style=this_style)
+    control_text = render_control_from_template_(template, distro=distro)
+    return get_build_deps_from_control_(control_text)
+
+
+def render_control_from_template_(template, distro=None):
+    """
+    render control file from template
+    """
     tvars = {}
     if distro:
         tvars['distro'] = distro
-    control_text = t.render_file_content('control', tvars=tvars)
-    return get_build_deps_from_control_(control_text)
+    control_text = template.render_file_content('control', tvars=tvars)
+    return control_text
 
 
 def get_build_deps_from_srcpkg(

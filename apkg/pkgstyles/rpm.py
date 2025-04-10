@@ -22,14 +22,12 @@ import glob
 from pathlib import Path
 import re
 import subprocess
-import sys
 
 from packaging.version import Version
 
 from apkg import ex
 from apkg.util import common
 from apkg.log import getLogger
-from apkg import pkgtemplate
 from apkg.util.run import run, sudo
 import apkg.util.shutil35 as shutil
 
@@ -79,9 +77,11 @@ def is_valid_template(path):
     return bool(get_spec_(path))
 
 
-def get_template_name(path, **kwargs):
-    distro = kwargs.get('distro')
-    spec_text = render_spec_from_template_(path, distro=distro)
+def get_template_name(template, distro=None):
+    """
+    get Name from .spec
+    """
+    spec_text = render_spec_from_template_(template, distro=distro)
     for line in spec_text.splitlines():
         m = re.match(RE_PKG_NAME, line)
         if m:
@@ -92,7 +92,7 @@ def get_template_name(path, **kwargs):
             return name
 
     raise ex.ParsingFailed(
-        msg="unable to determine Name from rpm template: %s" % path)
+        msg="unable to determine Name from rpm template: %s" % template.path)
 
 
 def get_srcpkg_nvr(path):
@@ -238,13 +238,12 @@ def install_distro_packages(
 
 
 def get_build_deps_from_template(
-        template_path,
-        **kwargs):
+        template,
+        distro=None):
     """
     parse BuildRequires from packaging template
     """
-    distro = kwargs.get('distro')
-    spec_text = render_spec_from_template_(template_path, distro=distro)
+    spec_text = render_spec_from_template_(template, distro=distro)
     return get_build_deps_from_spec_(spec_text)
 
 
@@ -303,17 +302,15 @@ def get_spec_(path):
     return None
 
 
-def render_spec_from_template_(template_path, distro=None, parse_macros=True):
+def render_spec_from_template_(template, distro=None, parse_macros=True):
     """
     render spec file from template
     """
-    spec_path = get_spec_(template_path).relative_to(template_path)
-    this_style = sys.modules[__name__]
-    t = pkgtemplate.PackageTemplate(template_path, style=this_style)
+    spec_path = get_spec_(template.path).relative_to(template.path)
     tvars = {}
     if distro:
         tvars['distro'] = distro
-    spec_txt = t.render_file_content(spec_path, tvars=tvars)
+    spec_txt = template.render_file_content(spec_path, tvars=tvars)
     if parse_macros:
         spec_txt = parse_spec_(spec_txt)
     return spec_txt

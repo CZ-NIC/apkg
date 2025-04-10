@@ -155,7 +155,7 @@ def srcpkg(
     try:
         pkg_name = call_pkgstyle_fun(
             template.pkgstyle, 'get_template_name',
-            template.path, distro=distro)
+            template, distro=distro)
     except ex.ApkgException as e:
         pkg_name = proj.name
         log.info("%s, using project.name instead: %s", str(e), pkg_name)

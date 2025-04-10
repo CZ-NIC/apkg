@@ -35,6 +35,25 @@ def test_apkg_ex_minimal_no_git():
         os.chdir(old_cwd)
 
 
+def test_apkg_ex_template_variables():
+    """
+    test examples/template-variables
+    """
+    old_cwd = os.getcwd()
+    os.chdir('examples/template-variables')
+    try:
+        cmd = ('apkg install --build-dep')
+        code, out = subprocess.getstatusoutput(cmd)
+        assert re.search(r'installed \d+ packages', out)
+        assert code == 0, "ERROR (%s): %s" % (code, out)
+
+        cmd = ('apkg test --test-dep')
+        code, out = subprocess.getstatusoutput(cmd)
+        assert code == 0, "ERROR (%s): %s" % (code, out)
+    finally:
+        os.chdir(old_cwd)
+
+
 def test_apkg_full_pipe(build_dep):
     """
     test entire apkg pipeline using pipes

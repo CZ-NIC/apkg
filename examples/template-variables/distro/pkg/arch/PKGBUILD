@@ -1,0 +1,28 @@
+pkgname=apkg-ex-{{ custom_fun_echo('template-variables') }}
+pkgver={{ version }}
+pkgrel={{ release }}
+pkgdesc="testing package containing a single script"
+arch=('any')
+url="https://gitlab.nic.cz/packaging/apkg"
+license=('GPL3')
+depends=('bash')
+source=("${pkgname}-v${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+package() {
+  mkdir -p "$pkgdir/usr/bin"
+  cp $pkgname-v$pkgver/$pkgname "$pkgdir/usr/bin/$pkgname"
+}
+
+# TEMPLATING TEST:
+# upstream version {{ version }} for {{ distro }}
+# custom variables: {{ custom_int }}, {{ custom_float }}, {{ custom_bool }}, {{ custom_str }}
+# custom functions: 1 + 2 == {{ custom_fun_add(1, 2) }}, {{ custom_fun_echo('ECHO') }}
+{%- if distro_like  %}
+# distro_like: {{ distro_like.names | join(', ') }}
+{%- if distro_like.match('arch') %}
+## arch-like distro
+{%- endif %}
+{%- else %}
+# distro_like is unavailable - probably building for different distro than host
+{%- endif %}

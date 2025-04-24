@@ -34,18 +34,18 @@ def fname_(path):
     return path / "default.nix"
 
 
-def is_valid_template(path):
+def is_valid_template(path, distro=None):
     return ((path / "default.nix").exists()
             and (path / "top-level.nix").exists())
 
 
-def get_template_name(path):
+def get_template_name(template, distro=None):
     # I'd like to simply use nix directly, e.g.:
     #   return run("nix", "eval", "--file", path / "top-level.nix",
     #           "pname", "--raw")
     # but that would require substituting the templates first.
     # So we use a hacky regexp instead :-/
-    expr = fname_(path)
+    expr = fname_(template.path)
     for line in expr.open():
         m = re.match(r'\s*pname\s*=\s*"(\S+)";', line)
         if m:

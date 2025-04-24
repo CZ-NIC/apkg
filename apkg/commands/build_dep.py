@@ -116,7 +116,7 @@ def build_dep(
         log.info("build deps from template: %s", template.path)
         deps = call_pkgstyle_fun(
             pkgstyle, 'get_build_deps_from_template',
-            template.path, distro=distro)
+            template, distro=distro)
 
         if test_dep:
             # include test deps as well

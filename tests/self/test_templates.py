@@ -84,6 +84,7 @@ def test_template_render_rpm(proj, capsys, distro, extra):
 
     chl = spec.split('%changelog\n')[-1]
     m = re.search(RE_RPM_CH, chl, flags=re.DOTALL)
+    assert m, "failed to parse changelog - debug examples/templates"
     ver, rls, ver2, distro_, extra_ = m.groups()
     assert ver == '1.0'
     assert ver2 == '1.0'

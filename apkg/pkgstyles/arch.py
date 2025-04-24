@@ -9,11 +9,9 @@ apkg package style for **Arch** linux.
 """
 import glob
 from pathlib import Path
-import sys
 
 from apkg import ex
 from apkg.log import getLogger
-from apkg import pkgtemplate
 from apkg.util.run import cd, run, sudo
 import apkg.util.shutil35 as shutil
 
@@ -38,8 +36,9 @@ def is_valid_template(path):
     return pkgbuild.exists()
 
 
-def get_template_name(path):
-    return parse_pkgbuild_(path / 'PKGBUILD', 'echo "$pkgname"')
+def get_template_name(template, distro=None):
+    pkgbuild_text = render_pkgbuild_from_template_(template, distro=distro)
+    return parse_pkgbuild_content_(pkgbuild_text, 'echo "$pkgname"')
 
 
 def get_srcpkg_nvr(path):
@@ -123,19 +122,13 @@ def install_build_deps(
 
 
 def get_build_deps_from_template(
-        template_path,
-        **kwargs):
+        template,
+        distro=None):
     """
     parse depends and makedepends from packaging template
     """
-    distro = kwargs.get('distro')
     # render PKGBUILD
-    this_style = sys.modules[__name__]
-    t = pkgtemplate.PackageTemplate(template_path, style=this_style)
-    tvars = pkgtemplate.DUMMY_VARS.copy()
-    if distro:
-        tvars['distro'] = distro
-    pkgbuild_text = t.render_file_content('PKGBUILD', tvars=tvars)
+    pkgbuild_text = render_pkgbuild_from_template_(template, distro=distro)
     # depends: required for build and run
     depends = parse_pkgbuild_content_(
         pkgbuild_text,
@@ -145,6 +138,17 @@ def get_build_deps_from_template(
         pkgbuild_text,
         'printf \'%s\n\' "${makedepends[@]}"').splitlines()
     return depends + makedepends
+
+
+def render_pkgbuild_from_template_(template, distro=None):
+    """
+    render PKGBUILD file from template
+    """
+    tvars = {}
+    if distro:
+        tvars['distro'] = distro
+    pkgbuild_txt = template.render_file_content('PKGBUILD', tvars=tvars)
+    return pkgbuild_txt
 
 
 def get_build_deps_from_srcpkg(

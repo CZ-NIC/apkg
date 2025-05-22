@@ -14,6 +14,7 @@
     explicit `version`
     - [make_archive_script](config.md#projectmake_archive_script) can produce
       additional files (`components`)
+- new `-P` / `--path-format` global option to control how `apkg` prints output paths
 
 
 ## apkg 0.6.1

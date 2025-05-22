@@ -256,7 +256,6 @@ apkg:deb:
   parallel:
     matrix:
       - DISTRO:
-        - 'debian-10'
         - 'debian-11'
         - 'debian-12'
         - 'debian-13'
@@ -333,9 +332,9 @@ bird:deb:
   parallel:
     matrix:
       - DISTRO:
-        - 'debian-10'
         - 'debian-11'
         - 'debian-12'
+        - 'debian-13'
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
@@ -384,6 +383,7 @@ knot-dns:deb:
       - DISTRO:
         - 'debian-11'
         - 'debian-12'
+        - 'debian-13'
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
@@ -440,6 +440,7 @@ knot-resolver:deb:
       - DISTRO:
         - 'debian-11'
         - 'debian-12'
+        - 'debian-13'
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'

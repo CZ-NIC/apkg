@@ -263,6 +263,7 @@ apkg:deb:
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-24.10'
+        - 'ubuntu-25.04'
 
 apkg:rpm:
   image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
@@ -339,6 +340,7 @@ bird:deb:
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-24.10'
+        - 'ubuntu-25.04'
 
 bird:rpm:
   image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
@@ -388,6 +390,7 @@ knot-dns:deb:
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-24.10'
+        - 'ubuntu-25.04'
 
 knot-dns:rpm:
   image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
@@ -445,6 +448,7 @@ knot-resolver:deb:
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-24.10'
+        - 'ubuntu-25.04'
 
 knot-resolver:rpm:
   image: $CI_REGISTRY/packaging/apkg/test/$DISTRO

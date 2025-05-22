@@ -11,6 +11,7 @@ from apkg import __version__
 from apkg import commands
 from apkg import ex
 from apkg.log import getLogger, T
+from apkg.util import common
 from apkg.util.run import log_cmd_fail
 import apkg.log as _log
 
@@ -25,6 +26,7 @@ CLI_LOG_LEVELS = {
     'brief': _log.WARN,
     'quiet': _log.ERROR,
 }
+CLI_PATH_FORMATS = ['rel', 'abs', 'stem']
 
 
 class ClickApkgGroup(click.Group):
@@ -86,11 +88,15 @@ class ClickApkgGroup(click.Group):
               default='info', show_default=True,
               type=click.Choice(CLI_LOG_LEVELS.keys()),
               help="set log level")
+@click.option('-P', '--path-format',
+              default='rel', show_default=True,
+              type=click.Choice(CLI_PATH_FORMATS),
+              help="set file paths format")
 @click.help_option('-h', '--help',
                    help="show this help message")
 @click.version_option(__version__, message='%(version)s',
                       help="show apkg version")
-def cli(log_level='info'):
+def cli(log_level='info', path_format='rel'):
     """
     apkg the upstream packaging automation tool
     """
@@ -98,6 +104,8 @@ def cli(log_level='info'):
     _log.set_log_level(level)
     log.verbose("apkg version: %s", __version__)
     log.verbose("log level: %s (%s)", log_level.upper(), _log.get_log_level())
+    common.set_path_format(path_format)
+    log.verbose("path format: %s", common.get_path_format())
 
 
 def apkg(*args):

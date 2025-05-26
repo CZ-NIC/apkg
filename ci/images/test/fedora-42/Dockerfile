@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM fedora:40
+FROM fedora:42
 
 WORKDIR /root
 CMD ["/bin/bash"]
@@ -12,18 +12,19 @@ RUN dnf upgrade -y
 RUN dnf install -y \
     git \
     rpm-build \
-    python3-pip
+    python3-pip \
+    pipx
 # basic deps
 RUN dnf install -y \
     python3-beautifulsoup4 \
-    python3-blessings \
-    python3-cached-property \
+    python3-blessed \
     python3-click \
     python3-distro \
     python3-jinja2 \
     python3-packaging \
+    python3-pyyaml \
     python3-requests \
-    python3-toml
+    python3-tomli-w
 # testing deps
 RUN dnf install -y \
     python3-pytest \

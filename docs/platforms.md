@@ -35,6 +35,7 @@ apkg is able to **create packages** for/on following **distros**:
 | Debian 11 | ✅ | ✅ | [deb] | 3.9  |
 | Debian 10 | ⚠️ legacy | ✅ | [deb] | 3.7 ⚠️ EOL |
 | Debian 9 | ⚠️ legacy | ❌ | [deb] | 3.6 ⚠️ EOL |
+| Ubuntu 25.04 | ✅ | ✅ | [deb] | 3.13 |
 | Ubuntu 24.10 | ✅ | ✅ | [deb] | 3.12 |
 | Ubuntu 24.04 | ✅ | ✅ | [deb] | 3.12 |
 | Ubuntu 22.04 | ✅ | ✅ | [deb] | 3.10 |
@@ -42,18 +43,18 @@ apkg is able to **create packages** for/on following **distros**:
 | Ubuntu 18.04 | ⚠️ legacy | ❌ | [deb] | 3.6 ⚠️ EOL |
 | Linux Mint | ⚠️ untested | ❌ | [deb] |  |
 | Pop!_OS | ⚠️ untested | ❌ | [deb] |  |
-| Fedora Rawhide | ✅ | ❌ | [rpm] | 3.12 |
+| Fedora Rawhide | ✅ | ❌ | [rpm] | 3.13 |
+| Fedora 42 | ✅ | ✅ | [rpm] | 3.13 |
 | Fedora 41 | ✅ | ✅ | [rpm] | 3.13 |
-| Fedora 40 | ✅ | ✅ | [rpm] | 3.12 |
 | Enterprise Linux 10 | ✅ | ✅ | [rpm] | 3.12 |
 | Enterprise Linux 9 | ✅ | ✅ | [rpm] | 3.9 |
 | Enterprise Linux 8 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL |
 | Enterprise Linux 7 | ⚠️ legacy | ❌ | [rpm] | 3.6 ⚠️ EOL |
 | openSUSE Tumbleweed | ✅ | ✅ | [rpm] | 3.11 |
 | openSUSE Leap 15 | ⚠️ legacy | ✅ | [rpm] | 3.6 ⚠️ EOL, 3.11 available |
-| Arch | ✅ | ✅ | [arch] | 3.12 |
-| Manjaro | ⚠️ untested | ❌ | [arch] | 3.12 |
-| NixOS | ✅ | ✅ | [nix] | 3.11 |
+| Arch | ✅ | ✅ | [arch] | 3.13 |
+| Manjaro | ⚠️ untested | ❌ | [arch] | 3.13 |
+| NixOS | ✅ | ✅ | [nix] | 3.13 |
 
 *[legacy]: Distro is old, possibly EOL, or shipping EOL Python version, but apkg still supports in on best effort basis.
 

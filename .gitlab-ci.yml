@@ -256,7 +256,6 @@ apkg:deb:
   parallel:
     matrix:
       - DISTRO:
-        - 'debian-10'
         - 'debian-11'
         - 'debian-12'
         - 'debian-13'
@@ -264,6 +263,7 @@ apkg:deb:
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-24.10'
+        - 'ubuntu-25.04'
 
 apkg:rpm:
   image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
@@ -274,8 +274,8 @@ apkg:rpm:
   parallel:
     matrix:
       - DISTRO:
-        - 'fedora-40'
         - 'fedora-41'
+        - 'fedora-42'
         - 'rocky-8'
         - 'alma-9'
         - 'alma-10'
@@ -333,13 +333,14 @@ bird:deb:
   parallel:
     matrix:
       - DISTRO:
-        - 'debian-10'
         - 'debian-11'
         - 'debian-12'
+        - 'debian-13'
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-24.10'
+        - 'ubuntu-25.04'
 
 bird:rpm:
   image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
@@ -350,8 +351,8 @@ bird:rpm:
   parallel:
     matrix:
       - DISTRO:
-        - 'fedora-40'
         - 'fedora-41'
+        - 'fedora-42'
         - 'alma-9'
         - 'alma-10'
 
@@ -384,10 +385,12 @@ knot-dns:deb:
       - DISTRO:
         - 'debian-11'
         - 'debian-12'
+        - 'debian-13'
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-24.10'
+        - 'ubuntu-25.04'
 
 knot-dns:rpm:
   image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
@@ -398,8 +401,8 @@ knot-dns:rpm:
   parallel:
     matrix:
       - DISTRO:
-        - 'fedora-40'
         - 'fedora-41'
+        - 'fedora-42'
         - 'rocky-8'
         - 'alma-9'
         - 'alma-10'
@@ -440,10 +443,12 @@ knot-resolver:deb:
       - DISTRO:
         - 'debian-11'
         - 'debian-12'
+        - 'debian-13'
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-24.10'
+        - 'ubuntu-25.04'
 
 knot-resolver:rpm:
   image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
@@ -454,8 +459,8 @@ knot-resolver:rpm:
   parallel:
     matrix:
       - DISTRO:
-        - 'fedora-40'
         - 'fedora-41'
+        - 'fedora-42'
         - 'alma-9'
         - 'alma-10'
 

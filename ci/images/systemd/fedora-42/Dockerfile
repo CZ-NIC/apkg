@@ -1,4 +1,4 @@
-FROM fedora:40
+FROM fedora:42
 
 ARG ARCH=amd64
 
@@ -7,7 +7,8 @@ RUN dnf install -y \
 	systemd \
 	git \
 	git-lfs \
-	https://gitlab-runner-downloads.s3.amazonaws.com/latest/rpm/gitlab-runner_${ARCH}.rpm
+	https://gitlab-runner-downloads.s3.amazonaws.com/latest/rpm/gitlab-runner_${ARCH}.rpm \
+	https://gitlab-runner-downloads.s3.amazonaws.com/latest/rpm/gitlab-runner-helper-images.rpm
 
 # autologin as root on console
 RUN mkdir -p /etc/systemd/system/console-getty.service.d

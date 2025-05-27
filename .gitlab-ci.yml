@@ -423,11 +423,6 @@ knot-dns:opensuse-15.6:
     - py.test-3.11 -v ci/tests/test_knot_dns.py --junitxml=report.xml
   allow_failure: true
 
-knot-dns:nixos:
-  <<: [*knot-dns, *nixos]
-  script:
-    - nix-shell "$(nix-shell -p apkg --run 'apkg srcpkg' | head -n 1)" --argstr extraDepsFor knot-dns --argstr extraDeps libmnl --run 'py.test -v ci/tests/test_knot_dns.py --junitxml=report.xml'
-
 
 # integration tests: Knot Resolver
 
@@ -479,13 +474,6 @@ knot-resolver:opensuse-15.6:
     - *setup-project-py311
     - py.test-3.11 -v ci/tests/test_knot_resolver.py --junitxml=report.xml
   allow_failure: true
-
-knot-resolver:nixos:
-  <<: [*knot-resolver, *nixos]
-  script:
-    # Knot Resolver's make-archive needs basically all build-time dependencies (meson dist),
-    # so we add them on top of the normal apkg's development shell - and run the tests.
-    - nix-shell "$(nix-shell -p apkg --run 'apkg srcpkg' | head -n 1)" --argstr extraDepsFor knot-resolver --run 'py.test -v ci/tests/test_knot_resolver.py --junitxml=report.xml'
 
 
 # docs published to GitLab Pages: https://packaging.pages.nic.cz/apkg/

@@ -109,7 +109,7 @@ Resulting packages are cached if [cache.local](config.md#cachelocal) is enabled.
 
 {{ 'lint' | cmd_help }}
 
-{{ added_in_version('0.6.0') }}
+{{ added_in_version('0.6.0', compat=5) }}
 
 
 ## clean
@@ -132,6 +132,13 @@ See [test command examples](test.md#test-command-examples)
 ## info
 
 {{ 'apkg info' | run }}
+
+
+### info apkg-deps
+
+{{ 'apkg info apkg-deps' | run }}
+
+{{ added_in_version('0.6.0', compat=5) }}
 
 ### info cache
 

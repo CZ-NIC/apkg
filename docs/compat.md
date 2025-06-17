@@ -52,18 +52,18 @@ for upgrade if any:
 $> apkg compat
 
 project compat level:       3
-current apkg compat level:  4
-latest apkg compat level:   4
+current apkg compat level:  5
+latest apkg compat level:   5
 
-current apkg version:  0.5.1
-latest apkg version:   0.5.1
+current apkg version:  0.6.0
+latest apkg version:   0.6.0
 
-⚠ project compat level 3 is older than current 4
+⚠ project compat level 3 is older than current 5
 
 Please consider bumping
 
     [apkg]
-    compat = 4
+    compat = 5
 
 in project config: distro/config/apkg.toml
 
@@ -74,6 +74,18 @@ Inspect following upgrade notes:
 Introduced in apkg-0.5.0
 
 Forward compatible update, no action required.
+
+# COMPAT LEVEL 5
+
+Introduced in apkg-0.6.0
+
+Forward compatible update for most users.
+
+## RPM macros in .spec templates are now evaluated using rpmspec if available
+
+This might result in different build deps being detected by apkg when using
+%if macros on BuildRequires. Results depend on rpmspec availability
+and macros defined on the host machine (such as %fedora).
 ```
 
 ## compat level upgrade notes

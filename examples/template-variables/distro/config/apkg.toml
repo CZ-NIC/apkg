@@ -19,4 +19,4 @@ local_module = "distro/vars/override_example.py"
 
 
 [apkg]
-compat = 4
+compat = 5

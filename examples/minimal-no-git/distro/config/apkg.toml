@@ -6,4 +6,4 @@ make_archive_script = "distro/scripts/make-archive.sh"
 source = false
 
 [apkg]
-compat = 4
+compat = 5

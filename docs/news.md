@@ -1,5 +1,46 @@
 # apkg news
 
+## apkg 0.6.0
+
+Released 2025-06-19
+
+### Compat Level 5 News
+
+- new [apkg lint](commands.md#lint) command to invoke native distro linters (`lintian`, `rpmlint`)
+- improved [apkg system-setup](commands.md#system-setup) command including new `--lint` option to install linting deps
+- new [apkg info apkg-deps](commands.md#info-apkg-deps) command to show dependencies colored for easy debugging
+- new [distro_like](templatevars.md#apkgtemplatevarsdistro_like) template variable module for detecting similar distros
+- `rpm`: evaluate RPM macros using `rpmspec` if available
+    - `apkg` now works with `.spec` files using complex macros including macros in `Name`
+- [template variables](templatevars.md) are now always passed when rendering templates
+    - some `pkgstyle` functions previously rendered templates directly without
+      template variables which lead to errors in special cases
+- `apkg.templatevars.debseries` module was renamed to `deb_series` for consistency
+    - old `debseries` module is still supported for the time being, it emits a warning when used
+
+### Improvements
+
+- Python 3.13 is now [supported](platforms.md) and tested in CI
+- new distros are now [supported](platforms.md) and tested in CI:
+    - Debian 13 Trixie
+    - Ubuntu 25.04 Plucky Puffin and 24.10 Oricular Oriole
+    - Enterprise Linux 10: RHEL 10, AlmaLinux 10, Rocky 10
+    - Fedora 42 and 41
+- lighten dependencies:
+    - drop `hatchling` build dep in favor of `setuptools`
+    - drop `dunamai` build dep in favor of custom solution
+- improved handling of unreleased / versionless distros, including Debian testing, unstable, experimental
+- new `util.toml` module for robust runtime TOML libs selection
+    - supports `tomllib` (standard library since Python 3.11), `tomli`, `toml`,
+    `tomlkit` modules for TOML loading
+    - supports `tomli_w`, `toml`, `tomlkit` for TOML dumping
+- improved logging of function names when using `-L verbose` and `-L debug`
+- big [packaging guide](guide.md) upgrade
+    - new fancy Mermaid [diagrams](guide.md#graphical-diagram-of-apkg-workflow)
+    - updated workflow with `install`, `test`, `lint` commands
+    - new `added_in_version` macro to provide consistent version / compat information
+
+
 ## apkg 0.5.1
 
 Released 2024-06-24

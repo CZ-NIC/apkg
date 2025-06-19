@@ -268,7 +268,7 @@ name = "foo"
 make_archive_script = "scripts/make-archive.sh"
 
 [apkg]
-compat = 4
+compat = 5
 ```
 
 

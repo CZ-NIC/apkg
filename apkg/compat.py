@@ -10,10 +10,17 @@ log = getLogger(__name__)
 
 
 # current apkg compatibility level
-COMPAT_LEVEL = 4
+COMPAT_LEVEL = 5
 
 
 COMPAT_LEVEL_NOTES = {
+    5: ('0.6.0', """Forward compatible update for most users.
+
+## RPM macros in .spec templates are now evaluated using rpmspec if available
+
+This might result in different build deps being detected by apkg when using
+%if macros on BuildRequires. Results depend on rpmspec availability
+and macros defined on the host machine (such as %fedora)."""),
     4: ('0.5.0', """Forward compatible update, no action required."""),
     3: ('0.4.0', """Forward compatible update, no action required."""),
     2: ('0.3.0', """Forward compatible update for most users.

@@ -1,5 +1,14 @@
 # apkg news
 
+## apkg 0.6.1
+
+Released 2025-06-20
+
+### Fixes
+
+- reintroduce `toml` dep for older systems with Python < 3.11
+
+
 ## apkg 0.6.0
 
 Released 2025-06-19

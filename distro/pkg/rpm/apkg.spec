@@ -42,6 +42,10 @@ distributions/packaging systems with minimum overhead.
 %autosetup -n %{name}-v%{version} -S git
 # blessed is in install_requires for PyPI, but it's optional for colors
 sed -i '/blessed/d' pyproject.toml setup.cfg
+# toml is in install_requires for PyPI for backward compat, but it's not
+# available on modern fedora/el in favor of tomllib in Python >= 3.11 and tomli_w
+sed -i '/"toml"/d' pyproject.toml
+sed -i '/    toml/d' setup.cfg
 
 %build
 %py3_build

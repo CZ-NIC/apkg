@@ -4,7 +4,7 @@ set -e
 
 VERSION_TAG=$(git describe --tags --abbrev=0)
 VERSION=${VERSION_TAG#v}
-if ! git describe --tags --exact-match; then
+if ! git describe --tags --exact-match 2> /dev/null; then
     # devel version (not tagged)
     GIT_HASH=$(git rev-parse --short=6 HEAD)
     N_COMMITS=$(git rev-list $VERSION_TAG.. --count)
@@ -27,7 +27,7 @@ if [[ $VERSION = *"dev"* ]]; then
     # update devel version
     sed -i "s/\(__version__ *= *'\)[^']\+'/\1$VERSION'/" apkg/__init__.py
     git add apkg/__init__.py
-    if git commit -a -m "DROP: update __version__ = $VERSION"; then
+    if git commit -a -m "DROP: update __version__ = $VERSION" > /dev/null; then
         # undo commit in the end
         cleanup() {
             git reset --hard HEAD^ >/dev/null
@@ -43,5 +43,5 @@ fi
 mkdir -p "$OUTPATH"
 git archive --format tgz --output $ARPATH --prefix $NAMEVER/ HEAD
 
-# apkg expects stdout to list archive files
-echo $ARPATH
+# apkg expects stdout contains YAML dict with archive set
+echo "archive: '$ARPATH'"

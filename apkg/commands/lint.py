@@ -14,7 +14,7 @@ log = getLogger(__name__)
 
 
 @click.command(name="lint")
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-p', '--pedantic', is_flag=True,
               help="enable extra / all warnings and infos")
 @click.option('-i', '--info', is_flag=True,
@@ -28,9 +28,8 @@ log = getLogger(__name__)
                    " (apkg system-setup --lint)")
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/disable cache")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_lint(*args, **kwargs):
@@ -39,7 +38,7 @@ def cli_lint(*args, **kwargs):
 
     Default: build packages from source and lint them
 
-    You can supply files to lint as arguments or use --file-list.
+    You can supply files to lint as arguments or use --in-file.
 
     Use --pedantic to run extra / all checks.
 
@@ -63,8 +62,8 @@ def cli_lint(*args, **kwargs):
 
 
 def lint(
-        input_files=None,
-        input_file_lists=None,
+        inputs=None,
+        in_files=None,
         pedantic=False,
         info=False,
         strict=False,
@@ -87,21 +86,21 @@ def lint(
     if lint_dep:
         system_setup(lint=True)
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
 
-    if not infiles:
+    if not inputs:
         # default: use srcpkg and build to get packages to lint
-        infiles = make_srcpkg(
+        inputs = make_srcpkg(
             distro=distro,
             cache=cache)
-        infiles += build(
+        inputs += build(
             distro=distro,
             cache=cache)
 
     try:
         result = pkgstyle.call_pkgstyle_fun(
             ps, 'lint',
-            infiles,
+            inputs,
             pedantic=pedantic,
             info=info,
             strict=strict,

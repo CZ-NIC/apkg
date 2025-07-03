@@ -17,7 +17,7 @@ log = getLogger(__name__)
 
 
 @click.command(name="build")
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-s', '--srcpkg', is_flag=True,
               help="use source package")
 @click.option('-a', '--archive', is_flag=True,
@@ -39,9 +39,8 @@ log = getLogger(__name__)
                     "  [default: pkg/srcpkg/DISTRO/NVR]"))
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/disable cache")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 @click.option('-I', '--isolated', is_flag=True,
               help="use isolated builder (pbuilder, mock, ...)")
 @click.option('-i', '--install-dep', 'build_dep', is_flag=True,
@@ -61,8 +60,8 @@ def build(
         srcpkg=False,
         archive=False,
         upstream=False,
-        input_files=None,
-        input_file_lists=None,
+        inputs=None,
+        in_files=None,
         version=None,
         release=None,
         distro=None,
@@ -82,7 +81,7 @@ def build(
     use_cache = proj.cache.enabled(
         'local', cmd='build', use_cache=cache)
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
 
     if build_dep:
         if isolated:
@@ -95,7 +94,7 @@ def build(
                     srcpkg=srcpkg,
                     archive=archive,
                     upstream=upstream,
-                    input_files=infiles,
+                    inputs=inputs,
                     distro=distro,
                     project=proj)
             except ex.DistroNotSupported as e:
@@ -107,9 +106,9 @@ def build(
                 fail="--srcpkg and --version options are mutually exclusive")
     else:
         # make source package
-        infiles = make_srcpkg(
+        inputs = make_srcpkg(
             archive=archive,
-            input_files=infiles,
+            inputs=inputs,
             upstream=upstream,
             version=version,
             release=release,
@@ -117,8 +116,8 @@ def build(
             project=proj,
             cache=cache)
 
-    common.ensure_input_files(infiles)
-    srcpkg_path = infiles[0]
+    common.ensure_inputs(inputs)
+    srcpkg_path = inputs[0]
     if srcpkg:
         log.info("using existing source package: %s", srcpkg_path)
 
@@ -138,7 +137,7 @@ def build(
     if use_cache:
         cache_key = 'pkg/%s/%s/' % (distro.idver, nvr)
         cache_key += '%s:%s' % (
-            path_checksum(*infiles), file_checksum(*infiles))
+            path_checksum(*inputs), file_checksum(*inputs))
         cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
             log.success("reuse %d cached packages", len(cached))
@@ -160,7 +159,7 @@ def build(
     pkgs = pkgstyle.build_packages(
         build_path,
         result_path,
-        srcpkg_paths=infiles,
+        srcpkg_paths=inputs,
         isolated=isolated)
 
     if not pkgs:

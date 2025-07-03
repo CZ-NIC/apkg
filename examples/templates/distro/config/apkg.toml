@@ -3,6 +3,9 @@ name = "apkg-example-templates"
 make_archive_script = "distro/scripts/make-archive.sh"
 
 [apkg]
+# this project is explicitly on compat 5 to test backwards compatibility:
+# - its make_archive outputs data to stdout and only the last line of output is
+#   meaningful
 compat = 5
 
 [[distro.aliases]]

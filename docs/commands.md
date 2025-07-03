@@ -49,14 +49,18 @@ current distro: arch / Arch Linux
 [project.make_archive_script](config.md#projectmake_archive_script)
 config option to be set.
 
-This command will only succeed when the script finishes successfully (with
-exit code 0) and the resulting archive it created and printed to stdout
-followed by one line for each additional file (like signature).
+This command will only succeed when `make_archive_script` script finishes
+successfully (with exit code 0) and it outputs the resulting archive (and
+potentially other information) to stdout.
 
-Resulting archive is copied to `pkg/archives/dev/` or to `--result-dir`.
+See
+[project.make_archive_script](config.md#projectmake_archive_script)
+for expected script output.
 
-Resulting archive is cached if [cache.source](config.md#cachesource)
-is enabled. See [source cache](cache.md#source-cache) for requirements.
+Resulting files are copied to `pkg/archives/dev/` or to `--result-dir`.
+
+Results are cached if [cache.source](config.md#cachesource) is enabled. See
+[source cache](cache.md#source-cache) for requirements.
 
 
 ## get-archive

@@ -5,6 +5,9 @@ from pathlib import Path
 import re
 import sys
 import tempfile
+from typing import Iterable, Mapping, Optional, Union
+
+import yaml
 
 from apkg import ex
 from apkg.log import getLogger
@@ -14,26 +17,38 @@ import apkg.util.shutil35 as shutil
 log = getLogger(__name__)
 
 
-def copy_paths(paths, dst):
+CacheableEntry = Union[str, int, bool, Path,
+                       Iterable['CacheableEntry'],
+                       Mapping[str, 'CacheableEntry']]
+
+
+def copy_paths(cache_entry: CacheableEntry, dst: Path) -> CacheableEntry:
     """
     utility to copy a list of paths to dst
     """
     if not dst.exists():
         dst.mkdir(parents=True, exist_ok=True)
     dst_full = dst.resolve()
-    new_paths = []
-    for p in paths:
-        if p.parent.resolve() == dst_full:
-            new_paths.append(p)
-        else:
-            p_dst = dst / p.name
-            log.verbose("copying file: %s -> %s", p, p_dst)
-            shutil.copy(p, p_dst)
-            new_paths.append(p_dst)
-    return new_paths
+
+    if isinstance(cache_entry, Path):
+        if cache_entry.parent.resolve() != dst_full:
+            p_dst = dst / cache_entry.name
+            log.verbose("copying file: %s -> %s", cache_entry, p_dst)
+            shutil.copy(cache_entry, p_dst)
+            return p_dst
+        return cache_entry
+    elif isinstance(cache_entry, list):
+        return [copy_paths(p) for p in cache_entry]
+    elif isinstance(cache_entry, dict):
+        result = {}
+        for k, v in cache_entry.items():
+            result[k] = copy_paths(v)
+        return result
+    return cache_entry
 
 
-def get_cached_paths(proj, cache_key, result_dir=None):
+def get_cached_paths(proj, cache_key: str,
+                     result_dir: Optional[str] = None) -> CacheableEntry:
     """
     get cached files and move them to result_dir if specified
     """
@@ -56,38 +71,87 @@ def print_results(results):
         print(str(results))
 
 
-def parse_input_files(files, file_lists):
+def print_results_dict(results):
     """
-    utility to parse apkg input files and input file lists
-    into a single list of input files
+    print results dict as YAML (used in make-archive and get-archive)
     """
-    if not files:
-        files = []
-    if not file_lists:
-        file_lists = []
-
-    all_files = [Path(f) for f in files]
-
-    if len([fl for fl in file_lists if fl == '-']) > 1:
-        fail = "requested to read stdin multiple times"
-        raise ex.InvalidInput(fail=fail)
-
-    for fl in file_lists:
-        if fl == '-':
-            f = sys.stdin
-        else:
-            f = open(fl, 'r', encoding='utf-8')
-        all_files += [Path(ln.strip()) for ln in f.readlines()]
-        f.close()
-
-    return all_files
+    print(yaml_dump(results))
 
 
-def ensure_input_files(infiles):
-    if not infiles:
+def yaml_path_representer(dumper, obj):
+    # to print pathlib.Path as str
+    return dumper.represent_scalar("tag:yaml.org,2002:str", str(obj))
+
+
+class SafeDumper(yaml.dumper.SafeDumper):
+    # don't modify global PyYAML state
+    pass
+
+
+yaml.add_representer(
+    # print pathlib.Path as str
+    type(Path()),
+    yaml_path_representer,
+    SafeDumper,
+)
+
+
+def yaml_dump(*args, **kwargs):
+    kwargs['Dumper'] = SafeDumper
+    return yaml.dump(*args, **kwargs).rstrip()
+
+
+def parse_inputs(inputs, in_files, in_format='list'):
+    """
+    utility parser of apkg command inputs
+    """
+    all_inputs = list(inputs) if inputs else []
+
+    if in_files:
+        if len([fl for fl in in_files if fl == '-']) > 1:
+            fail = "requested to read stdin multiple times"
+            raise ex.InvalidInput(fail=fail)
+
+        for fl in in_files:
+            if fl == '-':
+                f = sys.stdin
+            else:
+                f = open(fl, 'r', encoding='utf-8')
+            all_inputs += [ln.rstrip() for ln in f.readlines()]
+            f.close()
+
+    if in_format == 'yaml':
+        result = parse_yaml_inputs(all_inputs)
+    else:
+        result = parse_list_inputs(all_inputs)
+
+    return result
+
+
+def parse_list_inputs(inputs):
+    return [Path(i) for i in inputs]
+
+
+def parse_yaml_inputs(inputs):
+    if not inputs:
+        return {}
+    txt = '\n'.join(inputs)
+    result = yaml.safe_load(txt)
+    return result
+
+
+def ensure_inputs(inputs, n=0):
+    if not inputs:
         raise ex.InvalidInput(
-            fail="no input file(s) specified")
-    for f in infiles:
+            fail="no input file specified")
+    if n:
+        n_in = len(inputs)
+        if n_in != n:
+            exp = 'single input file' if n == 1 else '%s input files' % n
+            ins = '\n'.join([str(p) for p in inputs])
+            raise ex.InvalidInput(
+                fail="expected %s, but got %s:\n\n%s" % (exp, n_in, ins))
+    for f in inputs:
         if not f or not f.exists():
             raise ex.InvalidInput(
                 fail="input file not found: %s" % f)

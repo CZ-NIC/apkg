@@ -1,5 +1,21 @@
 # apkg news
 
+## apkg 0.7.0
+
+**UNRELEASED** - in development
+
+### Compat Level 6 News
+
+- flexible YAML output for
+  [make_archive_script](config.md#projectmake_archive_script),
+  [make-archive](commands.md#make-archive), and
+  [get-archive](commands.md#get-archive)
+    - [make_archive_script](config.md#projectmake_archive_script) can specify
+    explicit `version`
+    - [make_archive_script](config.md#projectmake_archive_script) can produce
+      additional files (`components`)
+
+
 ## apkg 0.6.1
 
 Released 2025-06-20

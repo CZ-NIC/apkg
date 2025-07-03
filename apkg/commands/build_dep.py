@@ -15,7 +15,7 @@ log = getLogger(__name__)
 
 
 @cli.command(name="build-dep", aliases=['builddep'])
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-l', '--list', 'install', default=True, flag_value=False,
               help="list build deps only, don't install")
 @click.option('-t', '--test-dep', is_flag=True,
@@ -28,9 +28,8 @@ log = getLogger(__name__)
               help="use template (/build srcpkg) from archive")
 @click.option('-d', '--distro',
               help="override target distro  [default: current]")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 @click.option('--ask/--no-ask', 'interactive',
               default=False, show_default=True,
               help="enable/disable interactive mode")
@@ -53,8 +52,8 @@ def build_dep(
         upstream=False,
         srcpkg=False,
         archive=False,
-        input_files=None,
-        input_file_lists=None,
+        inputs=None,
+        in_files=None,
         install=True,
         distro=None,
         interactive=False,
@@ -73,24 +72,24 @@ def build_dep(
     distro = adistro.distro_arg(distro, proj)
     log.info("target distro: %s", distro)
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
 
     if srcpkg:
         # use source package to determine deps
-        if archive or not infiles:
+        if archive or not inputs:
             # build source package
             srcpkg_files = cmd_srcpkg(
                 archive=archive,
                 distro=distro,
-                input_files=input_files,
-                input_file_lists=input_file_lists,
+                inputs=inputs,
+                in_files=in_files,
                 upstream=upstream,
                 project=proj)
         else:
             # use specified source package
-            srcpkg_files = infiles
+            srcpkg_files = inputs
 
-        common.ensure_input_files(srcpkg_files)
+        common.ensure_inputs(srcpkg_files)
         srcpkg_path = srcpkg_files[0]
 
         # fetch pkgstyle (deb, rpm, arch, ...)
@@ -107,7 +106,7 @@ def build_dep(
     else:
         # use tempalte to determine deps
         archive, archive_files = parse_archive_args(
-            proj, archive, upstream, infiles)
+            proj, archive, upstream, inputs)
 
         # fetch pkgstyle (deb, rpm, arch, ...)
         template = proj.get_template_for_distro(distro)
@@ -124,7 +123,7 @@ def build_dep(
                 install=False,
                 upstream=upstream,
                 archive=archive,
-                input_files=archive_files)
+                inputs=archive_files)
             deps = sorted(set(deps).union(tdeps))
 
     if install:

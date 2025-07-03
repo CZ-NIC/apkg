@@ -10,10 +10,20 @@ log = getLogger(__name__)
 
 
 # current apkg compatibility level
-COMPAT_LEVEL = 5
+COMPAT_LEVEL = 6
 
 
 COMPAT_LEVEL_NOTES = {
+    6: ('0.7.0', """Forward incompatible update, changes required:
+
+## new make_archive_script YAML interface
+
+make_archive_script stdout is now expected to be in YAML format, any messages
+should go to stderr.
+
+Edit your make_archive_script to output like this:
+
+archive: pkg/archives/dev/banana-1.2.3.tar.gz"""),
     5: ('0.6.0', """Forward compatible update for most users.
 
 ## RPM macros in .spec templates are now evaluated using rpmspec if available

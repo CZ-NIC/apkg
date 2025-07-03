@@ -51,29 +51,23 @@ for upgrade if any:
 ```
 $> apkg compat
 
-project compat level:       3
-current apkg compat level:  5
-latest apkg compat level:   5
+project compat level:       4
+current apkg compat level:  6
+latest apkg compat level:   6
 
-current apkg version:  0.6.1
-latest apkg version:   0.6.1
+current apkg version:  0.7.0
+latest apkg version:   0.7.0
 
-⚠ project compat level 3 is older than current 5
+⚠ project compat level 3 is older than current 6
 
 Please consider bumping
 
     [apkg]
-    compat = 5
+    compat = 6
 
 in project config: distro/config/apkg.toml
 
 Inspect following upgrade notes:
-
-# COMPAT LEVEL 4
-
-Introduced in apkg-0.5.0
-
-Forward compatible update, no action required.
 
 # COMPAT LEVEL 5
 
@@ -86,6 +80,21 @@ Forward compatible update for most users.
 This might result in different build deps being detected by apkg when using
 %if macros on BuildRequires. Results depend on rpmspec availability
 and macros defined on the host machine (such as %fedora).
+
+# COMPAT LEVEL 6
+
+Introduced in apkg-0.7.0
+
+Forward incompatible update, changes required:
+
+## new make_archive_script YAML interface
+
+make_archive_script stdout is now expected to be in YAML format, any messages
+should go to stderr.
+
+Edit your make_archive_script to output like this:
+
+archive: pkg/archives/dev/banana-1.2.3.tar.gz
 ```
 
 ## compat level upgrade notes
@@ -100,6 +109,8 @@ upgrading from the specified compat level to current:
 
 Please inspect apkg [news](news.md) for respective release:
 
+* compat level **6**: [0.7.0](news.md#apkg-070)
+* compat level **5**: [0.6.0](news.md#apkg-060)
 * compat level **4**: [0.5.0](news.md#apkg-050)
 * compat level **3**: [0.4.0](news.md#apkg-040)
 * compat level **2**: [0.3.0](news.md#apkg-030)

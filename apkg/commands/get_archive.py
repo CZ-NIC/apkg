@@ -5,6 +5,7 @@ import requests
 import click
 
 from apkg import ex
+from apkg.commands.make_archive import archive_dict2list
 from apkg.util import common
 from apkg.log import getLogger
 from apkg.project import Project
@@ -18,6 +19,9 @@ log = getLogger(__name__)
               help='version of archive to download')
 @click.option('-O', '--result-dir',
               help="put results into specified dir")
+@click.option('-o', '--out-format', default='yaml', show_default=True,
+              type=click.Choice(['yaml', 'list']),
+              help="set output format")
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/distable cache")
 @click.help_option('-h', '--help', help='show this help')
@@ -25,8 +29,17 @@ def cli_get_archive(*args, **kwargs):
     """
     download upstream archive for current project
     """
+    out_format = kwargs.pop('out_format')
+
     results = get_archive(*args, **kwargs)
-    common.print_results(results)
+
+    if out_format == 'list':
+        rlist = archive_dict2list(results)
+        common.print_results(rlist)
+    else:
+        # YAML
+        common.print_results_dict(results)
+
     return results
 
 
@@ -61,7 +74,7 @@ def get_archive(
         cache_key = 'archive/upstream/%s' % archive_url
         cached = common.get_cached_paths(proj, cache_key, result_dir)
         if cached:
-            log.success("reuse cached archive: %s", cached[0])
+            log.success("reuse cached archive: %s", cached['archive'])
             return cached
 
     log.info('downloading archive: %s', archive_url)
@@ -94,7 +107,12 @@ def get_archive(
     ar_base_path.mkdir(parents=True, exist_ok=True)
     archive_path.open('wb').write(r.content)
     log.success('downloaded archive: %s', archive_path)
-    results = [archive_path]
+
+    results = {
+        'archive': archive_path,
+        'archive_url': archive_url,
+        'version': str(version),
+    }
 
     signature_url = proj.upstream_signature_url(version)
     if signature_url:
@@ -109,7 +127,8 @@ def get_archive(
         log.info('saving signature to: %s', signature_path)
         signature_path.open('wb').write(r.content)
         log.success('downloaded signature: %s', signature_path)
-        results.append(signature_path)
+        results['signature'] = signature_path
+        results['signature_url'] = signature_url
     else:
         log.verbose("project.upstream_signature_url not set"
                     " - skipping signature download")
@@ -120,7 +139,7 @@ def get_archive(
     return results
 
 
-def parse_archive_args(proj, archive, upstream, infiles):
+def parse_archive_args(proj, archive, upstream, inputs):
     """
     Helper to parse archive arguments,
     use get-archive,
@@ -129,13 +148,13 @@ def parse_archive_args(proj, archive, upstream, infiles):
 
     Useful for other commands.
     """
-    archive_files = infiles
+    archive_files = inputs
     if upstream:
         archive = True
         if not archive_files:
             archive_files = get_archive(project=proj)
     if archive:
-        common.ensure_input_files(archive_files)
+        common.ensure_inputs(archive_files)
         proj.load_upstream_archive(archive_files[0])
     return archive, archive_files
 

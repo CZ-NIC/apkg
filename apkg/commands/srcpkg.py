@@ -7,7 +7,7 @@ from apkg.cache import file_checksum, path_checksum
 from apkg import ex
 from apkg.util import common
 from apkg.commands.get_archive import get_archive
-from apkg.commands.make_archive import make_archive
+from apkg.commands.make_archive import make_archive, sanitize_archive_output
 from apkg.log import getLogger
 from apkg.pkgstyle import call_pkgstyle_fun
 from apkg.project import Project
@@ -19,7 +19,7 @@ log = getLogger(__name__)
 
 
 @click.command(name="srcpkg")
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-a', '--archive', is_flag=True,
               help="source package from speficied archive file(s)")
 @click.option('-u', '--upstream', is_flag=True,
@@ -38,9 +38,11 @@ log = getLogger(__name__)
               help="only render source package template")
 @click.option('--cache/--no-cache', default=True, show_default=True,
               help="enable/disable cache")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file(s), '-' to read from stdin")
+@click.option('-f', '--in-format', default='auto', show_default=True,
+              type=click.Choice(['auto', 'yaml', 'list']),
+              help="set input format")
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_srcpkg(*args, **kwargs):
@@ -54,8 +56,9 @@ def cli_srcpkg(*args, **kwargs):
 
 def srcpkg(
         archive=False,
-        input_files=None,
-        input_file_lists=None,
+        inputs=None,
+        in_files=None,
+        in_format=None,
         upstream=False,
         version=None,
         release=None,
@@ -99,34 +102,58 @@ def srcpkg(
     if not release:
         release = '1'
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    if not in_format or in_format == 'auto':
+        # default to list format when inputs arg is used, otherwise use yaml format
+        in_format = 'list' if inputs else 'yaml'
+
+    inputs = common.parse_inputs(inputs, in_files, in_format=in_format)
+
+    if in_format == 'list':
+        # convert inputs from list to yaml format
+        if inputs:
+            inputs = {'archive': inputs[0]}
+        else:
+            inputs = {}
+
+    sanitize_archive_output(inputs)
 
     if not archive:
         # archive not specified - use make_archive or get_archive
-        if infiles:
-            instr = ", ".join([str(i) for i in infiles])
+        if inputs:
             raise ex.InvalidInput(
-                fail="unexpected input file(s): %s" % instr)
+                fail="unexpected input:\n\n%s" % common.yaml_dump(inputs))
 
         if upstream:
-            infiles = get_archive(
+            inputs = get_archive(
                 version=version,
                 cache=cache,
                 project=proj)
         else:
-            infiles = make_archive(
+            inputs = make_archive(
                 cache=cache,
                 project=proj)
 
-    common.ensure_input_files(infiles)
-    ar_path = infiles[0]
-    version = get_archive_version(ar_path)
+    ar_path = inputs.get('archive')
+    if not ar_path:
+        raise ex.InvalidInput(
+            msg="Missing required input: archive")
+    ar_path = Path(ar_path)
+
+    version = inputs.get('version')
+    if not version:
+        version = get_archive_version(ar_path)
+
+    components = inputs.get('components', {})
+
+
+    paths = [ar_path] + list(components.values())
+    common.ensure_inputs(paths)
 
     if use_cache:
         cache_key = 'srcpkg/%s/%s/%s-%s/' % (
             srcpkg_type, distro.idver, version, release)
         cache_key += '%s:%s' % (
-            path_checksum(*infiles), file_checksum(*infiles))
+            path_checksum(*paths), file_checksum(*paths))
         if not upstream:
             # dev srcpkg uses project source as input
             cache_key += ':%s' % proj.checksum
@@ -201,7 +228,7 @@ def srcpkg(
     results = template.pkgstyle.build_srcpkg(
         build_path,
         out_path,
-        archive_paths=infiles,
+        archive_info=inputs,
         template=template,
         tvars=tvars)
 
@@ -223,6 +250,18 @@ def srcpkg(
         proj.cache.update(cache_key, results)
 
     return results
+
+
+def sanitize_inputs(inputs):
+    # convert paths to pathlib.Path
+    archive = inputs.get('archive')
+    if archive and not isinstance(archive, Path):
+        inputs['archive'] = Path(archive)
+    components = inputs.get('components')
+    if components:
+        for key, val in list(components.items()):
+            if not isinstance(val, Path):
+                components[key] = Path(val)
 
 
 APKG_CLI_COMMANDS = [cli_srcpkg]

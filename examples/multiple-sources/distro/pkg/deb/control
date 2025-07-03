@@ -1,0 +1,11 @@
+Source: apkg-ex-multiple-sources
+Section: debug
+Priority: optional
+Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
+Build-Depends: debhelper
+Homepage: https://gitlab.nic.cz/packaging/apkg
+
+Package: apkg-ex-multiple-sources
+Architecture: all
+Depends: bash
+Description: testing package containing a single script

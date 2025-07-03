@@ -17,4 +17,4 @@ python_module = "apkg.templatevars.debseries"
 
 [apkg]
 # recommended - apkg compat level
-compat = 5
+compat = 6

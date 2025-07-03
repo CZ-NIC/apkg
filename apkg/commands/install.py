@@ -12,7 +12,7 @@ log = getLogger(__name__)
 
 
 @click.command(name="install")
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-C', '--custom-pkgs', is_flag=True,
               help="install custom packages (no build)")
 @click.option('-D', '--distro-pkgs', is_flag=True,
@@ -37,9 +37,8 @@ log = getLogger(__name__)
 @click.option('--ask/--no-ask', 'interactive',
               default=False, show_default=True,
               help="enable/disable interactive mode")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 # TODO: once py3.5 is dropped, add hidden=True
 @click.option('-y', '--yes', 'interactive', flag_value=False,
               help="[DEPRECATED] compat alias for --no-ask")
@@ -65,8 +64,8 @@ def install(
         srcpkg=False,
         archive=False,
         upstream=False,
-        input_files=None,
-        input_file_lists=None,
+        inputs=None,
+        in_files=None,
         version=None,
         release=None,
         distro=None,
@@ -86,7 +85,7 @@ def install(
         raise ex.DistroNotSupported(distro=distro)
     log.info("target pkgstyle: %s", ps.name)
 
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
 
     pkgs = []
     result = None
@@ -97,14 +96,14 @@ def install(
                 fail=("--custom-pkgs and --distro-pkgs options"
                       " are mutually exclusive"))
 
-        pkgs = infiles
+        pkgs = inputs
         result = pkgstyle.call_pkgstyle_fun(
             ps, 'install_custom_packages',
             pkgs,
             distro=distro,
             interactive=interactive)
     elif distro_pkgs:
-        pkgs = infiles
+        pkgs = inputs
         result = pkgstyle.call_pkgstyle_fun(
             ps, 'install_distro_packages',
             pkgs,
@@ -116,7 +115,7 @@ def install(
             srcpkg=srcpkg,
             archive=archive,
             upstream=upstream,
-            input_files=infiles,
+            inputs=inputs,
             version=version,
             release=release,
             distro=distro,

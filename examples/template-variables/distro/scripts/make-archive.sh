@@ -14,4 +14,4 @@ tar -czf "$ARPATH" --transform "s#^template-variables#$NAMEVER#" \
     -C .. template-variables
 
 # apkg expects stdout to list archive files
-echo $ARPATH
+echo "archive: '$ARPATH'"

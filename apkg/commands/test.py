@@ -14,7 +14,7 @@ log = getLogger(__name__)
 
 
 @cli.command(name="test", aliases=['tests'])
-@click.argument('input_files', nargs=-1)
+@click.argument('inputs', nargs=-1)
 @click.option('-i', '--info', is_flag=True,
               help="show tests information and exit")
 @click.option('-l', '--list-tests', is_flag=True,
@@ -31,9 +31,8 @@ log = getLogger(__name__)
               help="install testing dependencies on host (apkg test-dep)")
 @click.option('-k', '--test-filter',
               help="only select tests matching supplied REGEX")
-@click.option('-F', '--file-list', 'input_file_lists', multiple=True,
-              help=("specify text file listing one input file per line"
-                    ", use '-' to read from stdin"))
+@click.option('-F', '--in-file', 'in_files', multiple=True,
+              help="specify input file, '-' to read from stdin")
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_test(*args, **kwargs):
@@ -51,8 +50,8 @@ def test(
         show_control=False,
         upstream=False,
         archive=None,
-        input_files=None,
-        input_file_lists=None,
+        inputs=None,
+        in_files=None,
         distro=None,
         test_dep=False,
         test_filter=None):
@@ -61,15 +60,15 @@ def test(
     """
     proj = Project()
     distro = adistro.distro_arg(distro, proj)
-    infiles = common.parse_input_files(input_files, input_file_lists)
+    inputs = common.parse_inputs(inputs, in_files)
     archive, archive_files = parse_archive_args(
-        proj, archive, upstream, infiles)
+        proj, archive, upstream, inputs)
 
     if test_dep:
         cmd_test_dep(
             upstream=upstream,
             archive=None,
-            input_files=archive_files,
+            inputs=archive_files,
             distro=distro)
 
     if info:

@@ -33,6 +33,7 @@ dependencies = [
     "distro",
     "jinja2",
     "packaging",
+    "pyyaml",
     "requests",
     "toml",
 ]

@@ -25,6 +25,7 @@ python3Packages.buildPythonApplication rec {
     distro           # current distro detection
     jinja2           # templating
     packaging        # version parsing
+    pyyaml           # YAML for serialization
     requests         # HTTP for humans™
     setuptools       # required for build
     toml             # config files

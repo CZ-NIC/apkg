@@ -14,4 +14,4 @@ tar -czf "$ARPATH" --transform "s#^minimal-no-git#$NAMEVER#" \
     -C .. minimal-no-git
 
 # apkg expects stdout to list archive files
-echo archive $ARPATH
+echo "archive: '$ARPATH'"

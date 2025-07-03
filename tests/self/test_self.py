@@ -3,6 +3,8 @@ import os
 import pytest
 import re
 
+import yaml
+
 from apkg.util import test
 from apkg.util.run import cd
 from apkg.util.git import git
@@ -81,12 +83,13 @@ def test_apkg_make_archive_cache(repo_path, caplog):
 
 
 def test_apkg_get_archive_manual(repo_path, capsys):
-    VERSION = '0.0.4'
+    VERSION = '0.4.2'
     with cd(repo_path):
         assert apkg('get-archive', '--version', VERSION) == 0
     out, _ = capsys.readouterr()
-    # first stdout line should be downloaded archive
-    assert out.startswith("pkg/archives/upstream/apkg-v%s.tar.gz" % VERSION)
+    results = yaml.safe_load(out)
+    assert results['archive'] == "pkg/archives/upstream/apkg-v%s.tar.gz" % VERSION
+    assert results['version'] == VERSION
 
 
 def test_apkg_get_archive_auto(repo_path, capsys):
@@ -94,8 +97,9 @@ def test_apkg_get_archive_auto(repo_path, capsys):
     with cd(repo_path):
         assert apkg('get-archive') == 0
     out, _ = capsys.readouterr()
-    # first stdout line should be downloaded archive
-    assert out.startswith("pkg/archives/upstream/apkg-")
+    results = yaml.safe_load(out)
+    version = results['version']
+    assert results['archive'] == "pkg/archives/upstream/apkg-v%s.tar.gz" % version
 
 
 def test_apkg_srcpkg(repo_path, capsys):

@@ -17,6 +17,9 @@ import apkg.util.shutil35 as shutil
 log = getLogger(__name__)
 
 
+PATH_FORMAT = 'relative'
+
+
 CacheableEntry = Union[str, int, bool, Path,
                        Iterable['CacheableEntry'],
                        Mapping[str, 'CacheableEntry']]
@@ -66,7 +69,7 @@ def print_results(results):
     """
     try:
         for r in results:
-            print(str(r))
+            print(format_path(r))
     except TypeError:
         print(str(results))
 
@@ -78,9 +81,17 @@ def print_results_dict(results):
     print(yaml_dump(results))
 
 
+def format_path(path: Path):
+    if PATH_FORMAT == 'absolute':
+        return str(path.absolute())
+    elif PATH_FORMAT == 'stem':
+        return str(path.stem)
+    return str(path)
+
+
 def yaml_path_representer(dumper, obj):
     # to print pathlib.Path as str
-    return dumper.represent_scalar("tag:yaml.org,2002:str", str(obj))
+    return dumper.represent_scalar("tag:yaml.org,2002:str", format_path(obj))
 
 
 class SafeDumper(yaml.dumper.SafeDumper):
@@ -248,3 +259,27 @@ def sanitize_fn(name):
     sanitize a string to be safe for use as a filename
     """
     return re.sub(r'[\\/\\:*?"\'<>| ]', '_', name)
+
+
+def set_path_format(fmt: str) -> str:
+    """
+    set global path format
+    """
+    global PATH_FORMAT
+
+    if not fmt or 'relative'.startswith(fmt):
+        PATH_FORMAT = 'relative'
+    elif 'absolute'.startswith(fmt):
+        PATH_FORMAT = 'absolute'
+    elif 'stem'.startswith(fmt):
+        PATH_FORMAT = 'stem'
+    else:
+        raise ex.InvalidFormat(
+            msg="Invalid path format: %s" % fmt)
+
+
+def get_path_format():
+    """
+    set global path format
+    """
+    return PATH_FORMAT

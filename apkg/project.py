@@ -244,7 +244,7 @@ class Project:
         uv_script = self.config_get('upstream.version_script')
         if uv_script:
             v = upstreamversion.version_from_script(
-                uv_script, script_name='upstream.version_script')
+                uv_script, script_name='upstream.version_script', proj=self)
             log.info("detected upstream version (from script): %s", v)
             return v
         ar_url = self.upstream_archive_url('VERSION')

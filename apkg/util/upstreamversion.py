@@ -5,7 +5,9 @@ import re
 import bs4
 from packaging import version
 import requests
+import yaml
 
+from apkg import ex
 from apkg.log import getLogger
 from apkg.util.run import run
 
@@ -16,14 +18,34 @@ log = getLogger(__name__)
 RE_ARCHIVE_VERSION = r'[\w-]+-(\d[^-]+)\.tar\..*'
 
 
-def version_from_script(script, script_name='script'):
+def version_from_script(script, script_name='script', proj=None):
     """
-    get version from last stdout line of a script
+    get version from a script
     """
     log.verbose("getting upstream version from %s: %s", script_name, script)
     out = run(script, quiet=True)
-    _, _, last_line = out.rpartition('\n')
-    v = version.parse(last_line.strip())
+    if proj and proj.compat_level < 6:
+        # use old behaviour - the last line of output was used
+        msg = ("using legacy %s format (last line)"
+               " due to compat level %s" % (script_name, proj.compat_level))
+        log.warning(msg)
+        _, _, last_line = out.rpartition('\n')
+        v = last_line.strip()
+    else:
+        # modern YAML output (compat >= 6)
+        try:
+            results = yaml.safe_load(out)
+        except Exception as e:
+            msg = ("Failed to parse %s YAML output:\n\n"
+                   "%s\n\nError:\n\n%s" % (script_name, out, e))
+            raise ex.UnexpectedCommandOutput(msg=msg)
+        if not isinstance(results, dict) or 'version' not in results:
+            msg = ("Invalid %s YAML output format:\n\n"
+                   "%s\n\nExpected format example:\n\n"
+                   "version: 1.2.3" % (script_name, out))
+            raise ex.UnexpectedCommandOutput(msg=msg)
+        v = results['version']
+    v = version.parse(v)
     return v
 
 

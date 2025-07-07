@@ -8,6 +8,7 @@
 
 - flexible YAML output for
   [make_archive_script](config.md#projectmake_archive_script),
+  [version_script](config.md#upstreamversion_script),
   [make-archive](commands.md#make-archive), and
   [get-archive](commands.md#get-archive)
     - [make_archive_script](config.md#projectmake_archive_script) can specify

@@ -80,9 +80,9 @@ Most projects which use `apkg` have the script in `scripts/` directory for
 historic reasons, but feel free to put it into `distro/scripts/` or anywhere
 else you want.
 
-{{ added_in_version('0.6.0', compat=5, action="Changed") }}
+{{ added_in_version('0.7.0', compat=6, action="Changed", extra="to YAML output") }}
 
-For compat level 4 and older, `make_archive_script` is expected to return
+For compat level 5 and older, `make_archive_script` is expected to return
 archive file name as last line of its stdout:
 
 ```

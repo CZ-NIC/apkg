@@ -80,9 +80,9 @@ Most projects which use `apkg` have the script in `scripts/` directory for
 historic reasons, but feel free to put it into `distro/scripts/` or anywhere
 else you want.
 
-{{ added_in_version('0.6.0', compat=5, action="Changed") }}
+{{ added_in_version('0.7.0', compat=6, action="Changed", extra="to YAML output") }}
 
-For compat level 4 and older, `make_archive_script` is expected to return
+For compat level 5 and older, `make_archive_script` is expected to return
 archive file name as last line of its stdout:
 
 ```
@@ -122,7 +122,7 @@ Optional signature file to download alongside upstream archive.
 If default upstream version auto-detection from HTML listing of files at
 `upstream.archive_url` parent doesn't work for your project or you want full
 control over the process, you can create a custom executable script which
-prints current upstream version to `stdout` and tell `apkg` to use it
+prints current upstream version to `stdout` as YAML and use it
 with `upstream.version_script` option:
 
 ```toml
@@ -130,10 +130,24 @@ with `upstream.version_script` option:
 version_script = "scripts/upstream-version.py"
 ```
 
+Expected script standard output in YAML:
+
+```yaml
+version: 1.2.3
+```
+
 This option overrides default auto-detection mechanism.
 
 script example: {{ 'scripts/upstream-version.py' | file_link  }}
 
+{{ added_in_version('0.7.0', compat=6, action="Changed", extra='to YAML output') }}
+
+For compat level 5 and older, `upstream.version_script` is expected to return
+version as last line of its stdout:
+
+```
+1.2.3
+```
 
 ## [apkg]
 

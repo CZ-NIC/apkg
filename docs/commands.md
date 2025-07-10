@@ -89,7 +89,7 @@ is enabled.
 {{ 'srcpkg' | cmd_help }}
 
 Resulting source package is cached if both [cache.local](config.md#cachelocal) and
-[cache.source](config.md#cachesources) are enabled, unless using `--upstream`
+[cache.source](config.md#cachesource) are enabled, unless using `--upstream`
 which only requires [cache.local](config.md#cachelocal).
 See [source cache](cache.md#source-cache) for more info.
 

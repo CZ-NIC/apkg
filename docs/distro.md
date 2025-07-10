@@ -62,8 +62,9 @@ Specifiers](https://packaging.pypa.io/en/latest/specifiers.html) to perform the
 check.
 
 Distro rules are used during [template selection] and also to define
-[custom templates] in config.
+[distro alias templates](templates.md#distro-alias-template) in config.
 
+[custom templates]: custom-template
 
 ## distro aliases
 
@@ -118,7 +119,5 @@ Full example from {{ 'examples/templates/distro/pkg/deb/changelog' | file_link }
 ```
 
 
-
 [template selection]: templates.md#template-selection
-[custom templates]: templates.md#custom-template
 [distro]: https://github.com/python-distro/distro

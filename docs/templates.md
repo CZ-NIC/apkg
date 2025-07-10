@@ -226,5 +226,5 @@ Examples:
 [distro in templates]: distro.md#distro-in-templates
 [target distro]: distro.md#target-distro
 [template variables]: templatevars.md
-[default template variables]: templates.md#default-template-variables
-[custom template variables]: templates.md#custom-template-variables
+[default template variables]: templatevars.md#default-template-variables
+[custom template variables]: templatevars.md#custom-template-variables

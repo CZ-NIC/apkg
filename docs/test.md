@@ -19,7 +19,7 @@ To get information about tests, use `-i`/`--info` argument:
 apkg test --info
 ```
 
-_Introduced in apkg-0.4.0_
+{{ added_in_version('0.4.0', compat=3) }}
 
 
 ## tests directory
@@ -153,7 +153,7 @@ $> apkg test -c -d fedora-38
 A tests extra (from `distro/tests/extra/`) is selected and used based on a
 target [distro](distro.md), taking [distro aliases](distro.md#distro-aliases)
 into consideration much like
-[template selection](templates.md#tempalte-selection).
+[template selection](templates.md#template-selection).
 
 To allow full control over tests, `apkg` provides 4 types of tests extra
 selection mechanisms (described below) which can be combined as needed.

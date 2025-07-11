@@ -45,3 +45,14 @@ theme:
     - content.code.copy
     - content.tabs.link
     - content.tooltips
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: switch to dark mode

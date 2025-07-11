@@ -246,7 +246,7 @@ This guide assumes you have following options specified in your `apkg.toml`:
 
 * [project.name](config.md#projectname)
 * [project.make_archive_script](config.md#projectmake_archive_script)
-* [apkg.compat](config.md##apkgcompat)
+* [apkg.compat](config.md#apkgcompat)
 
 Confirm that `apkg status` in project directory mentions existing config file:
 

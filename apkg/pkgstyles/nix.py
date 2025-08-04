@@ -78,7 +78,7 @@ def build_srcpkg(
         archive_info,
         template,
         tvars):
-    archive_path = archive_info['archive_path']
+    archive_path = archive_info['archive']
     tvars = tvars or {}
     tvars['src_hash'] = hash_file(archive_path).hexdigest()
     log.info("applying templates")
@@ -86,7 +86,7 @@ def build_srcpkg(
 
     log.info("copying everything to: %s", out_path)
     shutil.copytree(build_path, out_path)
-    archive_paths = [archive_info["archive"]]
+    archive_paths = [archive_path]
     archive_paths.extend(archive_info.get("components", {}).values())
     out_archives = []
     for src_path in archive_paths:

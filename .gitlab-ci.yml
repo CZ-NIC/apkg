@@ -164,9 +164,9 @@ default:
     # build deps when using modern packaging through pyproject.toml
     # which are also needed when running apkg self tests
     - nix-env -f '<nixpkgs>' -iQA python3.pkgs.setuptools
-    # Use bootstrap apkg to install itself from the current commit
-    - nix-shell '<nixpkgs>' -p apkg --run 'apkg install'
-  allow_failure: true
+    # Bootstrap a nix-built apkg: first `pip install .` and use that for `apkg install`
+    - nix-shell '<nixpkgs>' -p python3 --run 'python3 -m venv ./.venv'
+    - nix-shell '<nixpkgs>' -p python3.pkgs.pip --run 'source ./.venv/bin/activate && pip install . && apkg install'
 
 
 # basic tests

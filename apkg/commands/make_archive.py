@@ -100,7 +100,7 @@ def make_archive(
         # use old undocumented behaviour when the last line of output was used
         msg = ("using legacy make_archive_script format (last line)"
                " due to compat level %s" % proj.compat_level)
-        log.warning(msg)
+        log.info(msg)
         lines = out.split('\n')
         archive_path = Path(lines[-1])
         results["archive"] = archive_path

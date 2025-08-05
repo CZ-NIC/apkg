@@ -28,7 +28,7 @@ def version_from_script(script, script_name='script', proj=None):
         # use old behaviour - the last line of output was used
         msg = ("using legacy %s format (last line)"
                " due to compat level %s" % (script_name, proj.compat_level))
-        log.warning(msg)
+        log.info(msg)
         _, _, last_line = out.rpartition('\n')
         v = last_line.strip()
     else:

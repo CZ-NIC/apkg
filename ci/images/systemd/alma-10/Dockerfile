@@ -1,4 +1,4 @@
-FROM almalinux:10-kitten
+FROM almalinux:10
 
 ARG ARCH=amd64
 

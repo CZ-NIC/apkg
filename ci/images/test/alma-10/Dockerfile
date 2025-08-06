@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM almalinux:10-kitten
+FROM almalinux:10
 
 WORKDIR /root
 CMD ["/bin/bash"]

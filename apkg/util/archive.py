@@ -29,7 +29,8 @@ def unpack_archive(archive_path, out_path):
     root_files_old = set(temp_path.glob("*"))
     # shutil doesn't provide a way to check extracted files :(
     # pautil has bugs and got last release in 2016...
-    shutil.unpack_archive(archive_path, temp_path)
+    # NOTE(py36): str conversions can be dropped with Python 3.6 support
+    shutil.unpack_archive(str(archive_path), str(temp_path))
     root_files_new = set(temp_path.glob("*"))
     root_files = root_files_new - root_files_old
     n_root_files = len(root_files)

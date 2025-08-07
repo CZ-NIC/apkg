@@ -197,8 +197,7 @@ def hash_file(*paths, algo='sha256'):
     b = bytearray(128*1024)
     mv = memoryview(b)
     for path in paths:
-        # NOTE(py35): explicit Path -> str conversion for python 3.5
-        with open(str(path), 'rb', buffering=0) as f:
+        with open(path, 'rb', buffering=0) as f:
             while True:
                 # NOTE: pylint's cell-var-from-loop cries made me do this >:(
                 n = f.readinto(mv)

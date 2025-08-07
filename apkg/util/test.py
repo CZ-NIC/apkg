@@ -3,8 +3,7 @@ shared apkg testing functions
 """
 import os
 from pathlib import Path
-
-import apkg.util.shutil35 as shutil
+import shutil
 
 
 def init_testing_repo(repo_path, test_path):
@@ -24,7 +23,7 @@ def inject_tree(src_path, dst_path, ignore_top_dirs=None):
         dst_path.mkdir(parents=True, exist_ok=True)
 
     # recursively copy all files
-    for d, subdirs, files in shutil.walk(src_path, topdown=True):
+    for d, subdirs, files in os.walk(src_path, topdown=True):
         rel_dir = Path(d).relative_to(src_path)
         dst_dir = dst_path / rel_dir
         dst_dir.mkdir(parents=True, exist_ok=True)

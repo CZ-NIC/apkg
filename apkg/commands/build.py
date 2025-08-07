@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 
 import click
 
@@ -10,7 +11,6 @@ from apkg.commands.srcpkg import srcpkg as make_srcpkg
 from apkg.log import getLogger
 from apkg.project import Project
 from apkg.util import common
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)

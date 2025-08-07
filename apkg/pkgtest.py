@@ -5,6 +5,7 @@ import email
 import glob
 import os
 import re
+import shutil
 
 from pathlib import Path
 try:
@@ -21,7 +22,6 @@ from apkg import pkgstyle as _pkgstyle
 from apkg.pkgtemplate import IncludeRawExtension
 from apkg.util.run import run, sudo
 from apkg.util.test import inject_tree
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)
@@ -166,7 +166,7 @@ class TestsExtra:
             out_path.mkdir(parents=True, exist_ok=True)
 
         # recursively render all files
-        for d, _, files in shutil.walk(self.path, followlinks=True):
+        for d, _, files in os.walk(self.path, followlinks=True):
             rel_dir = Path(d).relative_to(self.path)
             dst_dir = out_path / rel_dir
             dst_dir.mkdir(parents=True, exist_ok=True)

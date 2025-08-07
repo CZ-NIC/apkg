@@ -14,13 +14,10 @@ from apkg.cli import apkg
 APKG_BASE_DIR = Path(__file__).parents[2]
 
 
-# NOTE(py35): use tmp_path instead of tmpdir
-#             when py3.5 support is dropped
-
 @pytest.fixture(scope="module")
-def repo_path(tmpdir_factory):
-    tmpdir = tmpdir_factory.mktemp("apkg_test_repo_")
-    repo_path = test.init_testing_repo(APKG_BASE_DIR, str(tmpdir))
+def repo_path(tmp_path_factory):
+    tmp_path = tmp_path_factory.mktemp("apkg_test_repo_")
+    repo_path = test.init_testing_repo(APKG_BASE_DIR, tmp_path)
     with cd(repo_path):
         # commit all changes for the purposes of testing, if any
         git('commit', '-a', '-m', 'TEST: uncommited changes from source',

@@ -18,9 +18,9 @@ CPIO = which('cpio')
 
 
 @pytest.fixture(scope="module")
-def repo_path(tmpdir_factory):
-    tmpdir = tmpdir_factory.mktemp("apkg_multiple_sources_")
-    repo_path = test.init_testing_repo(EXAMPLE_DIR, str(tmpdir))
+def repo_path(tmp_path_factory):
+    tmp_path = tmp_path_factory.mktemp("apkg_multiple_sources_")
+    repo_path = test.init_testing_repo(EXAMPLE_DIR, tmp_path)
     return repo_path
 
 

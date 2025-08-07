@@ -16,11 +16,11 @@ LIBYANG_REPO_URL = 'https://github.com/CESNET/libyang'
 
 
 @pytest.fixture(scope="module")
-def clone_path(tmpdir_factory):
+def clone_path(tmp_path_factory):
     """
     clone project repo once on module load and reuse it in individual tests
     """
-    tmpd = tmpdir_factory.mktemp("apkg_test_libyang_git")
+    tmpd = tmp_path_factory.mktemp("apkg_test_libyang_git")
     p = '%s/libyang' % tmpd
     branch = os.getenv('LIBYANG_BRANCH') or 'master'
     git('clone', '--recursive', '-b', branch, LIBYANG_REPO_URL, p)

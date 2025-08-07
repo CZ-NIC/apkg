@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 
 import click
 import yaml
@@ -10,7 +11,6 @@ from apkg.log import getLogger
 from apkg.project import Project
 from apkg.util.archive import get_archive_version
 from apkg.util.run import run
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)

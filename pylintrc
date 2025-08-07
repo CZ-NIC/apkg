@@ -1,7 +1,7 @@
 [MESSAGES CONTROL]
 disable=
     broad-except,
-    consider-using-f-string,  # NOTE(py35): f"yes!" when py3.5 is dropped
+    consider-using-f-string,  # most of apkg was written before wide f-string support
     consider-using-with,
     duplicate-code,  # unevitable with pkgstyle plugin arch
     fixme,

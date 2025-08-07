@@ -72,7 +72,6 @@ def test_dep(
         n_deps = len(deps)
         if n_deps > 0:
             log.info("installing %s test deps...", n_deps)
-            # TODO get pkgstyle for distro
             pkgstyle = get_pkgstyle_for_distro(distro)
             call_pkgstyle_fun(
                 pkgstyle, 'install_build_deps',

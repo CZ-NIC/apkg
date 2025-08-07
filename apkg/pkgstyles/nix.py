@@ -14,11 +14,11 @@ apkg package style for **Nix** ([NixOS.org](https://nixos.org)).
 """
 import os
 import re
+import shutil
 
 from apkg import ex
 from apkg.log import getLogger
 from apkg.util.run import run
-import apkg.util.shutil35 as shutil
 from apkg.util.common import hash_file
 
 log = getLogger(__name__)

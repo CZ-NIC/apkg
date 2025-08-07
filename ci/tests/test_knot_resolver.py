@@ -16,11 +16,11 @@ KRESD_REPO_URL = 'https://gitlab.nic.cz/knot/knot-resolver.git'
 
 
 @pytest.fixture(scope="module")
-def clone_path(tmpdir_factory):
+def clone_path(tmp_path_factory):
     """
     clone project repo once on module load and reuse it in individual tests
     """
-    tmpd = tmpdir_factory.mktemp("apkg_test_kresd_git")
+    tmpd = tmp_path_factory.mktemp("apkg_test_kresd_git")
     p = '%s/knot-resolver' % tmpd
     branch = os.getenv('KNOT_RESOLVER_BRANCH') or 'master'
     git('clone', '--recursive', '-b', branch, KRESD_REPO_URL, p)

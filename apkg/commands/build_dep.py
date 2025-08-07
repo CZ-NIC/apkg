@@ -33,8 +33,7 @@ log = getLogger(__name__)
 @click.option('--ask/--no-ask', 'interactive',
               default=False, show_default=True,
               help="enable/disable interactive mode")
-# TODO: once py3.5 is dropped, add hidden=True
-@click.option('-y', '--yes', 'interactive', flag_value=False,
+@click.option('-y', '--yes', 'interactive', flag_value=False, hidden=True,
               help="compat alias for --no-ask")
 @click.help_option('-h', '--help',
                    help="show this help message")

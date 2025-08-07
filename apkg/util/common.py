@@ -3,6 +3,7 @@ import fnmatch
 import hashlib
 from pathlib import Path
 import re
+import shutil
 import sys
 import tempfile
 from typing import Iterable, Mapping, Optional, Union
@@ -11,7 +12,6 @@ import yaml
 
 from apkg import ex
 from apkg.log import getLogger
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)
@@ -197,8 +197,7 @@ def hash_file(*paths, algo='sha256'):
     b = bytearray(128*1024)
     mv = memoryview(b)
     for path in paths:
-        # NOTE(py35): explicit Path -> str conversion for python 3.5
-        with open(str(path), 'rb', buffering=0) as f:
+        with open(path, 'rb', buffering=0) as f:
             while True:
                 # NOTE: pylint's cell-var-from-loop cries made me do this >:(
                 n = f.readinto(mv)

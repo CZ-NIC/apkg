@@ -5,6 +5,7 @@ from collections import UserDict
 import glob
 import importlib.util
 import os
+import shutil
 
 from pathlib import Path
 import jinja2
@@ -16,7 +17,6 @@ from apkg import adistro
 from apkg.log import getLogger
 from apkg import pkgstyle as _pkgstyle
 from apkg.util import common
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)
@@ -174,7 +174,7 @@ class PackageTemplate:
         tvars = self.template_vars(tvars=tvars)
 
         # recursively render all files
-        for d, _, files in shutil.walk(self.path, followlinks=True):
+        for d, _, files in os.walk(self.path, followlinks=True):
             rel_dir = Path(d).relative_to(self.path)
             dst_dir = out_path / rel_dir
             dst_dir.mkdir(parents=True, exist_ok=True)

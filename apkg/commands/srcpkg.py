@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 
 import click
 
@@ -12,7 +13,6 @@ from apkg.log import getLogger
 from apkg.pkgstyle import call_pkgstyle_fun
 from apkg.project import Project
 from apkg.util.archive import get_archive_version
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)

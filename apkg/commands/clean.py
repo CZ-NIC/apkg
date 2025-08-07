@@ -1,10 +1,10 @@
 import click
+import shutil
 
 from apkg import ex
 from apkg.log import getLogger
 from apkg.project import Project
 from apkg.util.git import git
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)

@@ -2,10 +2,10 @@
 apkg archive (tarball) utils
 """
 from pathlib import Path
+import shutil
 import tempfile
 
 from apkg.parse import split_archive_fn, parse_version
-import apkg.util.shutil35 as shutil
 
 from apkg import ex
 from apkg.log import getLogger

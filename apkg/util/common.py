@@ -3,6 +3,7 @@ import fnmatch
 import hashlib
 from pathlib import Path
 import re
+import shutil
 import sys
 import tempfile
 from typing import Iterable, Mapping, Optional, Union
@@ -11,7 +12,6 @@ import yaml
 
 from apkg import ex
 from apkg.log import getLogger
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)

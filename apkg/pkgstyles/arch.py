@@ -9,11 +9,11 @@ apkg package style for **Arch** linux.
 """
 import glob
 from pathlib import Path
+import shutil
 
 from apkg import ex
 from apkg.log import getLogger
 from apkg.util.run import cd, run, sudo
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)

@@ -21,6 +21,7 @@ from datetime import datetime
 import glob
 from pathlib import Path
 import re
+import shutil
 import subprocess
 
 from packaging.version import Version
@@ -29,7 +30,6 @@ from apkg import ex
 from apkg.util import common
 from apkg.log import getLogger
 from apkg.util.run import run, sudo
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)

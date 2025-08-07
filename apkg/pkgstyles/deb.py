@@ -23,6 +23,7 @@ import glob
 import os
 from pathlib import Path
 import re
+import shutil
 import tempfile
 
 from apkg import ex
@@ -30,7 +31,6 @@ from apkg.log import getLogger
 from apkg import parse
 from apkg.util.run import cd, run, sudo
 from apkg.util.archive import unpack_archive
-import apkg.util.shutil35 as shutil
 
 
 log = getLogger(__name__)

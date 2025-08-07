@@ -12,8 +12,7 @@ version_script = "scripts/upstream-version.py"
 
 # optional - custom template variables deb_series and deb_codename
 [[template.variables]]
-# TODO: rename to deb_series after 0.6 release
-python_module = "apkg.templatevars.debseries"
+python_module = "apkg.templatevars.deb_series"
 
 [apkg]
 # recommended - apkg compat level

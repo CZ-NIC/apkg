@@ -16,11 +16,11 @@ BIRD_REPO_URL = 'https://gitlab.nic.cz/labs/bird.git'
 
 
 @pytest.fixture(scope="module")
-def clone_path(tmpdir_factory):
+def clone_path(tmp_path_factory):
     """
     clone project repo once on module load and reuse it in individual tests
     """
-    tmpd = tmpdir_factory.mktemp("apkg_test_bird_git")
+    tmpd = tmp_path_factory.mktemp("apkg_test_bird_git")
     p = '%s/bird' % tmpd
     # XXX: using apkg-jru branch for now
     branch = os.getenv('BIRD_BRANCH') or 'apkg-jru'

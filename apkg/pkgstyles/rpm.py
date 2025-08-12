@@ -15,14 +15,16 @@ such as Fedora, CentOS, SUSE, RHEL.
 
 **template variables:**
 
- * `now`: current date in RPM changelog format
+ * `now`: current date in RPM changelog format,
+          use `SOURCE_DATE_EPOCH` env var when set
 """
-from datetime import datetime
 import glob
+import os
 from pathlib import Path
 import re
 import shutil
 import subprocess
+import time
 
 from packaging.version import Version
 
@@ -55,15 +57,20 @@ DISTRO_REQUIRES = {
 }
 
 
-def format_date():
+def get_now():
     """
     current date and time in RPM changelog format
+
+    SOURCE_DATE_EPOCH env variable overrides the time when set
     """
-    return datetime.now().strftime('%a %b %d %Y')
+    return time.strftime(
+        "%a %b %d %Y",
+        time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time())))
+    )
 
 
 TEMPLATE_VARS_DYNAMIC = {
-    'now': format_date,
+    'now': get_now,
 }
 
 

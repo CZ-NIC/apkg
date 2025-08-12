@@ -1,6 +1,9 @@
+import email.utils
 from pathlib import Path
 import pytest
+import os
 import re
+import time
 
 from apkg.adistro import Distro
 from apkg.cli import apkg
@@ -137,3 +140,55 @@ def test_template_render_deb(proj, capsys, distro, extra):
     distro_exp = '%s / %s / %s' % (d, d.idver, d.tiny)
     assert distro_ == distro_exp
     assert extra_.strip() == extra
+
+
+T_EPOCH = 123456789
+RE_RPM_TIME = r'%changelog\n\* (\w\w\w \w\w\w \d\d? \d\d\d\d) '
+
+
+def test_template_render_rpm_now(proj, capsys):
+    """
+    test rending of {{ now }} in examples/templates/distro/pkg/rpm/*spec
+    with SOURCE_DATE_EPOCH env var set
+    """
+    with cd(proj.path.base):
+        os.environ["SOURCE_DATE_EPOCH"] = str(T_EPOCH)
+        assert apkg('srcpkg', '--render-template', '-d', 'fedora') == 0
+        out, _ = capsys.readouterr()
+        out_path = Path(out.strip()).resolve()
+        assert out_path.exists()
+        spec_path = next(out_path.glob('*.spec'))
+        spec = spec_path.open('r').read()
+        del os.environ["SOURCE_DATE_EPOCH"]
+
+    m = re.search(RE_RPM_TIME, spec, flags=re.MULTILINE)
+    assert m
+    t_spec = m.group(1)
+    t_exp = time.strftime("%a %b %d %Y", time.gmtime(T_EPOCH))
+    assert t_spec == t_exp
+
+
+RE_DEB_TIME = r'\s+--\s+.*  (.*)'
+
+
+def test_template_render_deb_now(proj, capsys):
+    """
+    test rending of {{ now }} in examples/templates/distro/pkg/deb/changelog
+    with SOURCE_DATE_EPOCH env var set
+    """
+    with cd(proj.path.base):
+        os.environ["SOURCE_DATE_EPOCH"] = str(T_EPOCH)
+        assert apkg('srcpkg', '--render-template', '-d', 'debian') == 0
+        out, _ = capsys.readouterr()
+        out_path = Path(out.strip()).resolve()
+        assert out_path.exists()
+        changelog_path = next(out_path.glob('changelog'))
+        chl = changelog_path.open('r').read()
+        del os.environ["SOURCE_DATE_EPOCH"]
+
+    m = re.search(RE_DEB_TIME, chl)
+    assert m
+    t_ch = m.group(1)
+    t_exp = email.utils.formatdate(timeval=T_EPOCH, localtime=True)
+
+    assert t_ch == t_exp

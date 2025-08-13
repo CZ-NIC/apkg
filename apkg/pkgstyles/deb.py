@@ -98,12 +98,15 @@ def get_srcpkg_nvr(path):
     return nvr
 
 
-def copy_pkg_files(src_path, dst_path):
+def copy_pkg_files(src_path, dst_path, source=False):
     """
     copy package files at src_path to dst_path
 
     Find a single *.changes file at src_path
     and copy it and all files it references to dst_path.
+
+    If multiple *.changes files are detected, select single *_source.changes if
+    source=True, otherwise a single *_$ARCH.changes.
 
     Return a list of all files copied.
 
@@ -114,8 +117,19 @@ def copy_pkg_files(src_path, dst_path):
         raise ex.UnexpectedCommandOutput(
             msg="no *.changes files found when copying package")
     if len(changes) > 1:
-        raise ex.UnexpectedCommandOutput(
-            msg="multiple *.changes files found when copying package")
+        if source:
+            # only select *_source.changes
+            changes = [ch for ch in changes if ch.endswith('source.changes')]
+        else:
+            # only select *_$ARCH.changes
+            changes = [ch for ch in changes if not ch.endswith('source.changes')]
+        if len(changes) == 1:
+            changes_fn = Path(changes[0]).name
+            log.info("multiple *.changes files found, using %s changes: %s",
+                     'source' if source else 'binary', changes_fn)
+        else:
+            raise ex.UnexpectedCommandOutput(
+                msg="multiple *.changes files found when copying package")
 
     changes_path = Path(changes[0])
     changes_dst_path = dst_path / changes_path.name
@@ -213,7 +227,7 @@ def build_srcpkg(
 
     log.info("copying source package to result dir: %s", out_path)
     out_path.mkdir(parents=True)
-    copied = copy_pkg_files(build_path, out_path)
+    copied = copy_pkg_files(build_path, out_path, source=True)
     dscs = [path for path in copied if path.suffix == '.dsc']
     if not dscs:
         raise ex.UnexpectedCommandOutput(
@@ -265,7 +279,7 @@ def build_packages(
                 )
 
     log.info("copying built packages to result dir: %s", out_path)
-    copied = copy_pkg_files(build_path, out_path)
+    copied = copy_pkg_files(build_path, out_path, source=False)
     pkgs = [path for path in copied if path.suffix in ['.deb', '.ddeb']]
     if not pkgs:
         raise ex.UnexpectedCommandOutput(

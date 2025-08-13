@@ -104,6 +104,7 @@ default:
   stage: bird
   rules:
     - if: $INTEGRATION == "true" || $TEST_BIRD == "true"
+    - when: manual
   needs:
     - install
   artifacts:
@@ -117,6 +118,7 @@ default:
   stage: knot-dns
   rules:
     - if: $INTEGRATION == "true" || $TEST_KNOT_DNS == "true"
+    - when: manual
   needs:
     - install
   artifacts:
@@ -137,6 +139,7 @@ default:
   stage: knot-resolver
   rules:
     - if: $INTEGRATION == "true" || $TEST_KNOT_RESOLVER == "true"
+    - when: manual
   needs:
     - install
   artifacts:

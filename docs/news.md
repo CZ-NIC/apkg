@@ -16,6 +16,7 @@
     - [make_archive_script](config.md#projectmake_archive_script) can produce
       additional files (`components`)
 - new `-P` / `--path-format` global option to control how `apkg` prints output paths
+- `SOURCE_DATE_EPOCH` support in `{{ now }}` for build reproducibility
 
 
 ## apkg 0.6.1

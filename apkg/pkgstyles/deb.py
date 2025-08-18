@@ -15,7 +15,8 @@ and its many clones such as Ubuntu or Mint.
 
 **template variables:**
 
- * `now`: current date in Debian changelog format (RFC 2822)
+ * `now`: current date in Debian changelog format (RFC 2822),
+          use `SOURCE_DATE_EPOCH` env var when set
 """
 import email
 import email.utils
@@ -25,6 +26,7 @@ from pathlib import Path
 import re
 import shutil
 import tempfile
+import time
 
 from apkg import ex
 from apkg.log import getLogger
@@ -50,15 +52,18 @@ DISTRO_REQUIRES = {
 }
 
 
-def format_date():
+def get_now():
     """
     current date and time in Debian changelog format (RFC 2822)
+
+    SOURCE_DATE_EPOCH env variable overrides the time when set
     """
-    return email.utils.formatdate(localtime=True)
+    t = int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))
+    return email.utils.formatdate(timeval=t, localtime=True)
 
 
 TEMPLATE_VARS_DYNAMIC = {
-    'now': format_date,
+    'now': get_now,
 }
 
 

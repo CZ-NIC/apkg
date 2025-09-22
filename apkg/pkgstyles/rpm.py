@@ -311,17 +311,21 @@ def lint(
 
 
 def get_package_manager_(distro):
-    default = 'dnf'
-    if not distro:
-        return default
-    if distro.id == 'opensuse':
-        return 'zypper'
-    if (distro.id in EL_FAMILY_DISTROS
-            and distro.version
-            and Version(distro.version) <= Version("7")):
-        # use yum on EL <= 7
-        return 'yum'
-    return default
+    if distro:
+        if distro.id == 'opensuse':
+            # use zypper on openSUSE
+            return 'zypper'
+        if (distro.id in EL_FAMILY_DISTROS
+                and distro.version
+                and Version(distro.version) <= Version("7")):
+            # use yum on EL <= 7
+            return 'yum'
+    # use dnf by default
+    if not shutil.which('dnf'):
+        # dnf not available - check for microdnf (as seen in EL 10 minimal images)
+        if shutil.which('microdnf'):
+            return 'microdnf'
+    return 'dnf'
 
 
 def get_spec_(path):

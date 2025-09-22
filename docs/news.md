@@ -1,5 +1,14 @@
 # apkg news
 
+## apkg 0.6.2
+
+Released 2025-09-22
+
+### Fixes
+
+- adapt [apkg build-dep](commands.md#build-dep) and [apkg test-dep](commands.md#test-dep) for incompatible changes in Click 8.3.0 which resulted in `--list` suddenly being default (?!)
+
+
 ## apkg 0.6.1
 
 Released 2025-06-20

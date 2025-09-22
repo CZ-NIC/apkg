@@ -55,8 +55,8 @@ project compat level:       3
 current apkg compat level:  5
 latest apkg compat level:   5
 
-current apkg version:  0.6.1
-latest apkg version:   0.6.1
+current apkg version:  0.6.2
+latest apkg version:   0.6.2
 
 ⚠ project compat level 3 is older than current 5
 

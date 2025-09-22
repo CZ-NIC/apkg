@@ -14,7 +14,7 @@ log = getLogger(__name__)
 
 @cli.command(name="test-dep", aliases=['testdep'])
 @click.argument('input_files', nargs=-1)
-@click.option('-l', '--list', 'install', default=True, flag_value=False,
+@click.option('-l', '--list', 'list', is_flag=False,
               help="list test deps only, don't install")
 @click.option('-u', '--upstream', is_flag=True,
               help="use upstream archive")
@@ -34,8 +34,9 @@ def cli_test_dep(*args, **kwargs):
     """
     install or list testing dependencies
     """
+    kwargs['install'] = not kwargs.pop('list')
     deps = test_dep(*args, **kwargs)
-    if not kwargs.get('install', True):
+    if not kwargs['install']:
         common.print_results(deps)
 
 

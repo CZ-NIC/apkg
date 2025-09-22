@@ -2,7 +2,7 @@
 
 ## apkg 0.7.0
 
-**UNRELEASED** - in development
+Released 2025-09-22
 
 ### Compat Level 6 News
 
@@ -15,12 +15,14 @@
     explicit `version`
     - [make_archive_script](config.md#projectmake_archive_script) can produce
       additional files (`components`)
+    - backward compatibility with previous behavior is retained for `compat` < 6
 - new `-P` / `--path-format` global option to control how `apkg` prints output paths
 - `SOURCE_DATE_EPOCH` support in `{{ now }}` for build reproducibility
 
 ### Fixes
 
-- adapt [apkg build-dep](commands.md#build-dep) and [apkg test-dep](commands.md#test-dep) for incompatible changes in Click 8.3.0 which resulted in `--list` suddenly being default (?!)
+- adapt [apkg build-dep](commands.md#build-dep) and [apkg test-dep](commands.md#test-dep)
+  for incompatible changes in Click 8.3.0 which resulted in `--list` suddenly being default (?!)
 
 
 ## apkg 0.6.1

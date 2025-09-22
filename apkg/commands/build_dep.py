@@ -16,7 +16,7 @@ log = getLogger(__name__)
 
 @cli.command(name="build-dep", aliases=['builddep'])
 @click.argument('inputs', nargs=-1)
-@click.option('-l', '--list', 'install', default=True, flag_value=False,
+@click.option('-l', '--list', 'list', is_flag=True,
               help="list build deps only, don't install")
 @click.option('-t', '--test-dep', is_flag=True,
               help="include testing deps as well")
@@ -41,8 +41,9 @@ def cli_build_dep(*args, **kwargs):
     """
     install or list build dependencies
     """
+    kwargs['install'] = not kwargs.pop('list')
     deps = build_dep(*args, **kwargs)
-    if not kwargs.get('install', True):
+    if not kwargs['install']:
         common.print_results(deps)
 
 

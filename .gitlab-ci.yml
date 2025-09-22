@@ -265,7 +265,6 @@ apkg:deb:
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
-        - 'ubuntu-24.10'
         - 'ubuntu-25.04'
 
 apkg:rpm:
@@ -342,7 +341,6 @@ bird:deb:
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
-        - 'ubuntu-24.10'
         - 'ubuntu-25.04'
 
 bird:rpm:
@@ -392,7 +390,6 @@ knot-dns:deb:
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
-        - 'ubuntu-24.10'
         - 'ubuntu-25.04'
 
 knot-dns:rpm:
@@ -445,7 +442,6 @@ knot-resolver:deb:
         - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
-        - 'ubuntu-24.10'
         - 'ubuntu-25.04'
 
 knot-resolver:rpm:

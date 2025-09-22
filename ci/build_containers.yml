@@ -10,12 +10,9 @@ build_all_images:
 #    - "ln -s \"$(which podman)\" /usr/bin/docker"
     - "docker login -u \"${CI_REGISTRY_USER}\" -p \"${CI_REGISTRY_PASSWORD}\" \"${CI_REGISTRY}\""
     - cd ci/images && ./update_all.sh
-  except:
+  only:
     variables:
-      - $MINIMAL
-      - $INTEGRATION
-      - $BUILD_IMAGES
-  when: manual
+      - $BUILD_ALL_IMAGES
   needs:
     - install
 
@@ -26,8 +23,6 @@ build_select_images:
     - dind
     - amd64
   script:
-#    - unset $TMPDIR  # prevents errors in the LXC runners
-#    - "ln -s \"$(which podman)\" /usr/bin/docker"
     - "docker login -u \"${CI_REGISTRY_USER}\" -p \"${CI_REGISTRY_PASSWORD}\" \"${CI_REGISTRY}\""
     - cd ci/images && ./update_all.sh $BUILD_IMAGES
   only:

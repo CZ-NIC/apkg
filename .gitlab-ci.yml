@@ -488,6 +488,8 @@ pages:
     - public
   rules:
     - if: $CI_COMMIT_BRANCH == "master" && $MINIMAL != "true" && $INTEGRATION != "true"
+  needs:
+    - install
 
 # include jobs to build the containers
 include:

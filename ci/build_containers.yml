@@ -16,6 +16,8 @@ build_all_images:
       - $INTEGRATION
       - $BUILD_IMAGES
   when: manual
+  needs:
+    - install
 
 build_select_images:
   image: docker.io/docker:dind
@@ -31,3 +33,5 @@ build_select_images:
   only:
     variables:
       - $BUILD_IMAGES
+  needs:
+    - install

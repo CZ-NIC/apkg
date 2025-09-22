@@ -18,6 +18,10 @@
 - new `-P` / `--path-format` global option to control how `apkg` prints output paths
 - `SOURCE_DATE_EPOCH` support in `{{ now }}` for build reproducibility
 
+### Fixes
+
+- adapt [apkg build-dep](commands.md#build-dep) and [apkg test-dep](commands.md#test-dep) for incompatible changes in Click 8.3.0 which resulted in `--list` suddenly being default (?!)
+
 
 ## apkg 0.6.1
 

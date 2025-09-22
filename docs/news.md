@@ -17,7 +17,7 @@ Released 2025-09-22
       additional files (`components`)
     - backward compatibility with previous behavior is retained for `compat` < 6
 - new `-P` / `--path-format` global option to control how `apkg` prints output paths
-- `SOURCE_DATE_EPOCH` support in `{{ now }}` for build reproducibility
+- `SOURCE_DATE_EPOCH` support in `now` template variable for build reproducibility
 
 ### Fixes
 

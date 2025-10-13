@@ -206,11 +206,11 @@ unit:
   parallel:
     matrix:
       - PYTHON_IMAGE:
-        - 'python:3.9'
         - 'python:3.10'
         - 'python:3.11'
         - 'python:3.12'
         - 'python:3.13'
+        - 'python:3.14'
 
 unit:legacy:
   <<: *test
@@ -230,6 +230,7 @@ unit:legacy:
         - 'python:3.6'
         - 'python:3.7'
         - 'python:3.8'
+        - 'python:3.9'
   allow_failure: true
 
 self:

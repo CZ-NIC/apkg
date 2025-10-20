@@ -148,7 +148,7 @@ def copy_pkg_files(src_path, dst_path, source=False):
         if not entry:
             # first line is empty
             continue
-        items = re.split(r'\s+', entry.strip(), 5)
+        items = re.split(r'\s+', entry.strip(), maxsplit=5)
         if len(items) < 5:
             log.warning("Invalid *.changes line: %s", entry)
             continue

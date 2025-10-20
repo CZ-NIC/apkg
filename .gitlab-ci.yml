@@ -34,7 +34,7 @@ workflow:
     - when: always
 
 
-image: $CI_REGISTRY/packaging/apkg/test/debian-12-full
+image: $CI_REGISTRY/packaging/apkg/test/debian-13-full
 
 
 default:

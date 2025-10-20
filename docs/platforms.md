@@ -6,6 +6,7 @@ apkg is tested to **run** on following **Python** versions:
 
 | Python | support   |
 | ------ | --------- |
+| 3.14   | ✅        |
 | 3.13   | ✅        |
 | 3.12   | ✅        |
 | 3.11   | ✅        |

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM debian:bookworm
+FROM debian:trixie
 ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /root
@@ -37,7 +37,7 @@ RUN apt-get install -y -qqq \
     python3-pytest-sugar
 # basic deps
 RUN apt-get install -y -qqq \
-    python3-blessings \
+    python3-blessed \
     python3-bs4 \
     python3-build \
     python3-click \

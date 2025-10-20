@@ -26,8 +26,8 @@ log = getLogger(__name__)
 
 IS_ROOT = os.geteuid() == 0
 PY_VERSION = version.parse('%s.%s' % (sys.version_info[:2]))
-# Require python 3.6 for tee feature.
-CAN_TEE = PY_VERSION >= version.parse('3.6')
+# Require python 3.7 for tee feature.
+CAN_TEE = PY_VERSION >= version.parse('3.7')
 
 
 def run(cmd,
@@ -100,7 +100,7 @@ def run(cmd,
         tee = False
 
     if tee and not CAN_TEE:
-        log.warning("can't tee on python < 3.6"
+        log.warning("can't tee on python < 3.7"
                     " - command output won't be printed")
         tee = False
 
@@ -109,8 +109,7 @@ def run(cmd,
 
     if tee:
         try:
-            loop = asyncio.get_event_loop_policy().get_event_loop()
-            result = loop.run_until_complete(_tee(*cmd, **kwargs))
+            result = asyncio.run(_tee(*cmd, **kwargs))
         except FileNotFoundError:
             raise ex.CommandNotFound(cmd=cmd_str)
     else:
@@ -173,7 +172,7 @@ async def _tee(*args, shell=False, **kwargs):
         sink.append(line_str)
         print(line_str, file=sys.stderr)
 
-    loop = asyncio.get_event_loop_policy().get_event_loop()
+    loop = asyncio.get_event_loop()
     tasks = []
     if process.stdout:
         tasks.append(loop.create_task(_read_stream(

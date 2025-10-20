@@ -82,7 +82,12 @@ def test_multiple_sources_srcpkg_rpm(proj, capsys):
             'files.tar.gz',
         }
         listing = subprocess.getoutput("rpm2cpio %s | cpio -t --quiet" % quoted)
-        files = set(listing.split('\n'))
+        files = set()
+        for line in listing.split('\n'):
+            # strip leading `./` which is sometimes present
+            if line.startswith('./'):
+                line = line[2:]
+            files.add(line)
         assert files == expected
 
         spec = subprocess.getoutput(("rpm2cpio %s | "

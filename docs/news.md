@@ -1,5 +1,14 @@
 # apkg news
 
+## apkg 0.7.1
+
+Released 2025-10-23
+
+### Improvements
+
+- Python 3.14 is now [supported](platforms.md) and tested in CI
+
+
 ## apkg 0.7.0
 
 Released 2025-09-22

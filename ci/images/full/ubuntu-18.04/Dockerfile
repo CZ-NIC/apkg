@@ -23,17 +23,18 @@ RUN apt-get install -y -qqq \
     python3-setuptools
 # apkg deps
 RUN apt-get install -y -qqq \
+    python3-bs4 \
     python3-blessings \
+    python3-cached-property \
     python3-click \
+    python3-distro \
     python3-jinja2 \
     python3-packaging \
+    python3-requests \
     python3-toml
 # python deps not available\too old in distro
 RUN pip3 install \
-    beautifulsoup4 \
-    build \
-    distro \
-    cached_property
+    build
 # install stable apkg from PyPI
 RUN python3 -m pip install apkg
 RUN apkg --version

@@ -4,7 +4,7 @@ set -e
 
 VERSION_TAG=$(git describe --tags --abbrev=0)
 VERSION=${VERSION_TAG#v}
-if ! git describe --tags --exact-match 2> /dev/null; then
+if ! git describe --tags --exact-match &> /dev/null; then
     # devel version (not tagged)
     GIT_HASH=$(git rev-parse --short=6 HEAD)
     N_COMMITS=$(git rev-list $VERSION_TAG.. --count)

@@ -33,9 +33,9 @@ log = getLogger(__name__)
 @click.option('--ask/--no-ask', 'interactive',
               default=False, show_default=True,
               help="enable/disable interactive mode")
-# TODO: once py3.5 is dropped, add hidden=True
+# TODO: once py3.6 is dropped, add hidden=True
 @click.option('-y', '--yes', 'interactive', flag_value=False,
-              help="compat alias for --no-ask")
+              help="[DEPRECATED] compat alias for --no-ask")
 @click.help_option('-h', '--help',
                    help="show this help message")
 def cli_build_dep(*args, **kwargs):

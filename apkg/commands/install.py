@@ -43,7 +43,7 @@ log = getLogger(__name__)
               help="enable/disable interactive mode")
 @click.option('-F', '--in-file', 'in_files', multiple=True,
               help="specify input file, '-' to read from stdin")
-# TODO: once py3.5 is dropped, add hidden=True
+# TODO: once py3.6 is dropped, add hidden=True
 @click.option('-y', '--yes', 'interactive', flag_value=False,
               help="[DEPRECATED] compat alias for --no-ask")
 @click.help_option('-h', '--help',

@@ -24,7 +24,8 @@ RUN pacman -Syu --noconfirm \
     python-jinja \
     python-packaging \
     python-requests \
-    python-toml
+    python-toml \
+    python-yaml
 # Arch being special deps
 RUN pacman -Syu --noconfirm \
     sudo

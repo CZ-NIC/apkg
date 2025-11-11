@@ -3,15 +3,15 @@
 **apkg** is a free and open source minimalist cross-distro **upstream packaging
 automation tool** aimed at producing high quality native packages for many
 different OS distributions/packaging systems directly from upstream sources with
-minimum overhead while respecting individual distro's standards and policies.
+minimum overhead while respecting individual distros' standards and policies.
 
-It's a CLI optimized for both CI systems and terminal.
+It's a stable CLI optimized for both CI systems and terminal.
 
 Please read the [docs]:
 
 # [apkg docs online][docs]
 
-## [apkg docs on GitLab](https://gitlab.nic.cz/packaging/apkg/-/blob/master/docs/README.md)
+## [apkg docs on GitLab](https://gitlab.nic.cz/packaging/apkg/-/blob/master/docs/index.md)
 
 ## apkg docs from sources
 

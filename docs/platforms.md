@@ -11,7 +11,7 @@ apkg is tested to **run** on following **Python** versions:
 | 3.12   | ✅        |
 | 3.11   | ✅        |
 | 3.10   | ✅        |
-| 3.9    | ✅        |
+| 3.9    | ⚠️ EOL    |
 | 3.8    | ⚠️ EOL    |
 | 3.7    | ⚠️ EOL    |
 | 3.6    | ⚠️ EOL    |
@@ -30,7 +30,7 @@ apkg is able to **create packages** for/on following **distros**:
 
 | distro | support | CI | pkgstyle | Python |
 | ------ | ------- | -- | -------- | ------ |
-| Debian Sid | ✅ | ❌ | [deb] | 3.13 |
+| Debian Sid | ✅ | ❌ | [deb] | 3.14 |
 | Debian 13 | ✅ | ✅ | [deb] | 3.13 |
 | Debian 12 | ✅ | ✅ | [deb] | 3.11 |
 | Debian 11 | ✅ | ✅ | [deb] | 3.9  |
@@ -43,7 +43,7 @@ apkg is able to **create packages** for/on following **distros**:
 | Ubuntu 18.04 | ⚠️ legacy | ❌ | [deb] | 3.6 ⚠️ EOL |
 | Linux Mint | ⚠️ untested | ❌ | [deb] |  |
 | Pop!_OS | ⚠️ untested | ❌ | [deb] |  |
-| Fedora Rawhide | ✅ | ❌ | [rpm] | 3.13 |
+| Fedora Rawhide | ✅ | ❌ | [rpm] | 3.14 |
 | Fedora 42 | ✅ | ✅ | [rpm] | 3.13 |
 | Fedora 41 | ✅ | ✅ | [rpm] | 3.13 |
 | Enterprise Linux 10 | ✅ | ✅ | [rpm] | 3.12 |

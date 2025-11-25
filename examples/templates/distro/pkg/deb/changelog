@@ -16,4 +16,4 @@ apkg-example-templates ({{ version }}-{{ release }}~{{ distro.tiny }}) unstable;
   * other Debian-based
 {%- endif %}
 
- -- Jakub Ružička <jakub.ruzicka@nic.cz>  {{ now }}
+ -- Jakub Ružička <jru@debian.org>  {{ now }}

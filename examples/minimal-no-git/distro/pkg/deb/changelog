@@ -2,4 +2,4 @@ apkg-ex-minimal-no-git ({{ version }}-{{ release }}) unstable; urgency=medium
 
   * upstream version {{ version }}
 
- -- Jakub Ružička <jakub.ruzicka@nic.cz>  {{ now }}
+ -- Jakub Ružička <jru@debian.org>  {{ now }}

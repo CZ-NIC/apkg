@@ -10,7 +10,7 @@ requires-python = ">=3.6"
 license = {text = "MIT"}
 keywords = ["packaging", "devops", "CI", "cli"]
 authors = [
-  { name = "Jakub Ružička", email = "jakub.ruzicka@nic.cz" },
+  { name = "Jakub Ružička", email = "jru@debian.org" },
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",

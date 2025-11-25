@@ -20,7 +20,7 @@ This is a minimal example of apkg templating features.
 %doc README.md
 
 %changelog
-* {{ now }} Jakub Ružička <jakub.ruzicka@nic.cz> - {{ version }}-{{ release }}
+* {{ now }} Jakub Ružička <jru@debian.org> - {{ version }}-{{ release }}
 - new upstream version {{ version }}
 - distro: {{ distro }} / {{ distro.idver }} / {{ distro.tiny }}
 - include: {% include 'distro/common/shared.txt' %}

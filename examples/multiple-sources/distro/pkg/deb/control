@@ -1,7 +1,7 @@
 Source: apkg-ex-multiple-sources
 Section: debug
 Priority: optional
-Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
+Maintainer: Jakub Ružička <jru@debian.org>
 Build-Depends: debhelper
 Homepage: https://gitlab.nic.cz/packaging/apkg
 

@@ -152,7 +152,7 @@ some-package ({{ version }}-{{ release }}~{{ deb_series }}) {{ deb_series }}; ur
 
 * upstream package version {{ version }} for {{ distro }} {{ deb_codename }}
 
--- Jakub Ružička <jakub.ruzicka@nic.cz>  {{ now }}
+-- Jakub Ružička <jru@debian.org>  {{ now }}
 ```
 {% endraw %}
 

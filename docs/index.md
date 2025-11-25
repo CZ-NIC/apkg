@@ -9,7 +9,7 @@ minimum overhead while respecting individual distros' standards and policies.
 
 ## status
 
-**apkg** is in **beta**, maturing towards `v1.0` 🚀
+**apkg** is now **stable** with [v1.0.0](news.md#apkg-100) released 🚀
 
 **[apkg news](news.md)**
 

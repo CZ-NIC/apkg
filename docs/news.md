@@ -1,5 +1,45 @@
 # apkg news
 
+## apkg 1.0.0
+
+Released 2025-11-25
+
+### 1.0.0 release notes 🚀
+
+After **5 years** of development, **apkg** finally reached version **1.0.0** 🥳
+
+This journey resulted in:
+
+- **500** git commits (excluding merge commits)
+- **202** merge requests
+- **92** resolved issues
+- **14 000** total lines of code
+    - **8 419** lines of source code (excluding blank lines)
+    - **2 779** lines of documentation (excluding blank lines)
+
+95 % of apkg's code was authored by me and I'd like to extend my sincere
+thanks to **all contributors and users** for their bug reports, pull
+requests, reviews, suggestions, and all other contributions, which made apkg
+significantly better.
+
+apkg now [supports](platforms.md#python-support) all Python versions from
+**3.6** to **3.14**. In other words, it's able to run in most Python
+environments from past **8 years** - a feat that cost considerable amount of
+effort and sanity.
+
+apkg [supports](platforms.md#distro-support) major linux distros and package
+managers including but not limited to all actively supported releases of Debian,
+Ubuntu, Fedora, Enterprise Linux, openSUSE, Arch, and NixOS. Adding support for
+new distro is reasonably straightforward.
+
+I've channeled my passion and two decades of packaging experience into
+apkg and I believe it now serves its intended purpose really well.
+
+**apkg** is now considered **stable** and ready for production use 🎉
+
+-- Jakub Ružička, the original apkg author
+
+
 ## apkg 0.7.1
 
 Released 2025-10-23

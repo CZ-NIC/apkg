@@ -62,5 +62,5 @@ sed -i '/    toml/d' setup.cfg
 
 
 %changelog
-* {{ now }} Jakub Ružička <jakub.ruzicka@nic.cz> - {{ version }}-{{ release }}
+* {{ now }} Jakub Ružička <jru@debian.org> - {{ version }}-{{ release }}
 - upstream version {{ version }}

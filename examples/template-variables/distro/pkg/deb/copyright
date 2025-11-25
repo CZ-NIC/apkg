@@ -3,7 +3,7 @@ Upstream-Name: apkg
 Source: https://gitlab.nic.cz/packaging/apkg
 
 Files: *
-Copyright: (c) 2020, Jakub Ružička <jakub.ruzicka@nic.cz>
+Copyright: (c) 2020, Jakub Ružička <jru@debian.org>
 License: GPL-3+
 
 License: GPL-3+

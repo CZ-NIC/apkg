@@ -1,4 +1,4 @@
-# Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
+# Maintainer: Jakub Ružička <jru@debian.org>
 
 pkgname=apkg-ex-minimal-no-git
 pkgver={{ version }}

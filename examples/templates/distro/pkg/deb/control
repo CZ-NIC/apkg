@@ -1,6 +1,6 @@
 Source: apkg-example-templates
 Priority: optional
-Maintainer: Jakub Ružička <jakub.ruzicka@nic.cz>
+Maintainer: Jakub Ružička <jru@debian.org>
 Homepage: https://gitlab.nic.cz/packaging/apkg
 
 Package: apkg-example-templates

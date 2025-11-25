@@ -20,13 +20,7 @@ compat = {{ compat_level }}
 
 ## ensuring compatibility
 
-!!! Important
-    During `apkg` beta, backward compatibility with older versions/compat levels is provided on **best effort** basis.
-
-    Starting from 1.0, backward compatibility will be **ensured**.
-
-
-Starting with `0.3.0`, `apkg status` displays project compat level:
+`apkg status` displays project compat level:
 
 ```
 $> apkg status
@@ -58,7 +52,7 @@ latest apkg compat level:   6
 current apkg version:  0.7.1
 latest apkg version:   0.7.1
 
-⚠ project compat level 3 is older than current 6
+⚠ project compat level 4 is older than current 6
 
 Please consider bumping
 

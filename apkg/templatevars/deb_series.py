@@ -22,7 +22,7 @@ Example usage in debian/chanelog:
 
     * upstream package version {{ version }} for {{ distro }} {{ deb_codename }}
 
-    -- Jakub Ružička <jakub.ruzicka@nic.cz>  {{ now }}
+    -- Jakub Ružička <jru@debian.org>  {{ now }}
 """  # noqa
 
 import csv

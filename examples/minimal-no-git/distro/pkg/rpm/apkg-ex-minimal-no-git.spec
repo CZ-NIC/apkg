@@ -26,5 +26,5 @@ install -D -m 0755 %{name} %{buildroot}%{_bindir}/%{name}
 %{_bindir}/%{name}
 
 %changelog
-* {{ now }} Jakub Ružička <jakub.ruzicka@nic.cz> - {{ version }}-{{ release }}
+* {{ now }} Jakub Ružička <jru@debian.org> - {{ version }}-{{ release }}
 - upstream version {{ version }}

@@ -26,7 +26,7 @@ install -D -m 0755 %{name} %{buildroot}%{_bindir}/%{name}
 %{_bindir}/%{name}
 
 %changelog
-* {{ now }} Jakub Ružička <jakub.ruzicka@nic.cz> - {{ version }}-{{ release }}
+* {{ now }} Jakub Ružička <jru@debian.org> - {{ version }}-{{ release }}
 - upstream version {{ version }} for {{ distro }}
 - custom variables: {{ custom_int }}, {{ custom_float }}, {{ custom_bool }}, {{ custom_str }}
 - custom functions: 1 + 2 == {{ custom_fun_add(1, 2) }}, {{ custom_fun_echo('ECHO') }}

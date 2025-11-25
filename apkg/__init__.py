@@ -1,3 +1,3 @@
 # setuptools read this version through setup.py
 # scripts/make-archive.sh updates this for `apkg make-archive`
-__version__ = '0.7.1'
+__version__ = '1.0.0'

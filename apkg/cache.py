@@ -57,7 +57,7 @@ class ProjectCache:
 
         cache = json.load(cache_path.open('r'))
         version = cache.get('__version__', None)
-        if version != __version__:
+        if version != __version__ and version is not None:
             log.warning("ignoring cache from different apkg version: "
                         "%s != %s", version, __version__)
             return

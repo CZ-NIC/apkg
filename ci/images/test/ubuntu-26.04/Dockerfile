@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM ubuntu:25.04
+FROM ubuntu:26.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /root

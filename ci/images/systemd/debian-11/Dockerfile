@@ -1,6 +1,6 @@
 FROM debian:bullseye
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ARG ARCH=amd64
 
 RUN apt-get update && apt-get install -y \

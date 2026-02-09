@@ -1,4 +1,4 @@
-FROM registry.nic.cz/packaging/apkg/systemd/ubuntu-25.04
+FROM registry.nic.cz/packaging/apkg/systemd/ubuntu-26.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /root

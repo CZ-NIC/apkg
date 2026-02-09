@@ -8,6 +8,7 @@ RUN dnf install -y \
 	git \
 	git-lfs \
 	man-db \
+	https://gitlab-runner-downloads.s3.amazonaws.com/latest/rpm/gitlab-runner-helper-images.rpm \
 	https://gitlab-runner-downloads.s3.amazonaws.com/latest/rpm/gitlab-runner_${ARCH}.rpm
 
 # autologin as root on console

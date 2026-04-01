@@ -1,6 +1,7 @@
 FROM fedora:42
 
-ARG ARCH=amd64
+# ARG ARCH=amd64
+ARG ARCH=x86_64
 
 RUN dnf update -y
 RUN dnf install -y \

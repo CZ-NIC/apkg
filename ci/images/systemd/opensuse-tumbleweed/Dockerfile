@@ -1,6 +1,6 @@
 FROM opensuse/tumbleweed
 
-ARG ARCH=amd64
+ARG ARCH=x86_64
 
 RUN zypper dup -y
 RUN zypper install -y \

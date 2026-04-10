@@ -1,6 +1,6 @@
 FROM opensuse/leap:15.6
 
-ARG ARCH=amd64
+ARG ARCH=x86_64
 
 RUN zypper update -y
 RUN zypper install -y \

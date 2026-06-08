@@ -1,3 +1,52 @@
+.update_image: &update_image
+  image: docker.io/docker:dind
+  stage: deploy
+  tags:
+    - dind
+    - amd64
+  needs:
+    - install
+  script:
+    - "docker login -u \"${CI_REGISTRY_USER}\" -p \"${CI_REGISTRY_PASSWORD}\" \"${CI_REGISTRY}\""
+    - cd ci/images && ./update_all.sh $DISTRO
+  rules:
+    # Build automatically from schedule when UPDATE_IMAGES is set
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $UPDATE_IMAGES'
+      when: on_success
+    - when: manual
+
+arch:update_image:
+  <<: *update_image
+  variables:
+    DISTRO: arch
+
+rpm:update_image:
+  <<: *update_image
+  parallel:
+    matrix:
+      - DISTRO:
+        - alma-9
+        - alma-10
+        - fedora-42
+        - fedora-43
+        - fedora-44
+        - fedora-rawhide
+        - opensuse-15.6
+        - opensuse-tumbleweed
+
+deb:update_image:
+  <<: *update_image
+  parallel:
+    matrix:
+      - DISTRO:
+        - debian-11
+        - debian-12
+        - debian-13
+        - ubuntu-20.04
+        - ubuntu-22.04
+        - ubuntu-24.04
+        - ubuntu-25.10
+        - ubuntu-26.04
 
 build_all_images:
   image: docker.io/docker:dind

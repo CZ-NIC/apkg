@@ -5,7 +5,6 @@ ARG ARCH=x86_64
 RUN zypper dup -y
 RUN zypper install -y \
 	systemd \
-	systemd-sysvinit \
 	git \
 	git-lfs \
 	curl \

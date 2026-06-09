@@ -8,9 +8,9 @@ SHELL ["/bin/bash", "-c"]
 
 
 # packaging deps
-RUN zypper install -y --force-resolution curl git rpm-build python311-pipx
+RUN zypper install -y --force-resolution curl git rpm-build python3-pipx
 # basic deps
-RUN zypper install -y python311-beautifulsoup4 python311-setuptools python311-Jinja2 python311-click python311-distro python311-blessed python311-requests python311-toml
+RUN zypper install -y python3-beautifulsoup4 python3-setuptools python3-Jinja2 python3-click python3-distro python3-blessed python3-requests python3-toml
 # systemd
 RUN zypper install -y systemd
 # install stable apkg from PyPI

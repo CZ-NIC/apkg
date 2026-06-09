@@ -31,7 +31,7 @@ rpm:update_image:
         - fedora-43
         - fedora-44
         - fedora-rawhide
-        - opensuse-15.6
+        - opensuse-16.0
         - opensuse-tumbleweed
 
 deb:update_image:

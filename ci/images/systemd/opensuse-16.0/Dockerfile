@@ -1,4 +1,4 @@
-FROM opensuse/tumbleweed
+FROM opensuse/leap:16.0
 
 ARG ARCH=x86_64
 

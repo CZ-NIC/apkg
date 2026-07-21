@@ -42,11 +42,10 @@ deb:update_image:
         - debian-11
         - debian-12
         - debian-13
-        - ubuntu-20.04
         - ubuntu-22.04
         - ubuntu-24.04
-        - ubuntu-25.10
         - ubuntu-26.04
+        - ubuntu-26.10
 
 build_all_images:
   image: docker.io/docker:dind

@@ -262,7 +262,6 @@ apkg:deb:
       - DISTRO:
         - 'debian-12'
         - 'debian-13'
-        - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-26.04'
@@ -337,7 +336,6 @@ bird:deb:
       - DISTRO:
         - 'debian-12'
         - 'debian-13'
-        - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-26.04'
@@ -435,7 +433,6 @@ knot-resolver:deb:
       - DISTRO:
         - 'debian-12'
         - 'debian-13'
-        - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-26.04'

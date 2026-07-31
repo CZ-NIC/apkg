@@ -13,15 +13,11 @@ variables:
   KNOT_RESOLVER_BRANCH:
     value: "master"
     description: "Knot Resolver branch to test"
-  BIRD_BRANCH:
-    value: "pkg-v2"
-    description: "BIRD branch to test"
 
 
 stages:
   - test
   - apkg
-  - bird
   - knot-dns
   - knot-resolver
   - deploy
@@ -99,20 +95,6 @@ default:
     when: always
     reports:
       junit: report.xml
-
-.bird: &bird
-  stage: bird
-  rules:
-    - if: $INTEGRATION == "true" || $TEST_BIRD == "true"
-    - when: manual
-  needs:
-    - install
-  artifacts:
-    when: always
-    reports:
-      junit: report.xml
-  before_script:
-    - echo "Testing BIRD branch $BIRD_BRANCH"
 
 .knot-dns-base: &knot-dns-base
   stage: knot-dns
@@ -320,39 +302,6 @@ apkg:nixos:
     # (but use $PATH to force the new apkg binary built above).
     - rm -rf pkg/
     - nix-shell '<nixpkgs>' -A apkg --run "PATH='$PATH' "'$(type -P py.test) -v ci/tests/test_apkg.py --junitxml=report.xml'
-
-
-# integration tests: BIRD
-
-bird:deb:
-  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
-  <<: *bird
-  script:
-    - apt update
-    - *setup-project
-    - py.test-3 -v ci/tests/test_bird.py --junitxml=report.xml
-  parallel:
-    matrix:
-      - DISTRO:
-        - 'debian-12'
-        - 'debian-13'
-        - 'ubuntu-22.04'
-        - 'ubuntu-24.04'
-        - 'ubuntu-26.04'
-
-bird:rpm:
-  image: $CI_REGISTRY/packaging/apkg/test/$DISTRO
-  <<: *bird
-  script:
-    - *setup-project
-    - python3 -m pytest -v ci/tests/test_bird.py --junitxml=report.xml
-  parallel:
-    matrix:
-      - DISTRO:
-        - 'fedora-41'
-        - 'fedora-42'
-        - 'alma-9'
-        - 'alma-10'
 
 
 # integration tests: Knot DNS

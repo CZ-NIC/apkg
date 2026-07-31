@@ -9,7 +9,6 @@ an inspiration for your `apkg` packaging:
 * [Knot DNS](https://gitlab.nic.cz/knot/knot-dns)
 * [DNS Probe](https://gitlab.nic.cz/adam/dns-probe)
 * [C-DNS](https://gitlab.nic.cz/knot/c-dns/)
-* [BIRD](https://gitlab.nic.cz/labs/bird)
 * [libyang](https://github.com/CESNET/libyang)
 * [libnetconf2](https://github.com/CESNET/libnetconf2)
 * [sysrepo](https://github.com/sysrepo/sysrepo)

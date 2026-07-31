@@ -27,7 +27,6 @@ rpm:update_image:
       - DISTRO:
         - alma-9
         - alma-10
-        - fedora-42
         - fedora-43
         - fedora-44
         - fedora-rawhide

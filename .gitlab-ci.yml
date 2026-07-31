@@ -260,10 +260,8 @@ apkg:deb:
   parallel:
     matrix:
       - DISTRO:
-        - 'debian-11'
         - 'debian-12'
         - 'debian-13'
-        - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-26.04'
@@ -336,10 +334,8 @@ bird:deb:
   parallel:
     matrix:
       - DISTRO:
-        - 'debian-11'
         - 'debian-12'
         - 'debian-13'
-        - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-26.04'
@@ -435,10 +431,8 @@ knot-resolver:deb:
   parallel:
     matrix:
       - DISTRO:
-        - 'debian-11'
         - 'debian-12'
         - 'debian-13'
-        - 'ubuntu-20.04'
         - 'ubuntu-22.04'
         - 'ubuntu-24.04'
         - 'ubuntu-26.04'
